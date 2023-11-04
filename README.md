@@ -1,6 +1,7 @@
 # AcademicScope
 
 To-do:
+
 0. Install PostgreSQL, pgAdmin, REST Client extension VSCode
 1. npm i bcrypt cors dotenv express jsonwebtoken pg-promise
 2. npm i nodemon --save-dev
