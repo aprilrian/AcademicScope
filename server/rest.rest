@@ -1,0 +1,38 @@
+# POST http://localhost:3000/api/resetseqid
+
+# POST http://localhost:3000/api/dropusers
+
+# POST http://localhost:3000/register
+# Content-Type: application/json
+
+# {
+#     "username": "gelek",
+#     "email": "gelek@students.undip.ac.id",
+#     "password": "ok",
+#     "role": "operator"
+# }
+
+# GET http://localhost:3000/users
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImdlbGVrIiwiaWF0IjoxNjk5MDc3OTUwLCJleHAiOjE2OTkwNzc5ODB9.GiyVr65p6qD4qViXi6EiLbEP641FjIw3WFNxGkQfnj4
+
+POST http://localhost:3000/token
+Content-Type: application/json
+
+{
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwidXNlcm5hbWUiOiJnZWxlayIsImVtYWlsIjoiZ2VsZWtAc3R1ZGVudHMudW5kaXAuYWMuaWQiLCJwYXNzd29yZCI6IiQyYiQxMCQxRGFpZExPNHgxcW1Tcmthd08zRGRPRjYvenRtVDRkMTJ5RG14bnJuRDhEcHQvVUg1dm9HdSIsInJvbGUiOiJvcGVyYXRvciIsImlhdCI6MTY5OTA3OTQ1Mn0.FkuDgLo7hYh_0YdUsyjFz1fBYI-dhVzTG2tdanvrv24"
+}
+
+# POST http://localhost:3000/login
+# Content-Type: application/json
+
+# {
+#     "username": "gelek",
+#     "password": "ok"
+# }
+
+# DELETE http://localhost:3000/logout
+# Content-Type: application/json
+
+# {
+#     "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwidXNlcm5hbWUiOiJnZWxlayIsImVtYWlsIjoiZ2VsZWtAc3R1ZGVudHMudW5kaXAuYWMuaWQiLCJwYXNzd29yZCI6IiQyYiQxMCQxRGFpZExPNHgxcW1Tcmthd08zRGRPRjYvenRtVDRkMTJ5RG14bnJuRDhEcHQvVUg1dm9HdSIsInJvbGUiOiJvcGVyYXRvciIsImlhdCI6MTY5OTA3OTQ1Mn0.FkuDgLo7hYh_0YdUsyjFz1fBYI-dhVzTG2tdanvrv24"
+# }
