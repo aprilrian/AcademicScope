@@ -1,12 +1,13 @@
 # AcademicScope
 
-To-do:
+Server:
 
 0. Install PostgreSQL, pgAdmin, REST Client extension VSCode
-1. npm i bcrypt cors dotenv express jsonwebtoken pg-promise
-2. npm i nodemon --save-dev
-3. Buat database baru di pgAdmin dengan nama "postgres", klik kanan db-nya, restore
-4. Silahkan lakukan test dengan run "npm start" dan file rest.rest untuk API
+1. cd server
+2. npm i bcrypt cors dotenv express jsonwebtoken pg-promise
+3. npm i nodemon --save-dev
+4. Buat database baru di pgAdmin dengan nama "postgres", klik kanan db-nya, restore
+5. Silahkan lakukan test dengan run "npm start" dan file rest.rest untuk API
 
 Next:
 1. Push folder client untuk front-end dan sesuaikan dengan back-end di folder server
