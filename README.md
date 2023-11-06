@@ -6,7 +6,7 @@ Server:
 1. cd server
 2. npm i bcrypt cors dotenv express jsonwebtoken pg-promise
 3. npm i nodemon --save-dev
-4. Buat database baru di pgAdmin dengan nama "postgres", klik kanan db-nya, restore
+4. Buka pqAdmin, buka script query postgres.sql dan run script
 5. Silahkan lakukan test dengan run "npm start" dan file rest.rest untuk API
 
 Next:
