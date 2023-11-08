@@ -134,8 +134,11 @@ app.post('/skripsi', authenticateToken, async (req, res) => {
 });
 
 app.post('/register', async (req, res) => {
-  const hashedPassword = await bcrypt.hash(req.body.password, 10)
   const { username, email, password, role } = req.body;
+  // const password = req.body.password;
+  const salt = bcrypt.genSaltSync(10);
+  const hashedPassword = bcrypt.hashSync(password, salt)
+  // const hashedPassword = await bcrypt.hash(req.body.password, 10)
   try {
     const user = await db.query(`
       INSERT INTO public.users (username, email, password, role)
