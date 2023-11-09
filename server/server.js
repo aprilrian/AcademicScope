@@ -52,10 +52,10 @@ app.post('/token', async (req, res) => {
   }
 })
 
-app.get('/users', authenticateToken, async (req, res) => {
-  const users = await db.query(`SELECT * FROM public.users`)
-  res.json(users.filter(user => user.username === req.user.username))
-})
+// app.get('/users', authenticateToken, async (req, res) => {
+//   const users = await db.query(`SELECT * FROM public.users`)
+//   res.json(users.filter(user => user.username === req.user.username))
+// })
 
 // Entry Pengambilan IRS per Semester (SRS-XXX-003)
 app.post('/irs', authenticateToken, async (req, res) => {
@@ -153,8 +153,8 @@ app.post('/register', async (req, res) => {
 });
 
 app.post('/login', async (req, res) => {
-  const users = await db.query(`SELECT * FROM public.users`)
-  const user = users.find(user => user.username === req.body.username)
+  const users = await db.query('SELECT * FROM public.users')
+  const user = users.find(user => user.email === req.body.email)
   if (user == null) {
     return res.status(400).send('Tidak dapat menemukan user')
   } 
@@ -166,7 +166,12 @@ app.post('/login', async (req, res) => {
         INSERT INTO public."refreshTokens" (tokens)
         VALUES ($1)
       `, [refreshToken])
-      res.json({ accessToken: accessToken, refreshToken: refreshToken })
+      const responseData = {
+        ...user,  // Spread user properties
+        accessToken: accessToken,
+        refreshToken: refreshToken
+      }
+      res.json(responseData)
     } else {
       res.status(401).send('Username atau password salah')
     }
