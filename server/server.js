@@ -9,11 +9,24 @@ const db = require('./db')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const bodyParser = require('body-parser')
+const multer = require('multer');
 
 // Middleware
 app.use(cors())
 app.use(express.json())
 app.use(bodyParser.json())
+
+// Multer configuration
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/'); // Set the destination folder for uploaded files
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname); // Set the filename to be unique
+  },
+});
+
+const upload = multer({ storage: storage });
 
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization']
@@ -77,11 +90,13 @@ app.post('/irs', authenticateToken, async (req, res) => {
 });
 
 // Entry Prestasi Akademik KHS per Semester (SRS-XXX-004)
-app.post('/khs', authenticateToken, async (req, res) => {
+app.post('/khs', authenticateToken, upload.single('file'), async (req, res) => {
   const { semester, grades } = req.body;
   const username = req.user.username;
 
   try {
+    const file = req.file;
+
     // Simpan data KHS ke database
     await db.query(`
       INSERT INTO public.khs (semester_aktif, sks, sks_kumulatif, ip, ip_kumulatif, status_konfirmasi, file, mahasiswa_id)

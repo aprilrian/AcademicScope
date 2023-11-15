@@ -424,4 +424,4 @@ ALTER TABLE ONLY public.irs
 ADD CONSTRAINT irs_mahasiswa_id_fkey FOREIGN KEY (mahasiswa_id) REFERENCES public.mahasiswa(id);
 --
 -- PostgreSQL database dump complete
---
+- -
