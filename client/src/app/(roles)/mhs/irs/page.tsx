@@ -115,10 +115,11 @@ export function ProfileForm() {
               name="semester_aktif"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Pilih Semester</FormLabel>
+                  <FormLabel>Semester</FormLabel>
                   <FormControl>
-                    <Input placeholder="Masukkan semester" {...field} />
+                    <Input placeholder="Contoh: 1" {...field} />
                   </FormControl>
+                  <FormDescription>Masukkan sesuai semester</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -131,8 +132,9 @@ export function ProfileForm() {
                 <FormItem>
                   <FormLabel>Jumlah SKS</FormLabel>
                   <FormControl>
-                    <Input placeholder="Masukkan SKS" {...field} />
+                    <Input placeholder="Contoh: 24" {...field} />
                   </FormControl>
+                  <FormDescription>Masukkan IRS sesuai semester</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -141,6 +143,7 @@ export function ProfileForm() {
             <div className="grid w-full max-w-sm items-center gap-1.5">
               <Label htmlFor="scan">Upload Scan</Label>
               <Input id="scan" type="file" />
+              <FormDescription>Masukkan file PDF</FormDescription>
             </div>
 
             <CardFooter>
