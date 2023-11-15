@@ -156,8 +156,8 @@ app.post('/register', async (req, res) => {
   // const hashedPassword = await bcrypt.hash(req.body.password, 10)
   try {
     const user = await db.query(`
-      INSERT INTO public.users (username, email, password, role)
-      VALUES ($1, $2, $3, $4)
+      INSERT INTO public.users (username, email, password, role, created_at)
+      VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
     `, [username, email, hashedPassword, role])
 
     res.status(201).send('Akun berhasil disisipkan');
