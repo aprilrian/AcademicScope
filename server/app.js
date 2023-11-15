@@ -10,6 +10,7 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const bodyParser = require('body-parser')
 const multer = require('multer');
+const router = express.Router();
 
 // Middleware
 app.use(cors())
@@ -45,6 +46,29 @@ function generateAccessToken(user) {
 }
 
 // Routes
+app.post('/generateMahasiswa', authenticateToken, async (req, res) => {
+  const { nim, nama, angkatan } = req.body;
+
+  try {
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPassword = bcrypt.hashSync('default', salt)
+    const user = await db.query(`INSERT INTO public.users (username, password, role, created_at)
+      VALUES ($1, $2, $3, CURRENT_TIMESTAMP) RETURNING *`, [nim, hashedPassword, 'Mahasiswa']);
+
+    // Simpan data mahasiswa ke database
+    const query = await db.query(`
+      INSERT INTO public.mahasiswas (nim, nama, angkatan, status, user_id)
+      VALUES ($1, $2, $3, $4, $5) RETURNING *
+    `, [nim, nama, angkatan, 'Aktif', user.id]);
+
+    res.status(201).json({ message: 'Data mahasiswa berhasil disimpan' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: 'Gagal menyimpan data mahasiswa' });
+  }
+});
+
+
 app.post('/token', async (req, res) => {
   try {
     const token = req.body.refreshToken
@@ -169,7 +193,7 @@ app.post('/register', async (req, res) => {
 
 app.post('/login', async (req, res) => {
   const users = await db.query('SELECT * FROM public.users')
-  const user = users.find(user => user.email === req.body.email)
+  const user = users.find(user => user.username === req.body.username)
   if (user == null) {
     return res.status(400).send('Tidak dapat menemukan user')
   } 
