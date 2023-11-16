@@ -271,7 +271,7 @@ app.post('/register', async (req, res) => {
 
 app.post('/login', async (req, res) => {
   const users = await db.query('SELECT * FROM public.users')
-  const user = users.find(user => user.username === req.body.username)
+  const user = users.find(user => user.email === req.body.email)
   if (user == null) {
     return res.status(400).send('Tidak dapat menemukan user')
   } 
