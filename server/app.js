@@ -103,10 +103,6 @@ app.get('/generateMahasiswaBatch', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
-
 
 app.post('/token', async (req, res) => {
   try {
