@@ -11,6 +11,7 @@ const jwt = require('jsonwebtoken')
 const bodyParser = require('body-parser')
 const multer = require('multer');
 const router = express.Router();
+const csvtojson = require('csvtojson');
 
 // Middleware
 app.use(cors())
@@ -53,10 +54,10 @@ app.post('/generateMahasiswa', authenticateToken, async (req, res) => {
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = bcrypt.hashSync('default', salt)
     const user = await db.query(`INSERT INTO public.users (username, password, role, created_at)
-      VALUES ($1, $2, $3, CURRENT_TIMESTAMP) RETURNING *`, [nim, hashedPassword, 'Mahasiswa']);
+      VALUES ($1, $2, $3, CURRENT_TIMESTAMP) RETURNING *`, [nim, hashedPassword, 'mahasiswa']);
 
     // Simpan data mahasiswa ke database
-    const query = await db.query(`
+    await db.query(`
       INSERT INTO public.mahasiswas (nim, nama, angkatan, status, user_id)
       VALUES ($1, $2, $3, $4, $5) RETURNING *
     `, [nim, nama, angkatan, 'Aktif', user.id]);
@@ -66,6 +67,44 @@ app.post('/generateMahasiswa', authenticateToken, async (req, res) => {
     console.error(err.message);
     res.status(500).json({ error: 'Gagal menyimpan data mahasiswa' });
   }
+});
+
+app.get('/generateMahasiswaBatch', async (req, res) => {
+  try {
+    // Baca file CSV dan konversi ke JSON
+    const jsonArray = await csvtojson().fromFile('batch.csv');
+
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPassword = bcrypt.hashSync('default', salt);
+
+    // Loop melalui setiap baris dan masukkan ke database
+    for (const mahasiswa of jsonArray) {
+      const { nim, nama, angkatan } = mahasiswa;
+
+      // Generate akun dan masukkan ke database
+      const userResult = await db.query('INSERT INTO users (username, password, role) VALUES ($1, $2, $3) RETURNING *', [nim, hashedPassword, 'mahasiswa']);
+      const user = userResult.rows[0];
+
+      // Masukkan data mahasiswa ke tabel 'mahasiswas'
+      const mahasiswaResult = await db.query(`
+        INSERT INTO public.mahasiswas (nim, nama, angkatan, status, user_id)
+        VALUES ($1, $2, $3, $4, $5) RETURNING *
+      `, [nim, nama, angkatan, 'Aktif', user.id]);
+
+      const mahasiswaData = mahasiswaResult.rows[0];
+
+      console.log(`Akun untuk ${nim} telah dibuat: ${JSON.stringify(user)}, ${JSON.stringify(mahasiswaData)}`);
+    }
+
+    res.status(200).json({ message: 'Batch generate akun selesai' });
+  } catch (error) {
+    console.error('Error during batch generate:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
 
 
@@ -202,7 +241,7 @@ app.post('/login', async (req, res) => {
       const accessToken = generateAccessToken(user)
       const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET)
       await db.query(`
-        INSERT INTO public."refreshTokens" (tokens)
+        INSERT INTO public."refreshTokens" (token)
         VALUES ($1)
       `, [refreshToken])
       const responseData = {
