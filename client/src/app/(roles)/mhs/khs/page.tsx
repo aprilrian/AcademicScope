@@ -18,6 +18,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  CardTitle,
+  CardDescription,
+  CardHeader,
+  CardContent,
+  CardFooter,
+  Card,
+} from "@/components/ui/card";
 import axios from "axios";
 
 // const formSchema = z.object({
@@ -66,86 +74,121 @@ const KHSForm = () => {
         </div>
         <Separator className="my-6" />
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <FormField
-              control={form.control}
-              name="semester_aktif"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel htmlFor="semester_aktif">Pilih Semester</FormLabel>
-                  <FormControl>
-                    <Input id='semester_aktif' type='semester_aktif'placeholder="Masukkan semester" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+        <div className="mt-10 flex-grow mb-10">
+          <Card className="max-w-2xl mx-auto">
+            <CardHeader>
+              <CardTitle>Isi form KHS</CardTitle>
+              <CardDescription>Isi dengan benar</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <Form {...form}>
+                  <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="space-y-8"
+                  >
+                    <FormField
+                      control={form.control}
+                      name="semester_aktif"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel htmlFor="semester_aktif">
+                            Pilih Semester
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              id="semester_aktif"
+                              type="semester_aktif"
+                              placeholder="Masukkan semester"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-            <FormField
-              control={form.control}
-              name="sks"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Jumlah SKS</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Masukkan Jumlah SKS" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormField
+                      control={form.control}
+                      name="sks"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Jumlah SKS</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Masukkan Jumlah SKS"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-            <FormField
-              control={form.control}
-              name="sks_kumulatif"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>SKS Kumulatif</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Masukkan SKS Kumulatif" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormField
+                      control={form.control}
+                      name="sks_kumulatif"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>SKS Kumulatif</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Masukkan SKS Kumulatif"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-            <FormField
-              control={form.control}
-              name="ip"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>IP Semester</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Masukkan IP Semester" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormField
+                      control={form.control}
+                      name="ip"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>IP Semester</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Masukkan IP Semester"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-            <FormField
-              control={form.control}
-              name="ip_kumulatif"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>IP Kumulatif</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Masukkan IPK" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormField
+                      control={form.control}
+                      name="ip_kumulatif"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>IP Kumulatif</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Masukkan IPK" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-            <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Label htmlFor="file">Upload Scan</Label>
-              <Input className='w-full' id="file" type="file" />
-            </div>
+                    <div className="grid w-full max-w-sm items-center gap-1.5">
+                      <Label htmlFor="file">Upload Scan</Label>
+                      <Input className="w-full" id="file" type="file" />
+                    </div>
 
-            <Button type="submit" className='w-full'>Submit</Button>
-          </form>
-        </Form>
+                    <CardFooter>
+                      <Button type="submit" className="w-full">
+                        Submit
+                      </Button>
+                    </CardFooter>
+                  </form>
+                </Form>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </>
   );

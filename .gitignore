@@ -1,1 +1,7 @@
+<<<<<<< HEAD
 server/.env
+=======
+/server/node_modules
+/client/node_modules
+/client/.next
+>>>>>>> 71693f75aa4bb64151a18e985dd8fd6b7e64c168
