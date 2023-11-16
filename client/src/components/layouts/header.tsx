@@ -36,7 +36,7 @@ export function MainNav({
             </Link>
 
             <div className="flex">
-              <main className="flex-grow p-6">
+              <main className="flex-grow p-6 w-screen">
                 <div className="flex justify-between items-center mb-4"></div>
                 <div className="absolute top-0 right-0 p-4 w-50 h-50">
                   <UserNav />
