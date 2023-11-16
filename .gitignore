@@ -1,0 +1,6 @@
+client/.env
+client/node_modules
+client/.next
+
+server/.env
+server/node_modules

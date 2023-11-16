@@ -24,7 +24,7 @@ const roles = {
   ],
   mahasiswa: [
     { name: "Dashboard", href: "/mhs/dashboard" },
-    { name: "Profil", href: "/mhs/profil" },
+    { name: "Profil", href: "/mhs/profile" },
     { name: "IRS", href: "/mhs/irs" },
     { name: "KHS", href: "/mhs/khs" },
     { name: "PKL", href: "/mhs/pkl" },

@@ -27,7 +27,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-
+import {
+  CardTitle,
+  CardDescription,
+  CardHeader,
+  CardContent,
+  CardFooter,
+  Card,
+} from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -90,6 +97,14 @@ export function ProfileForm() {
           <p className="text-muted-foreground">Isi PKL</p>
         </div>
         <Separator className="my-6" />
+        <div className="mt-10 flex-grow mb-10">
+          <Card className="max-w-2xl mx-auto">
+            <CardHeader>
+              <CardTitle>Isi form PKL</CardTitle>
+              <CardDescription>Isi dengan benar</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
@@ -144,12 +159,20 @@ export function ProfileForm() {
               <Input id="scan" type="file" />
             </div>
 
-            <Button className='w-full' type="submit">Submit</Button>
-          </form>
-        </Form>
+            <CardFooter>
+                      <Button type="submit" className="w-full">
+                        Submit
+                      </Button>
+                    </CardFooter>
+                  </form>
+                </Form>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </>
   );
-}
+};
 
 export default ProfileForm;

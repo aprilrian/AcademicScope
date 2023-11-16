@@ -18,6 +18,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  CardTitle,
+  CardDescription,
+  CardHeader,
+  CardContent,
+  CardFooter,
+  Card,
+} from "@/components/ui/card";
 
 const profileFormSchema = z.object({
   smt: z.string().min(2, {
@@ -46,9 +54,13 @@ const profileFormSchema = z.object({
 const loginSchema = yup
   .object()
   .shape({
-    semester: yup.string().required(),
+    semester_aktif: yup.string().required(),
     sks: yup.string().required(),
-    scan: yup.string().required(),
+    sks_kumulatif: yup.string().required(),
+    ip: yup.string().required(),
+    ip_kumulatif: yup.string().required(),
+    file: yup.string().required(),
+    mahasiswa_id: yup.string().required(),
   })
   .required();
 
@@ -88,17 +100,26 @@ export function ProfileForm() {
           <p className="text-muted-foreground">Isi IRS anda</p>
         </div>
         <Separator className="my-6" />
+        <div className="mt-10 flex-grow mb-10">
+          <Card className="max-w-2xl mx-auto">
+            <CardHeader>
+              <CardTitle>Isi form IRS</CardTitle>
+              <CardDescription>Isi dengan benar</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
               control={form.control}
-              name="semester"
+              name="semester_aktif"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Pilih Semester</FormLabel>
+                  <FormLabel>Semester</FormLabel>
                   <FormControl>
-                    <Input placeholder="Masukkan semester" {...field} />
+                    <Input placeholder="Contoh: 1" {...field} />
                   </FormControl>
+                  <FormDescription>Masukkan sesuai semester</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -111,8 +132,9 @@ export function ProfileForm() {
                 <FormItem>
                   <FormLabel>Jumlah SKS</FormLabel>
                   <FormControl>
-                    <Input placeholder="Masukkan SKS" {...field} />
+                    <Input placeholder="Contoh: 24" {...field} />
                   </FormControl>
+                  <FormDescription>Masukkan IRS sesuai semester</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -121,14 +143,23 @@ export function ProfileForm() {
             <div className="grid w-full max-w-sm items-center gap-1.5">
               <Label htmlFor="scan">Upload Scan</Label>
               <Input id="scan" type="file" />
+              <FormDescription>Masukkan file PDF</FormDescription>
             </div>
 
-            <Button className='w-full'type="submit">Submit</Button>
-          </form>
-        </Form>
+            <CardFooter>
+                      <Button type="submit" className="w-full">
+                        Submit
+                      </Button>
+                    </CardFooter>
+                  </form>
+                </Form>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </>
   );
-}
+};
 
 export default ProfileForm;
