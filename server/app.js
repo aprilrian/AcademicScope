@@ -72,7 +72,10 @@ app.post('/generateMahasiswa', authenticateToken, async (req, res) => {
 app.get('/generateMahasiswaBatch', async (req, res) => {
   try {
     // // Baca file CSV dan konversi ke JSON
-    const jsonArray = await csvtojson().fromFile('batch.csv');
+    const jsonArray = await csvtojson({
+      delimiter: ';',
+      headers: ['nim', 'nama', 'angkatan'],
+    }).fromFile('batch.csv');
 
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = bcrypt.hashSync('default', salt);
@@ -82,21 +85,21 @@ app.get('/generateMahasiswaBatch', async (req, res) => {
       const { nim, nama, angkatan } = mahasiswa;
 
       // Generate akun dan masukkan ke database
-      const userResult = await db.query('INSERT INTO users (username, password, role) VALUES ($1, $2, $3) RETURNING *', [nim, hashedPassword, 'mahasiswa']);
-      const user = userResult.rows[0];
+      const user = await db.query('INSERT INTO users (username, password, role, created_at) VALUES ($1, $2, $3, CURRENT_TIMESTAMP) RETURNING *', [nim, hashedPassword, 'mahasiswa']);
+      // const user = userResult.rows[0];
+    
+      // Masukkan data mahasiswa ke tabel 'mahasiswas'
+      const mahasiswaResult = await db.query(`
+        INSERT INTO public.mahasiswas (nim, nama, angkatan, status, user_id)
+        VALUES ($1, $2, $3, $4, $5) RETURNING *
+      `, [nim, nama, angkatan, 'Aktif', user.id]);
 
-    //   // Masukkan data mahasiswa ke tabel 'mahasiswas'
-    //   const mahasiswaResult = await db.query(`
-    //     INSERT INTO public.mahasiswas (nim, nama, angkatan, status, user_id)
-    //     VALUES ($1, $2, $3, $4, $5) RETURNING *
-    //   `, [nim, nama, angkatan, 'Aktif', user.id]);
+      // const mahasiswaData = mahasiswaResult.rows[0];
 
-    //   const mahasiswaData = mahasiswaResult.rows[0];
-
-    //   console.log(`Akun untuk ${nim} telah dibuat: ${JSON.stringify(user)}, ${JSON.stringify(mahasiswaData)}`);
+      console.log(`Akun untuk ${nim} telah dibuat`);
     }
 
-    // res.status(200).json({ message: 'Batch generate akun selesai' });
+    res.status(200).json({ message: 'Batch generate akun selesai' });
 
   } catch (error) {
     console.error('Error during batch generate:', error);
