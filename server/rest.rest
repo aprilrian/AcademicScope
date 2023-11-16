@@ -6,10 +6,10 @@
 # Content-Type: application/json
 
 # {
-#     "username": "gelek",
-#     "email": "gelek@students.undip.ac.id",
+#     "username": "fikri",
+#     "email": "fikri@students.com",
 #     "password": "ok",
-#     "role": "operator"
+#     "role": "mahasiswa"
 # }
 
 # GET http://localhost:3000/users
