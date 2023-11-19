@@ -4,8 +4,8 @@ require('dotenv').config()
 const express = require('express')
 const app = express()
 const port = 3000
+const db = require('./app/models')
 const cors = require('cors')
-const db = require('./app/database/db')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const bodyParser = require('body-parser')
@@ -14,9 +14,25 @@ const router = express.Router();
 const csvtojson = require('csvtojson');
 
 // Middleware
-app.use(cors())
+var corsOptions = {
+  origin: 'http://localhost:' + port,
+  optionsSuccessStatus: 200
+}
+
+app.use(cors(corsOptions))
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
+
+// Database connection
+db.sequelize.sync({ force: true })
+  .then(() => {
+    console.log('Database synchronized');
+  })
+  .catch((err) => {
+    console.error('Error synchronizing database:', err);
+  });
 
 // Multer configuration
 const storage = multer.diskStorage({
@@ -47,6 +63,16 @@ function generateAccessToken(user) {
 }
 
 // Routes
+app.get('/mahasiswas', async (req, res) => {
+  try {
+    const mahasiswas = await db.Mahasiswa.findAll();
+    res.json(mahasiswas);
+  } catch (error) {
+    console.error('Error retrieving mahasiswas:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
 app.post('/generateMahasiswa', authenticateToken, async (req, res) => {
   const { nim, nama, angkatan } = req.body;
 
