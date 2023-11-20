@@ -2,27 +2,19 @@ require("dotenv").config();
 
 // Initialization
 const express = require('express')
+
 const app = express()
 const db = require('./app/models')
-const cors = require('cors')
-const session = require('express-session')
+const cors = require('./app/services/cors')
+const session = require('./app/services/session')
 
 // CORS
-var corsOptions = {
-  origin: 'http://localhost:3000',
-  optionsSuccessStatus: 200
-}
-
-app.use(cors(corsOptions))
+app.use(cors)
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 // Session
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: true
-}))
+app.use(session)
 
 // Database synchronization
 db.sequelize.sync({ alter: true })
