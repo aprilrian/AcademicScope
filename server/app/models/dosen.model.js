@@ -1,7 +1,7 @@
 // DosenModel.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../configs/db.config');
-const User = require('./user.model');
+const User = require('./User.model');
 
 const Dosen = sequelize.define('Dosen', {
   nip: {
