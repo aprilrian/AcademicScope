@@ -4,9 +4,8 @@ require('./app/models')
 // Initialization
 const express = require('express')
 const app = express()
-const cors = require('./app/services/cors.service')
-const session = require('./app/services/session.service');
-const { db, initializeData } = require("./app/models");
+const cors = require('./app/services/cors')
+const session = require('./app/services/session')
 
 // CORS
 app.use(cors)
