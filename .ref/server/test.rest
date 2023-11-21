@@ -1,8 +1,0 @@
-POST http://localhost:8080/signin
-Content-Type: application/json
-    
-    {
-        "username": "admin",
-        "password": "facebook.com"
-    }
-    ```
