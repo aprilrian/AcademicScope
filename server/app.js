@@ -1,11 +1,11 @@
 require("dotenv").config();
-require('./app/models')
 
 // Initialization
 const express = require('express')
+const { db, initializeData } = require('./app/models')
 const app = express()
-const cors = require('./app/services/cors')
-const session = require('./app/services/session')
+const cors = require('./app/services/cors.service')
+const session = require('./app/services/session.service')
 
 // CORS
 app.use(cors)
