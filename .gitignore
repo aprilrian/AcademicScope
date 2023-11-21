@@ -13,4 +13,3 @@ server/.env
 # typescript
 client/*.tsbuildinfo
 client/next-env.d.ts
-
