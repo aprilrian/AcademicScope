@@ -85,5 +85,14 @@ async function initializeData() {
 
 module.exports = {
     db,
+    Mahasiswa: db.mahasiswa,
+    Dosen: db.dosen,
+    User: db.user,
+    KabupatenKota: db.KabupatenKota,
+    Provinsi: db.provinsi,
+    Role: db.role,
+    Status: db.status,
+    Angkatan: db.angkatan,
+    JalurMasuk: db.jalurMasuk,
     initializeData,
 }

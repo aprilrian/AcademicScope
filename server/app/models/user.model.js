@@ -28,11 +28,17 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  refreshToken: {
+    type: DataTypes.STRING,
+  },
 });
 
-User.beforeCreate(async (user) => {
-  const saltRounds = 10;
-  user.password = await bcrypt.hash(user.password, saltRounds);
+User.beforeCreate(async (user, options) => {
+  if (options && options.individualHooks === false) {
+    return;
+  }
+  const salt = await bcrypt.genSaltSync();
+  user.password = await bcrypt.hashSync(user.password, salt);
 });
 
 User.belongsTo(Role, { foreignKey: 'role' });

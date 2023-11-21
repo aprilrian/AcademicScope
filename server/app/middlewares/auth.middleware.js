@@ -1,26 +1,29 @@
-const { ACC_SECRET, REF_SECRET} = require("../config/auth.config.js");
+const { ACC_SECRET, REF_SECRET} = require("../configs/auth.config.js");
 const jwt = require("jsonwebtoken");
 const db = require("../models");
 
-function authenticateToken(req, res, next) {
-    const authHeader = req.headers['authorization']
-    const token = authHeader && authHeader.split(' ')[1] // Bearer TOKEN
-    if (token == null) return res.sendStatus(401)
-  
-    jwt.verify(token, ACC_SECRET, (err, user) => {
-      if (err) return res.sendStatus(403)
-      req.user = user
-      next()
-    })
-}
+exports.authenticateToken = async (req, res, next) => {
+  try {
+    const accessToken = req.cookies.accessToken;
+    if (!accessToken) {
+      return res.status(401).send({ message: "No token provided!" });
+    }
 
-function generateAccessToken(user) {
-  return jwt.sign(user, ACC_SECRET, { expiresIn: '300s' })
-}
+    jwt.verify(accessToken, ACC_SECRET, (err, decoded) => {
+      if (err) {
+        return res.status(401).send({ message: "Unauthorized!" });
+      }
+      req.userId = decoded.id;
+      next();
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: err.message });
+  }
+};
 
 authMiddleware = {
     authenticateToken,
-    generateAccessToken,
 };
 
 module.exports = authMiddleware;
