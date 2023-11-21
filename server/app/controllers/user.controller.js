@@ -24,22 +24,6 @@ exports.departemenBoard = (req, res) => {
   res.status(200).send("Departemen Content.");
 }
 
-exports.signUpOP = async (req, res) => {
-  try {
-    const { username, email, password, role } = req.body;
-    const user = await User.create({
-      username,
-      email,
-      password,
-      role,
-    });
-    await user.save();
-    res.status(201).send('Akun berhasil disisipkan');
-  } catch (error) {
-    res.status(500).send({ message: error.message });
-  }
-}
-
 
 // app.post('/register', async (req, res) => {
 //     const { username, email, password, role } = req.body;

@@ -16,19 +16,22 @@ app.use(express.urlencoded({ extended: true }))
 app.use(session)
 
 // Database synchronization
-// db.sequelize.sync({ alter: true, force: false })
-//   .then(() => {
-//     console.log('Database synchronized');
-//   })
-//   .catch((err) => {
-//     console.error('Error synchronizing database:', err);
-//   });
+db.sequelize.sync({ alter: true, force: false })
+  .then(() => {
+    console.log('Database synchronized');
+  })
+  .catch((err) => {
+    console.error('Error synchronizing database:', err);
+  });
 
 // Database initialization
 initializeData();
 
 // Routes
-app.use('/', require('./app/routes/user.routes'));
+app.get('/', (req, res) => {
+  res.send('Bang udah bang')
+})
+
 require("./app/routes/auth.routes")(app);
 // require("./app/routes/irs.routes")(app);
 // require("./app/routes/profil.routes")(app);
