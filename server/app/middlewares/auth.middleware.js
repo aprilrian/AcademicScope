@@ -259,7 +259,7 @@ const isKodeWali = (req, res, next) => {
     });
 };
 
-const authJwt = {
+const authMiddleware = {
     verifyToken,
     isAdmin,
     isDosen,
@@ -271,4 +271,4 @@ const authJwt = {
     getMahasiswaIdFromNim,
     isKodeWali,
 };
-module.exports = authJwt;
+module.exports = authMiddleware;

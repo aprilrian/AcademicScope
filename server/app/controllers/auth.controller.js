@@ -6,27 +6,6 @@ const { User, Mahasiswa, Dosen} = require("../models");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-// For OP ONLY!
-exports.signup = async (req, res) => {
-  try {
-    const { username, email, password, role } = req.body;
-    if (user.role === "admin") {
-      const user = await User.create({
-        username,
-        email,
-        password,
-        role,
-      });
-      await user.save();
-      res.status(201).send('Akun berhasil disisipkan');
-    } else {
-      res.status(403).send('Anda tidak memiliki akses');
-    }
-  } catch (error) {
-    res.status(500).send({ message: error.message });
-  }
-}
-
 exports.signin = async (req, res) => {
   try {
     const { username, password } = req.body;

@@ -33,10 +33,10 @@ app.get('/', (req, res) => {
 })
 
 require("./app/routes/auth.routes")(app);
+require("./app/routes/user.routes")(app);
 // require("./app/routes/irs.routes")(app);
 // require("./app/routes/profil.routes")(app);
 // require("./app/routes/pkl.routes")(app);
-// require("./app/routes/user.routes")(app);
 // require("./app/routes/khs.routes")(app);
 // require("./app/routes/skripsi.routes")(app);
 

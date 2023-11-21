@@ -25,12 +25,14 @@ async function initializeData() {
     const JalurMasuk = db.jalurMasuk;
     const Role = db.role;
     const Status = db.status;
+    const User = db.user;
 
     try {
         const angkatanCount = await Angkatan.count();
         const jalurMasukCount = await JalurMasuk.count();
         const roleCount = await Role.count();
         const statusCount = await Status.count();
+        const userCount = await User.count();
 
         if (angkatanCount === 0) {
         await Angkatan.bulkCreate([
@@ -82,6 +84,24 @@ async function initializeData() {
 
         console.log('Added initial data to status collection');
         }
+
+        if (userCount === 0) {
+        await User.bulkCreate([
+            {
+            username: 'operator',
+            email: 'operator@operator.undip.ac.id',
+            password: '$2b$10$yqdURhG0X7npTyfBKvnQoeoKDb3WQUCKpFa5G/5mshYSnO2pEFciy',
+            role: 'operator',
+            },
+            {
+            username: 'departemen',
+            email: 'departemen@departemen.undip.ac.id',
+            password: '$2b$10$q.1KQHs.lAUndhCxwJF4/eHQuJgvb3FYZfw8oQo1rj7jBaCsSmVEK',
+            role: 'departemen',
+            },
+        ]);
+        }
+        
     } catch (error) {
         console.error('Error initializing data:', error);
     }
