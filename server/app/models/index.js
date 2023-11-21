@@ -15,6 +15,10 @@ db.role = require("./Role.model");
 db.status = require("./Status.model");
 db.angkatan = require("./Angkatan.model");
 db.jalurMasuk = require("./JalurMasuk.model");
+db.irs = require("./irs.model");
+db.khs = require("./khs.model");
+db.pkl = require("./pkl.model");
+db.skripsi = require("./skripsi.model");
 
 async function initializeData() {
     const Angkatan = db.angkatan
