@@ -10,7 +10,7 @@ const Dosen = sequelize.define('Dosen', {
     allowNull: false,
     unique: true,
   },
-  name: {
+  nama: {
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -18,10 +18,10 @@ const Dosen = sequelize.define('Dosen', {
     type: DataTypes.STRING,
     unique: true,
   },
-  address: {
+  alamat: {
     type: DataTypes.STRING,
   },
-  phone_number: {
+  phone: {
     type: DataTypes.STRING,
   },
   user_id: {

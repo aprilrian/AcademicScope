@@ -3,15 +3,15 @@ const sequelize = require('../configs/db.config');
 const Provinsi = require('./Provinsi.model');
 
 const KabupatenKota = sequelize.define('KabupatenKota', {
-    provinsi: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    nama: {
+    kabupaten_kota: {
         type: DataTypes.STRING,
         primaryKey: true,
         allowNull: false,
         unique: true,
+    },
+    provinsi: {
+        type: DataTypes.STRING,
+        allowNull: false,
     },
     });
 

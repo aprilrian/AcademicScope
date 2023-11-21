@@ -1,6 +1,8 @@
 // UserModel.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../configs/db.config');
+const Role = require('./Role.model');
+const bcrypt = require('bcrypt');
 
 const User = sequelize.define('User', {
   id: {
@@ -26,10 +28,13 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  created_at: {
-    type: DataTypes.TIME,
-    allowNull: false,
-  },
 });
+
+User.beforeCreate(async (user) => {
+  const saltRounds = 10;
+  user.password = await bcrypt.hash(user.password, saltRounds);
+});
+
+User.belongsTo(Role, { foreignKey: 'role' });
 
 module.exports = User;

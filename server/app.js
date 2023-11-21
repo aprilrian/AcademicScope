@@ -1,12 +1,12 @@
 require("dotenv").config();
+require('./app/models')
 
 // Initialization
 const express = require('express')
-
 const app = express()
-const db = require('./app/models')
-const cors = require('./app/services/cors')
-const session = require('./app/services/session')
+const cors = require('./app/services/cors.service')
+const session = require('./app/services/session.service');
+const { db, initializeData } = require("./app/models");
 
 // CORS
 app.use(cors)
@@ -25,7 +25,11 @@ db.sequelize.sync({ alter: true })
     console.error('Error synchronizing database:', err);
   });
 
+// Database initialization
+initializeData();
+
 // Routes
+app.use('/', require('./app/routes/user.routes'));
 // require("./app/routes/irs.routes")(app);
 // require("./app/routes/profil.routes")(app);
 // require("./app/routes/pkl.routes")(app);
@@ -35,6 +39,6 @@ db.sequelize.sync({ alter: true })
 // require("./app/routes/skripsi.routes")(app);
 
 // Start server
-app.listen((process.env.APP_PORT || 8080), () => {
-  console.log(`Server started on http://localhost:${process.env.APP_PORT}`)
+app.listen((process.env.SERVER_PORT || 8080), () => {
+  console.log(`Server started on http://localhost:${process.env.SERVER_PORT}`)
 });

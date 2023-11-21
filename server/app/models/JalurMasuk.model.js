@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../configs/db.config');
 
 const JalurMasuk = sequelize.define('JalurMasuk', {
-    nama: {
+    jalur_masuk: {
         type: DataTypes.STRING,
         primaryKey: true,
         allowNull: false,

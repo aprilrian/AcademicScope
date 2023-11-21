@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../configs/db.config');
 
 const Status = sequelize.define('Status', {
-    nama: {
+    status: {
         type: DataTypes.STRING,
         primaryKey: true,
         allowNull: false,

@@ -1,4 +1,3 @@
-// MahasiswaModel.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../configs/db.config');
 const User = require('./User.model');
@@ -45,13 +44,12 @@ const Mahasiswa = sequelize.define('Mahasiswa', {
   },
   status: {
     type: DataTypes.STRING,
-    defaultValue: 'Aktif',
     allowNull: false,
   },
   foto: {
     type: DataTypes.STRING,
   },
-  dosen_wali: {
+  nip_dosen: {
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -62,12 +60,12 @@ const Mahasiswa = sequelize.define('Mahasiswa', {
   },
 });
 
-Mahasiswa.belongsTo(User, { foreignKey: 'user_id' });
-Mahasiswa.belongsTo(Dosen, { foreignKey: 'dosen_wali' });
-Mahasiswa.belongsTo(Status, { foreignKey: 'status' })
 Mahasiswa.belongsTo(KabupatenKota, { foreignKey: 'kabupatenKota' })
 Mahasiswa.belongsTo(Provinsi, { foreignKey: 'provinsi' })
 Mahasiswa.belongsTo(Angkatan, { foreignKey: 'angkatan' })
 Mahasiswa.belongsTo(JalurMasuk, { foreignKey: 'jalur_masuk' })
+Mahasiswa.belongsTo(Status, { foreignKey: 'status' })
+Mahasiswa.belongsTo(Dosen, { foreignKey: 'nip_dosen' });
+Mahasiswa.belongsTo(User, { foreignKey: 'user_id' });
 
 module.exports = Mahasiswa;
