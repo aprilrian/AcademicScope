@@ -1,50 +1,31 @@
-require('dotenv').config()
+require("dotenv").config();
 
-// Initialize express app and listen for incoming requests
+// Initialization
 const express = require('express')
+const { db, initializeData } = require('./app/models')
 const app = express()
-const port = 3000
-const cors = require('cors')
-const db = require('./app/database/db')
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
-const bodyParser = require('body-parser')
-const multer = require('multer');
-const router = express.Router();
-const csvtojson = require('csvtojson');
+const cors = require('./app/services/cors.service')
+const session = require('./app/services/session.service')
 
-// Middleware
-app.use(cors())
+// CORS
+app.use(cors)
 app.use(express.json())
-app.use(bodyParser.json())
+app.use(express.urlencoded({ extended: true }))
 
-// Multer configuration
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // Set the destination folder for uploaded files
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname); // Set the filename to be unique
-  },
-});
+// Session
+app.use(session)
 
-const upload = multer({ storage: storage });
-
-function authenticateToken(req, res, next) {
-  const authHeader = req.headers['authorization']
-  const token = authHeader && authHeader.split(' ')[1] // Bearer TOKEN
-  if (token == null) return res.sendStatus(401)
-
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    if (err) return res.sendStatus(403)
-    req.user = user
-    next()
+// Database synchronization
+db.sequelize.sync({ alter: true, force: false })
+  .then(() => {
+    console.log('Database synchronized');
   })
-}
+  .catch((err) => {
+    console.error('Error synchronizing database:', err);
+  });
 
-function generateAccessToken(user) {
-  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '300s' })
-}
+// Database initialization
+initializeData();
 
 // Routes
 app.post('/generateMahasiswa', authenticateToken, async (req, res) => {
@@ -64,7 +45,7 @@ app.post('/generateMahasiswa', authenticateToken, async (req, res) => {
 
     res.status(201).json({ message: 'Data mahasiswa berhasil disimpan' });
   } catch (err) {
-    console.error(err.messsage);
+    console.error(err.message);
     res.status(500).json({ error: 'Gagal menyimpan data mahasiswa' });
   }
 });
@@ -308,6 +289,6 @@ app.delete('/logout', async (req, res) => {
 });
 
 // Start server
-app.listen(port, () => {
-  console.log(`Server started on http://localhost:${port}`)
+app.listen((process.env.SERVER_PORT || 8080), () => {
+  console.log(`Server started on http://localhost:${process.env.SERVER_PORT}`)
 });
