@@ -5,8 +5,8 @@ const express = require('express')
 
 const app = express()
 const db = require('./app/models')
-const cors = require('./app/services/cors')
-const session = require('./app/services/session')
+const cors = require('./app/services/cors.service')
+const session = require('./app/services/session.service')
 
 // CORS
 app.use(cors)
@@ -35,6 +35,6 @@ db.sequelize.sync({ alter: true })
 // require("./app/routes/skripsi.routes")(app);
 
 // Start server
-app.listen((process.env.APP_PORT || 8080), () => {
+app.listen((process.env.APP_PORT || 3000), () => {
   console.log(`Server started on http://localhost:${process.env.APP_PORT}`)
 });
