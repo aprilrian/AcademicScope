@@ -6,10 +6,10 @@
 # Content-Type: application/json
 
 # {
-#     "username": "gelek",
-#     "email": "gelek@students.undip.ac.id",
+#     "username": "nathan",
+#     "email": "nathan@students.undip.ac.id",
 #     "password": "ok",
-#     "role": "operator"
+#     "role": "mahasiswa"
 # }
 
 # GET http://localhost:3000/users
@@ -22,13 +22,13 @@
 #     "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwidXNlcm5hbWUiOiJnZWxlayIsImVtYWlsIjoiZ2VsZWtAc3R1ZGVudHMudW5kaXAuYWMuaWQiLCJwYXNzd29yZCI6IiQyYiQxMCQxRGFpZExPNHgxcW1Tcmthd08zRGRPRjYvenRtVDRkMTJ5RG14bnJuRDhEcHQvVUg1dm9HdSIsInJvbGUiOiJvcGVyYXRvciIsImlhdCI6MTY5OTE3MzAyOH0.1beYduV0a57kQ3XUUbt6w1BRt7FWv9U0ORsGTTU-8VE"
 # }
 
-# POST http://localhost:3000/login
-# Content-Type: application/json
+POST http://localhost:3000/login
+Content-Type: application/json
 
-# {
-#     "username": "nathan@students.undip.ac.id",
-#     "password": "rahasia123"
-# }
+{
+    "username": "nathan",
+    "password": "ok"
+}
 
 # DELETE http://localhost:3000/logout
 # Content-Type: application/json

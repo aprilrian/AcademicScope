@@ -31,7 +31,7 @@ import { Input } from "@/components/ui/input";
 const loginSchema = yup
   .object()
   .shape({
-    email: yup.string().required(),
+    username: yup.string().required(),
     password: yup.string().required(),
   })
   .required();
@@ -56,7 +56,7 @@ const Login = () => {
 
       const res = await signIn("credentials", {
         redirect: false,
-        email: values.email,
+        username: values.username,
         password: values.password,
       });
 
@@ -83,7 +83,7 @@ const Login = () => {
         }
       } else {
         setError(res?.error);
-        form.setError("email", { message: res?.error });
+        form.setError("username", { message: res?.error });
         form.setError("password", { message: res?.error });
       }
     } catch (error: any) {
@@ -115,15 +115,15 @@ const Login = () => {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
-                name="email"
+                name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="email">Email</FormLabel>
+                    <FormLabel htmlFor="email">Username</FormLabel>
                     <FormControl>
                       <Input
-                        id="email"
-                        type="email"
-                        placeholder="Your email..."
+                        id="username"
+                        type="input"
+                        placeholder="Your Username..."
                         {...field}
                       />
                     </FormControl>

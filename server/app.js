@@ -64,7 +64,7 @@ app.post('/generateMahasiswa', authenticateToken, async (req, res) => {
 
     res.status(201).json({ message: 'Data mahasiswa berhasil disimpan' });
   } catch (err) {
-    console.error(err.message);
+    console.error(err.messsage);
     res.status(500).json({ error: 'Gagal menyimpan data mahasiswa' });
   }
 });
