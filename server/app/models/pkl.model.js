@@ -2,30 +2,58 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../configs/db.config');
 
 const PKL = sequelize.define('PKL', {
+  status: {
+    type: DataTypes.ENUM('belum', 'sedang pkl', 'lulus'),
+    allowNull: {
+      args: false,
+      msg: 'Status wajib diisi',
+    },
+  },
   nilai: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
+    allowNull: true,
     validate: {
-      len: [1, 1],
+      isInt: {
+        msg: 'Nilai harus berupa angka',
+      },
+      min: {
+        args: [0],
+        msg: 'Nilai dalam rentang 0-100',
+      },
+      max: {
+        args: [100],
+        msg: 'Nilai dalam rentang 0-100',
+      },
     },
   },
   semester: {
     type: DataTypes.INTEGER,
     validate: {
-      max: 2,
+      isInt: {
+        msg: 'Semester harus berupa angka',
+      },
+      min: {
+        args: [1],
+        msg: 'Semester dalam rentang 1-14',
+      },
+      max: {
+        args: [14],
+        msg: 'Semester dalam rentang 1-14',
+      },
     },
+    defaultValue: 6,
   },
-  statusKonfirmasi: {
+  status_verifikasi: {
+    type: DataTypes.ENUM('belum', 'sedang diverifikasi', 'sudah'),
+    defaultValue: 'belum',
+  },
+
+  pkl_file: {
     type: DataTypes.STRING,
-    validate: {
-      max: 20,
+    allowNull: {
+      args: false,
+      msg: 'Wajib upload scan berita acara seminar PKL',
     },
-  },
-  file: {
-    type: DataTypes.STRING,
-    // Tambahkan validasi jika diperlukan, misalnya:
-    // validate: {
-    //   len: [1, 100],
-    // },
   },
 });
 

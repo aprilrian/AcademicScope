@@ -3,59 +3,59 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../configs/db.config');
 
 const IRS = sequelize.define('IRS', {
-  semesterAktif: {
+  semester_aktif: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: {
+      args: false,
+      msg: 'Semester aktif wajib diisi',
+    },
     validate: {
-      notNull: {
-        msg: 'Semester aktif wajib diisi',
-      },
       isInt: {
         msg: 'Semester aktif harus berupa angka',
       },
       min: {
         args: [1],
-        msg: 'Semester aktif minimal 1',
+        msg: 'Semester aktif dalam rentang 1-14',
       },
       max: {
-        args: [99],
-        msg: 'Semester aktif maksimal 99',
+        args: [14],
+        msg: 'Semester aktif dalam rentang 1-14',
       },
     },
   },
   sks: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: {
+      args: false,
+      msg: 'Jumlah SKS wajib diisi',
+    },
     validate: {
-      notNull: {
-        msg: 'SKS wajib diisi',
-      },
       isInt: {
-        msg: 'SKS harus berupa angka',
+        msg: 'Jumlah SKS harus berupa angka',
       },
       min: {
         args: [1],
-        msg: 'SKS minimal 1',
+        msg: 'Jumlah SKS minimal 1 SKS',
       },
       max: {
-        args: [99],
-        msg: 'SKS maksimal 99',
+        args: [24],
+        msg: 'Jumlah SKS maksimal 24 SKS',
       },
     },
   },
-  file: {
+  irs_file: {
     type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      notNull: {
-        msg: 'Upload wajib diisi',
-      },
+    allowNull: {
+      args: false,
+      msg: 'Wajib upload scan IRS',
     },
   },
-  statusKonfirmasi: {
-    type: DataTypes.ENUM('belum', 'sudah'),
+  status_verifikasi: {
+    type: DataTypes.ENUM('belum', 'sedang diverifikasi' ,'sudah'),
     defaultValue: 'belum',
   },
+}, {
+  tableName: 'IRSs',
 });
 
 module.exports = IRS;

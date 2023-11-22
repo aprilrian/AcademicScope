@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../configs/db.config');
 
 const Provinsi = sequelize.define('Provinsi', {
-    id: {
+    kode: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         allowNull: false,

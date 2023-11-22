@@ -63,7 +63,7 @@ exports.signupDosen = async (req, res) => {
 exports.generate = async (req, res) => {
   try {
     const { nim, nama, angkatan, nip_dosen } = req.body;
-
+    
     const user = await User.create({
       username: nim,
       password: nim,
@@ -88,8 +88,6 @@ exports.generateBatch = async (req, res) => {
   try {
     const jsonFile = await csv().fromFile(req.file.path, { delimiter: ',' });
 
-    console.log(jsonFile);
-
     await User.sequelize.transaction(async (t) => {
       for (const row of jsonFile) {
         const user = await User.create({
@@ -110,16 +108,16 @@ exports.generateBatch = async (req, res) => {
         }, 
         { transaction: t }
         );
+        
+        res.status(201).send('Akun mahasiswa dengan nama ' + row.nama + ' berhasil disisipkan');
       }
     })
 
     // Delete file
     fs.unlinkSync(req.file.path);
 
-    res.send({
-      message: "Users were registered successfully!",
-    });
   } catch (err) {
+    fs.unlinkSync(req.file.path);
     console.error(err);
     res.status(500).send({
       message: "Internal Server Error",

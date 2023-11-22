@@ -12,13 +12,9 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 // Database synchronization
-// db.sequelize.sync({ alter: true, force: false })
-//   .then(() => {
-//     console.log('\nDatabase synchronized');
-//   })
-//   .catch((err) => {
-//     console.error('\nError synchronizing database:', err);
-//   });
+// db.sequelize.sync({ alter: true, force: true }).then(() => {
+//   console.log('Drop and re-sync db.');
+// });
 
 // Database initialization
 initializeData();

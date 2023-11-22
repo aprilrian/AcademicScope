@@ -1,7 +1,6 @@
 // UserModel.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../configs/db.config');
-const Role = require('./Role.model');
 const bcrypt = require('bcrypt');
 
 const User = sequelize.define('User', {
@@ -13,20 +12,35 @@ const User = sequelize.define('User', {
   },
   username: {
     type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
+    allowNull: {
+      args: false,
+      msg: 'Username wajib diisi',
+    },
+    unique: {
+      args: true,
+      msg: 'Username sudah digunakan',
+    },
   },
   email: {
     type: DataTypes.STRING,
-    unique: true,
+    unique: {
+      args: true,
+      msg: 'Email sudah digunakan',
+    },
   },
   password: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: {
+      args: false,
+      msg: 'Password wajib diisi',
+    },
   },
   role: {
-    type: DataTypes.STRING,
-    allowNull: false,
+    type: DataTypes.ENUM('operator', 'mahasiswa', 'dosen', 'departemen'),
+    allowNull: {
+      args: false,
+      msg: 'Role wajib diisi',
+    },
   },
   access_token: {
     type: DataTypes.STRING,
@@ -40,7 +54,5 @@ User.beforeCreate(async (user, options) => {
   const salt = await bcrypt.genSaltSync();
   user.password = await bcrypt.hashSync(user.password, salt);
 });
-
-User.belongsTo(Role, { foreignKey: 'role' });
 
 module.exports = User;
