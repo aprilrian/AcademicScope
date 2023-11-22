@@ -22,11 +22,11 @@ const Mahasiswa = sequelize.define('Mahasiswa', {
   alamat: {
     type: DataTypes.STRING,
   },
-  kabupatenKota: {
-    type: DataTypes.STRING,
+  kode_kabupatenKota: {
+    type: DataTypes.INTEGER,
   },
-  provinsi: {
-    type: DataTypes.STRING,
+  kode_provinsi: {
+    type: DataTypes.INTEGER,
   },
   angkatan: {
     type: DataTypes.STRING,
@@ -60,8 +60,8 @@ const Mahasiswa = sequelize.define('Mahasiswa', {
   },
 });
 
-Mahasiswa.belongsTo(KabupatenKota, { foreignKey: 'kabupatenKota' })
-Mahasiswa.belongsTo(Provinsi, { foreignKey: 'provinsi' })
+Mahasiswa.belongsTo(KabupatenKota, { foreignKey: 'kode_kabupatenKota' })
+Mahasiswa.belongsTo(Provinsi, { foreignKey: 'kode_provinsi' })
 Mahasiswa.belongsTo(Angkatan, { foreignKey: 'angkatan' })
 Mahasiswa.belongsTo(JalurMasuk, { foreignKey: 'jalur_masuk' })
 Mahasiswa.belongsTo(Status, { foreignKey: 'status' })

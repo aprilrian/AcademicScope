@@ -28,6 +28,9 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  access_token: {
+    type: DataTypes.STRING,
+  }
 });
 
 User.beforeCreate(async (user, options) => {

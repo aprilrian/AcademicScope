@@ -35,45 +35,44 @@ getMahasiswaIdFromNim = (req, res, next) => {
 };
 
 verifyToken = (req, res, next) => {
-    let token = req.headers["x-access-token"];
-    if (!token) {
-        return res.status(403).send({ message: "No token provided!" });
+  const token = req.headers.authorization?.split(' ')[1];
+
+  if (!token) {
+    return res.status(403).json({ message: 'No token provided!' });
+  }
+
+  jwt.verify(token, SECRET, (err, decoded) => {
+    if (err) {
+      if (err.name === 'TokenExpiredError') {
+        return res.status(401).json({ message: 'Token expired!' });
+      }
+      return res.status(401).json({ message: 'Unauthorized!' });
     }
-    jwt.verify(token, SECRET, (err, decoded) => {
-        if (err) {
-            return res.status(401).send({ message: "Unauthorized!" });
-        }
-        req.userId = decoded.id;
-        next();
-    });
+
+    req.user_id = decoded.id;
+    next();
+  });
 };
-isAdmin = (req, res, next) => {
-    User.findById(req.userId).exec((err, user) => {
-        if (err) {
-            res.status(500).send({ message: err });
-            return;
+
+isAdmin = async (req, res, next) => {
+    try {
+        const user = await User.findByPk(req.user_id);
+    
+        if (!user) {
+          return res.status(404).send({ message: 'User not found.' });
         }
-        Role.find(
-            {
-                _id: { $in: user.roles },
-            },
-            (err, roles) => {
-                if (err) {
-                    res.status(500).send({ message: err });
-                    return;
-                }
-                for (let i = 0; i < roles.length; i++) {
-                    if (roles[i].name === "admin") {
-                        next();
-                        return;
-                    }
-                }
-                res.status(403).send({ message: "Require Admin Role!" });
-                return;
-            }
-        );
-    });
+    
+        if (user.role === 'operator') {
+            return next();
+        } else { 
+            return res.status(403).send({ message: 'Require Admin Role!' });
+        }
+      } catch (error) {
+        console.error(error);
+        return res.status(500).send({ message: error.message || 'Internal Server Error' });
+      }
 };
+
 isMahasiswa = (req, res, next) => {
     User.findById(req.userId).exec((err, user) => {
         if (err) {

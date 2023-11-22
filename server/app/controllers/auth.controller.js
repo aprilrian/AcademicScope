@@ -8,15 +8,21 @@ const jwt = require("jsonwebtoken");
 
 exports.signin = async (req, res) => {
   try {
-    const { username, password } = req.body;
-    let user = await User.findOne({ where: { username } });
+    const { username, email, password } = req.body;
     
-    if(!username) {
-      return res.status(400).send({ message: "Username tidak boleh kosong" });
+    if(!username && !email) {
+      return res.status(400).send({ message: "Username atau email tidak boleh kosong" });
+    }
+
+    let user;
+    if (username) {
+      user = await User.findOne({ where: { username: username } });
+    } else if (email) {
+      user = await User.findOne({ where: { email: email } });
     }
 
     if (!user) {
-      return res.status(404).send({ message: "User tidak ditemukan." });
+      return res.status(404).send({ message: "User tidak ditemukan" });
     }
 
     const passwordIsValid = bcrypt.compareSync(password, user.password);
@@ -28,28 +34,12 @@ exports.signin = async (req, res) => {
       });
     }
 
-    // check if session is already set if yes then respond with 200
-    if (req.session.user) {
-      return res.status(200).send({
-        message: "User already logged in",
-      });
-    } else {
-      // set session
-      req.session.user = user.username;
-      req.session.save(function (err) {
-        if (err) {
-          res.status(500).send({ message: err });
-          return;
-        }
-      });
-    }
-
     let userData;
 
     if (user && user.role === "mahasiswa") {
       // Get mahasiswa name from user.id
       const mahasiswa = await Mahasiswa.findOne({
-        where: { userId: user.id },
+        where: { user_id: user.id },
       });
 
       userData = {
@@ -57,16 +47,18 @@ exports.signin = async (req, res) => {
         username: user.username,
         email: user.email,
         role: user.role,
-        name: mahasiswa ? mahasiswa.name : null,
+        nim: mahasiswa ? mahasiswa.nim : null,
+        nama: mahasiswa ? mahasiswa.nama : null,
       };
     } else if (user && user.role === "dosen") {
-      const dosen = await Dosen.findOne({ where: { userId: user.id } });
+      const dosen = await Dosen.findOne({ where: { user_id: user.id } });
 
       userData = {
         id: user.id,
         username: user.username,
         email: user.email,
         roles: user.role,
+        nip: dosen ? dosen.nip : null,
         name: dosen ? dosen.name : null,
       };
     } else {
@@ -82,6 +74,9 @@ exports.signin = async (req, res) => {
       expiresIn: SECRET_EXP,
     });
 
+    user.access_token = token;
+    await user.save();
+
     res.status(200).send({
       ...userData,
       accessToken: token,
@@ -92,15 +87,20 @@ exports.signin = async (req, res) => {
   }
 };
 
-exports.signout = (req, res) => {
-  req.session.user = null;
-  req.session.regenerate((err) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).send({ message: 'Error regenerating session' });
+exports.signout = async (req, res) => {
+    try {
+      const user = await User.findOne({ where: { access_token: req.body.accessToken } });
+      
+      if (user) {
+        user.access_token = null;
+        await user.save();
+        res.redirect("/");
+      } else {
+        return res.status(404).send({ message: "Ditemukan login ilegal. Mengirim agen FBI..." });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ message: error.message });
     }
-
-    res.redirect("/");
-  });
 };
 

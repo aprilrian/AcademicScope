@@ -22,12 +22,38 @@
 #     "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwidXNlcm5hbWUiOiJnZWxlayIsImVtYWlsIjoiZ2VsZWtAc3R1ZGVudHMudW5kaXAuYWMuaWQiLCJwYXNzd29yZCI6IiQyYiQxMCQxRGFpZExPNHgxcW1Tcmthd08zRGRPRjYvenRtVDRkMTJ5RG14bnJuRDhEcHQvVUg1dm9HdSIsInJvbGUiOiJvcGVyYXRvciIsImlhdCI6MTY5OTE3MzAyOH0.1beYduV0a57kQ3XUUbt6w1BRt7FWv9U0ORsGTTU-8VE"
 # }
 
-POST http://localhost:3000/login
+# POST http://localhost:8080/auth/signin
+# Content-Type: application/json
+
+# {
+#     "username": "operator",
+#     "password": "operator"
+# }
+
+# POST http://localhost:8080/auth/signout
+# Content-Type: application/json
+
+# {
+#     "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJvcGVyYXRvciIsImVtYWlsIjoib3BlcmF0b3JAb3BlcmF0b3IudW5kaXAuYWMuaWQiLCJyb2xlIjoib3BlcmF0b3IiLCJpYXQiOjE3MDA2MzY3NzEsImV4cCI6MTcwMDY0MDM3MX0.bMeEAqUMLurd8LUCGhVKCHOX1uRgmikEmiX8Cp2osgs"
+# }
+
+# POST http://localhost:8080/user/signupDosen
+# Content-Type: application/json
+
+# {
+#     "nip": "196902141994032002",
+#     "nama": "Prof. Dr. Widowati, S.Si., M.Si."
+# }
+
+POST http://localhost:8080/user/generate
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJvcGVyYXRvciIsImVtYWlsIjoib3BlcmF0b3JAb3BlcmF0b3IudW5kaXAuYWMuaWQiLCJyb2xlIjoib3BlcmF0b3IiLCJpYXQiOjE3MDA2NTc1MjgsImV4cCI6MTcwMDY2MTEyOH0.HCUm9KyIqDAKYihqimpSTDLPySEsL6nW3VKh6uAdZ0Y
 Content-Type: application/json
 
 {
-    "username": "nathan",
-    "password": "ok"
+    "nim": "24060121140120",
+    "nama": "Christian Joshua Nathanael Nadeak",
+    "angkatan": "2021",
+    "nip_dosen": "196511071992031003"
 }
 
 # DELETE http://localhost:3000/logout
