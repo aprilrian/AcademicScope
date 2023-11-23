@@ -45,16 +45,16 @@
 #     "nama": "Prof. Dr. Widowati, S.Si., M.Si."
 # }
 
-POST http://localhost:8080/user/generate
+POST http://localhost:8080/user/generateBatch
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJvcGVyYXRvciIsImVtYWlsIjoib3BlcmF0b3JAb3BlcmF0b3IudW5kaXAuYWMuaWQiLCJyb2xlIjoib3BlcmF0b3IiLCJpYXQiOjE3MDA2NTc1MjgsImV4cCI6MTcwMDY2MTEyOH0.HCUm9KyIqDAKYihqimpSTDLPySEsL6nW3VKh6uAdZ0Y
-Content-Type: application/json
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
 
-{
-    "nim": "24060121140120",
-    "nama": "Christian Joshua Nathanael Nadeak",
-    "angkatan": "2021",
-    "nip_dosen": "196511071992031003"
-}
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="mahasiswa.csv"
+Content-Type: text/plain
+
+This is the content of the file.
+------WebKitFormBoundary7MA4YWxkTrZu0gW
 
 # DELETE http://localhost:3000/logout
 # Content-Type: application/json

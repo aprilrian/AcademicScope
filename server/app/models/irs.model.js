@@ -1,6 +1,7 @@
 // models/irs.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../configs/db.config');
+const Mahasiswa = require('./Mahasiswa.model');
 
 const IRS = sequelize.define('IRS', {
   semester_aktif: {
