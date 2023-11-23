@@ -57,9 +57,9 @@ exports.signin = async (req, res) => {
         id: user.id,
         username: user.username,
         email: user.email,
-        roles: user.role,
+        role: user.role,
         nip: dosen ? dosen.nip : null,
-        name: dosen ? dosen.name : null,
+        nama: dosen ? dosen.nama : null,
       };
     } else {
       userData = {
@@ -89,9 +89,11 @@ exports.signin = async (req, res) => {
 
 exports.signout = async (req, res) => {
     try {
-      const user = await User.findOne({ where: { access_token: req.body.accessToken } });
+      const token = req.headers.authorization.split(' ')[1];
+      const user = await User.findOne({ where: { access_token: token } });
       
       if (user) {
+        global.userData = null;
         user.access_token = null;
         await user.save();
         res.redirect("/");

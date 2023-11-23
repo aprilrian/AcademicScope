@@ -34,13 +34,13 @@ async function initializeData() {
         await User.bulkCreate([
             {
             username: 'operator',
-            email: 'operator@operator.undip.ac.kode',
+            email: 'operator@operator.undip.ac.id',
             password: '$2b$10$yqdURhG0X7npTyfBKvnQoeoKDb3WQUCKpFa5G/5mshYSnO2pEFciy',
             role: 'operator',
             },
             {
             username: 'departemen',
-            email: 'departemen@departemen.undip.ac.kode',
+            email: 'departemen@departemen.undip.ac.id',
             password: '$2b$10$q.1KQHs.lAUndhCxwJF4/eHQuJgvb3FYZfw8oQo1rj7jBaCsSmVEK',
             role: 'departemen',
             },

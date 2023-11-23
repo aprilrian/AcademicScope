@@ -66,7 +66,7 @@ const Mahasiswa = sequelize.define('Mahasiswa', {
     },
   },
   foto: {
-    type: DataTypes.STRING,
+    type: DataTypes.BLOB,
   },
   nip_dosen: {
     type: DataTypes.STRING,

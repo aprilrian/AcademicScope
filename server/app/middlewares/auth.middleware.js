@@ -1,6 +1,6 @@
 const SECRET = process.env.SECRET;
 const jwt = require("jsonwebtoken");
-const { User, Role, Mahasiswa, Dosen } = require("../models");
+const { User, Mahasiswa, Dosen } = require("../models");
 
 //get mahasiswa id
 getMahasiswaId = (req, res, next) => {
@@ -56,6 +56,7 @@ verifyToken = (req, res, next) => {
 
 isAdmin = async (req, res, next) => {
     try {
+        console.log(req.user_id);
         const user = await User.findByPk(req.user_id);
     
         if (!user) {
@@ -63,7 +64,7 @@ isAdmin = async (req, res, next) => {
         }
     
         if (user.role === 'operator') {
-            return next();
+            next();
         } else { 
             return res.status(403).send({ message: 'Require Admin Role!' });
         }
@@ -72,34 +73,27 @@ isAdmin = async (req, res, next) => {
         return res.status(500).send({ message: error.message || 'Internal Server Error' });
       }
 };
+isMahasiswa = async (req, res, next) => {
+  try {
+    const user = await User.findByPk(req.user_id);
 
-isMahasiswa = (req, res, next) => {
-    User.findById(req.userId).exec((err, user) => {
-        if (err) {
-            res.status(500).send({ message: err });
-            return;
-        }
-        Role.find(
-            {
-                _id: { $in: user.roles },
-            },
-            (err, roles) => {
-                if (err) {
-                    res.status(500).send({ message: err });
-                    return;
-                }
-                for (let i = 0; i < roles.length; i++) {
-                    if (roles[i].name === "mahasiswa") {
-                        next();
-                        return;
-                    }
-                }
-                res.status(403).send({ message: "Require Mahasiswa Role!" });
-                return;
-            }
-        );
-    });
+    if (!user) {
+      return res.status(404).send({ message: 'User not found' });
+    }
+
+    if (user.role === 'mahasiswa') {
+      next();
+    } else {
+      res.status(403).send({ message: 'Require Mahasiswa Role!' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: error.message });
+  }
 };
+
+module.exports = isMahasiswa;
+
 isDosen = (req, res, next) => {
     User.findById(req.userId).exec((err, user) => {
         if (err) {
@@ -269,5 +263,6 @@ const authMiddleware = {
     isMahasiswaOrDosen,
     getMahasiswaIdFromNim,
     isKodeWali,
-};
-module.exports = authMiddleware;
+}
+
+module.exports = authMiddleware
