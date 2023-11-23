@@ -26,7 +26,7 @@
 # Content-Type: application/json
 
 # {
-#     "username": "operator",
+#     "email": "operator@operator.undip.ac.id",
 #     "password": "operator"
 # }
 
@@ -45,8 +45,8 @@
 #     "nama": "Prof. Dr. Widowati, S.Si., M.Si."
 # }
 
-POST http://localhost:8080/user/generate
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJvcGVyYXRvciIsImVtYWlsIjoib3BlcmF0b3JAb3BlcmF0b3IudW5kaXAuYWMuaWQiLCJyb2xlIjoib3BlcmF0b3IiLCJpYXQiOjE3MDA2NTc1MjgsImV4cCI6MTcwMDY2MTEyOH0.HCUm9KyIqDAKYihqimpSTDLPySEsL6nW3VKh6uAdZ0Y
+POST http://localhost:8080/user/generateBatch
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJvcGVyYXRvciIsImVtYWlsIjoib3BlcmF0b3JAb3BlcmF0b3IudW5kaXAuYWMuaWQiLCJyb2xlIjoib3BlcmF0b3IiLCJpYXQiOjE3MDA3MjE2ODYsImV4cCI6MTcwMDcyNTI4Nn0.Fgg8Wu3z33-7H2gFb0m5imqpnLTBF82etPfAX4o8-5Y
 Content-Type: application/json
 
 {
