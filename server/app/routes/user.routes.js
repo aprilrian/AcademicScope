@@ -13,5 +13,8 @@ router.post("/generate",
 router.post("/generateBatch", 
   [authMiddleware.verifyToken, authMiddleware.isAdmin],
   controller.generateBatch);
+router.post("/updateProfil", 
+  [authMiddleware.verifyToken, authMiddleware.isMahasiswa],
+  controller.updateProfil);
 
 module.exports = router;
