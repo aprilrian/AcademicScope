@@ -1,7 +1,6 @@
-const { User, Role, Mahasiswa, Dosen } = require("../models");
-const bcrypt = require('bcrypt');
-const fs = require('fs');
+const { User, Mahasiswa, Dosen } = require("../models");
 const csv = require('csvtojson');
+const fs = require('fs');
 
 exports.allAccess = (req, res) => {
   res.status(200).send("Public Content.");
@@ -40,29 +39,88 @@ exports.signup = async (req, res) => {
   }
 }
 
-exports.generate = async (req, res) => {
+exports.signupDosen = async (req, res) => {
   try {
-    if (req.body.nim) {
-      const nim = req.body.nim;
-      const user = await User.findOne({ where: { username: nim } });
-      if (user) {
-        res.status(500).send({ message: 'NIM sudah terdaftar' });
-      } else {
-        const salt = await bcrypt.genSalt();
-        const password = await bcrypt.hash(nim, salt);
-        const role = await Role.findOne({ where: { name: 'mahasiswa' } });
-        const mahasiswa = await Mahasiswa.findOne({ where: { nim } });
-        const user = await User.create({
-          username: nim,
-          password,
-          role_id: role.id,
-          mahasiswa_id: mahasiswa.id,
-        });
-        await user.save();
-        res.status(201).send('Akun berhasil disisipkan');
-      }
-    }
+    const { nip, nama } = req.body;
+    const user = await User.create({
+      username: nip,
+      password: nip,
+      role: "dosen",
+    });
+
+    await Dosen.create({
+      nip: nip,
+      nama: nama,
+      user_id: user.id,
+    });
+    
+    res.status(201).send('Akun dosen dengan nama ' + nama + ' berhasil disisipkan');
   } catch (error) {
     res.status(500).send({ message: error.message });
   }
 }
+
+exports.generate = async (req, res) => {
+  try {
+    const { nim, nama, angkatan, nip_dosen } = req.body;
+    
+    const user = await User.create({
+      username: nim,
+      password: nim,
+      role: "mahasiswa",
+    });
+
+    await Mahasiswa.create({
+      nim: nim,
+      nama: nama,
+      angkatan: angkatan,
+      status: "aktif",
+      nip_dosen: nip_dosen,
+      user_id: user.id,
+    });
+    res.status(201).send('Akun mahasiswa dengan nama ' + nama + ' berhasil disisipkan');
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+}
+
+exports.generateBatch = async (req, res) => {
+  try {
+    const jsonFile = await csv().fromFile(req.file.path, { delimiter: ',' });
+
+    await User.sequelize.transaction(async (t) => {
+      for (const row of jsonFile) {
+        const user = await User.create({
+          username: row.nim,
+          password: row.nim,
+          role: "mahasiswa",
+        }, 
+        { transaction: t }
+        );
+
+        await Mahasiswa.create({
+          nim: row.nim,
+          nama: row.nama,
+          angkatan: row.angkatan,
+          status: "aktif",
+          nip_dosen: row.nip_dosen,
+          user_id: user.id,
+        }, 
+        { transaction: t }
+        );
+        
+        res.status(201).send('Akun mahasiswa dengan nama ' + row.nama + ' berhasil disisipkan');
+      }
+    })
+
+    // Delete file
+    fs.unlinkSync(req.file.path);
+
+  } catch (err) {
+    fs.unlinkSync(req.file.path);
+    console.error(err);
+    res.status(500).send({
+      message: "Internal Server Error",
+    });
+  }
+};

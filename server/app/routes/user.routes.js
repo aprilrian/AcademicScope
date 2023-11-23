@@ -1,36 +1,17 @@
+const express = require("express");
+const router = express.Router();
+const controller = require("../controllers/user.controller");
+const corsConfig = require("../configs/cors.config");
 const authMiddleware = require("../middlewares/auth.middleware");
-const controller = require('../controllers/user.controller');
+const multerUpload = require("../services/multer.service");
 
-module.exports = function (app) {
-    app.use(function (req, res, next) {
-      res.header(
-        "Access-Control-Allow-Headers",
-        "x-access-token, Origin, Content-Type, Accept"
-      );
-      next();
-    });
-  
-    app.get("/all", controller.allAccess);
-  
-    app.get("/mahasiswa", [authMiddleware.verifyToken], controller.mahasiswaBoard);
-  
-    app.get(
-      "/dosen",
-      [authMiddleware.verifyToken, authMiddleware.isDosen],
-      controller.dosenBoard
-    );
-  
-    app.get(
-      "/operator",
-      [authMiddleware.verifyToken, authMiddleware.isAdmin],
-      controller.operatorBoard
-    );
-  
-    app.get(
-      "/departemen",
-      [authMiddleware.verifyToken, authMiddleware.isDepartemen],
-      controller.departemenBoard
-    );
+router.use(corsConfig);
+router.post("/signupDosen", controller.signupDosen);
+router.post("/generate", 
+  [authMiddleware.verifyToken, authMiddleware.isAdmin],
+  controller.generate);
+router.post("/generateBatch", 
+  [authMiddleware.verifyToken, authMiddleware.isAdmin],
+  controller.generateBatch);
 
-    app.post("/signup", controller.signup);
-}
+module.exports = router;

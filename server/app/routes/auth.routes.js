@@ -1,15 +1,10 @@
+const express = require("express");
+const router = express.Router();
 const controller = require("../controllers/auth.controller");
+const corsConfig = require("../configs/cors.config");
 
-module.exports = function (app) {
-  app.use(function (req, res, next) {
-    res.header(
-      "Access-Control-Allow-Headers",
-      "x-access-token, Origin, Content-Type, Accept"
-    );
-    next();
-  });
+router.use(corsConfig);
+router.post("/signin", controller.signin);
+router.post("/signout", controller.signout);
 
-  // app.post("/signup", controller.signup);
-  app.post("/signin", controller.signin);
-  app.post("/signout", controller.signout);
-};
+module.exports = router;

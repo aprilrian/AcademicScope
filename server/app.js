@@ -1,35 +1,27 @@
+// Initialization
 require("dotenv").config();
 
-// Initialization
 const express = require('express')
-const { db, initializeData } = require('./app/models')
 const app = express()
-const cors = require('./app/services/cors.service')
-const session = require('./app/services/session.service')
+const { db, initializeData } = require('./app/models')
+const multerUpload = require('./app/services/multer.service');
 
-// CORS
-app.use(cors)
+// Using services
+app.use(multerUpload)
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-// Session
-app.use(session)
-
 // Database synchronization
-db.sequelize.sync({ alter: true, force: false })
-  .then(() => {
-    console.log('Database synchronized');
-  })
-  .catch((err) => {
-    console.error('Error synchronizing database:', err);
-  });
+// db.sequelize.sync({ alter: true, force: true }).then(() => {
+//   console.log('Drop and re-sync db.');
+// });
 
 // Database initialization
 initializeData();
 
 // Routes
-require('./app/routes/auth.routes')(app);
-require('./app/routes/user.routes')(app);
+app.use('/auth', require('./app/routes/auth.routes'));
+app.use('/user', require('./app/routes/user.routes'));
 
 // Start server
 app.listen((process.env.SERVER_PORT || 8080), () => {

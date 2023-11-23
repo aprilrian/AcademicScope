@@ -2,58 +2,119 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../configs/db.config');
 
 const KHS = sequelize.define('KHS', {
-  semesterAktif: {
+  semester_aktif: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: {
+      args: false,
+      msg: 'Semester aktif wajib diisi',
+    },
     validate: {
-      notNull: { msg: 'Semester aktif wajib diisi' },
-      max: { args: [1], msg: 'Semester aktif maksimal 1 karakter' },
+      isInt: {
+        msg: 'Semester aktif harus berupa angka',
+      },
+      min: {
+        args: [1],
+        msg: 'Semester aktif dalam rentang 1-14',
+      },
+      max: {
+        args: [14],
+        msg: 'Semester aktif dalam rentang 1-14',
+      },
     },
   },
+
   sks: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: {
+      args: false,
+      msg: 'Jumlah SKS wajib diisi',
+    },
     validate: {
-      notNull: { msg: 'SKS harus diisi' },
-      max: { args: [2], msg: 'SKS maksimal 2 karakter' },
+      isInt: {
+        msg: 'Jumlah SKS harus berupa angka',
+      },
+      min: {
+        args: [1],
+        msg: 'Jumlah SKS minimal 1 SKS',
+      },
+      max: {
+        args: [24],
+        msg: 'Jumlah SKS maksimal 24 SKS',
+      },
     },
   },
-  sksKumulatif: {
+
+  sks_kumulatif: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: {
+      args: false,
+      msg: 'Jumlah SKS kumulatif wajib diisi',
+    },
     validate: {
-      notNull: { msg: 'SKS kumulatif wajib diisi' },
-      max: { args: [3], msg: 'SKS kumulatif maksimal 3 karakter' },
+      isInt: {
+        msg: 'Jumlah SKS kumulatif harus berupa angka',
+      },
+      min: {
+        args: [1],
+        msg: 'Jumlah SKS kumulatif minimal 1 SKS',
+      },
     },
   },
+
   ip: {
     type: DataTypes.FLOAT,
-    allowNull: false,
+    allowNull: {
+      args: false,
+      msg: 'IP wajib diisi',
+    },
     validate: {
-      notNull: { msg: 'IP harus diisi' },
-      max: { args: [3], msg: 'IP maksimal 3 karakter' },
+      isFloat: {
+        msg: 'IP harus berupa angka',
+      },
+      min: {
+        args: [0],
+        msg: 'IP dalam rentang 0-4',
+      },
+      max: { 
+        args: [4], msg: 'IP dalam rentang 0-4' 
+      },
     },
   },
-  ipKumulatif: {
+
+  ip_kumulatif: {
     type: DataTypes.FLOAT,
-    allowNull: false,
+    allowNull: {
+      args: false,
+      msg: 'IP kumulatif wajib diisi',
+    },
     validate: {
-      notNull: { msg: 'IP kumulatif harus diisi' },
-      max: { args: [3], msg: 'IP kumulatif maksimal 3 karakter' },
+      isFloat: {
+        msg: 'IP kumulatif harus berupa angka',
+      },
+      min: {
+        args: [0],
+        msg: 'IP kumulatif dalam rentang 0-4',
+      },
+      max: { 
+        args: [4], msg: 'IP kumulatif dalam rentang 0-4' 
+      },
     },
   },
-  statusKonfirmasi: {
+
+  status_verifikasi: {
+    type: DataTypes.ENUM('belum', 'sedang diverifikasi' ,'sudah'),
+    defaultValue: 'belum',
+  },
+
+  khs_file: {
     type: DataTypes.STRING,
-    allowNull: true,
-    validate: {
-      max: { args: [20], msg: 'Status konfirmasi maksimal 20 karakter' },
+    allowNull: {
+      args: false,
+      msg: 'Wajib upload scan KHS',
     },
   },
-  file: {
-    type: DataTypes.STRING,
-    allowNull: true,
-    // Jika ingin membuat validasi untuk file, Anda dapat menambahkannya di sini
-  },
+}, {
+  tableName: 'KHSs'
 });
 
 module.exports = KHS;
