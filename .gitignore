@@ -1,4 +1,4 @@
-.env
+server/.env
 
 client/.next
 client/node_modules
