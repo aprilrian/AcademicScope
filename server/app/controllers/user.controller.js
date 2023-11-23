@@ -1,8 +1,6 @@
 const { User, Mahasiswa, Dosen } = require("../models");
 const csv = require('csvtojson');
 const fs = require('fs');
-const { uploadTemp } = require("../services/multer.service");
-const { getMahasiswaUser } = require("../middlewares/auth.middleware");
 
 exports.allAccess = (req, res) => {
   res.status(200).send("Public Content.");

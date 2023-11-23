@@ -2,24 +2,6 @@ const SECRET = process.env.SECRET;
 const jwt = require("jsonwebtoken");
 const { User, Mahasiswa, Dosen } = require("../models");
 
-//get mahasiswa id
-getMahasiswaUser = async (req, res, next) => {
-    try {
-      const user = await User.findOne({
-        where: { id: req.user_id },
-      });
-  
-      if (!user) {
-        return res.status(404).send({ message: "User not found" });
-      }
-      return user;
-
-    } catch (err) {
-      console.error(err);
-      res.status(500).send({ message: err.message || "Internal Server Error" });
-    }
-  };
-
 verifyToken = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
 
@@ -59,6 +41,7 @@ isAdmin = async (req, res, next) => {
         return res.status(500).send({ message: error.message || 'Internal Server Error' });
       }
 };
+
 isMahasiswa = async (req, res, next) => {
   try {
     const user = await User.findByPk(req.user_id);
@@ -78,88 +61,64 @@ isMahasiswa = async (req, res, next) => {
   }
 };
 
-module.exports = isMahasiswa;
+isDosen = async (req, res, next) => {
+    try {
+        console.log(req.user_id);
+        const user = await User.findByPk(req.user_id);
+    
+        if (!user) {
+          return res.status(404).send({ message: 'User not found.' });
+        }
+    
+        if (user.role === 'dosen') {
+            next();
+        } else { 
+            return res.status(403).send({ message: 'Require Dosen Role!' });
+        }
+      } catch (error) {
+        console.error(error);
+        return res.status(500).send({ message: error.message || 'Internal Server Error' });
+      }
+};
 
-isDosen = (req, res, next) => {
-    User.findById(req.userId).exec((err, user) => {
-        if (err) {
-            res.status(500).send({ message: err });
-            return;
+isDepartemen = async (req, res, next) => {
+    try {
+        console.log(req.user_id);
+        const user = await User.findByPk(req.user_id);
+    
+        if (!user) {
+          return res.status(404).send({ message: 'User not found.' });
         }
-        Role.find(
-            {
-                _id: { $in: user.roles },
-            },
-            (err, roles) => {
-                if (err) {
-                    res.status(500).send({ message: err });
-                    return;
-                }
-                for (let i = 0; i < roles.length; i++) {
-                    if (roles[i].name === "dosen") {
-                        next();
-                        return;
-                    }
-                }
-                res.status(403).send({ message: "Require Dosen Role!" });
-                return;
-            }
-        );
-    });
+    
+        if (user.role === 'operator') {
+            next();
+        } else { 
+            return res.status(403).send({ message: 'Require Departemen Role!' });
+        }
+      } catch (error) {
+        console.error(error);
+        return res.status(500).send({ message: error.message || 'Internal Server Error' });
+      }
 };
-isDepartemen = (req, res, next) => {
-    User.findById(req.userId).exec((err, user) => {
-        if (err) {
-            res.status(500).send({ message: err });
-            return;
+
+isMaster = async (req, res, next) => {
+    try {
+        console.log(req.user_id);
+        const user = await User.findByPk(req.user_id);
+    
+        if (!user) {
+          return res.status(404).send({ message: 'User not found.' });
         }
-        Role.find(
-            {
-                _id: { $in: user.roles },
-            },
-            (err, roles) => {
-                if (err) {
-                    res.status(500).send({ message: err });
-                    return;
-                }
-                for (let i = 0; i < roles.length; i++) {
-                    if (roles[i].name === "departemen") {
-                        next();
-                        return;
-                    }
-                }
-                res.status(403).send({ message: "Require Departemen Role!" });
-                return;
-            }
-        );
-    });
-};
-isMaster = (req, res, next) => {
-    User.findById(req.userId).exec((err, user) => {
-        if (err) {
-            res.status(500).send({ message: err });
-            return;
+    
+        if (user.role === 'operator' || user.role === 'departemen') {
+            next();
+        } else { 
+            return res.status(403).send({ message: 'Require Master Role!' });
         }
-        Role.find(
-            {
-                _id: { $in: user.roles },
-            },
-            (err, roles) => {
-                if (err) {
-                    res.status(500).send({ message: err });
-                    return;
-                }
-                for (let i = 0; i < roles.length; i++) {
-                    if (roles[i].name === "departemen" || roles[i].name === "admin") {
-                        next();
-                        return;
-                    }
-                }
-                res.status(403).send({ message: "Require Departemen Role!" });
-                return;
-            }
-        );
-    });
+      } catch (error) {
+        console.error(error);
+        return res.status(500).send({ message: error.message || 'Internal Server Error' });
+      }
 };
 
 const isMahasiswaOrDosen = (req, res, next) => {
@@ -244,7 +203,6 @@ const authMiddleware = {
     isDosen,
     isDepartemen,
     isMahasiswa,
-    getMahasiswaUser,
     isMaster,
     isMahasiswaOrDosen,
     isKodeWali,
