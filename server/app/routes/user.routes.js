@@ -3,9 +3,9 @@ const router = express.Router();
 const controller = require("../controllers/user.controller");
 const corsConfig = require("../configs/cors.config");
 const authMiddleware = require("../middlewares/auth.middleware");
-const multerUpload = require("../services/multer.service");
 
 router.use(corsConfig);
+
 router.post("/signupDosen", controller.signupDosen);
 router.post("/generate", 
   [authMiddleware.verifyToken, authMiddleware.isAdmin],

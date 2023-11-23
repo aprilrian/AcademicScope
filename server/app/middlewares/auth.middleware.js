@@ -3,36 +3,22 @@ const jwt = require("jsonwebtoken");
 const { User, Mahasiswa, Dosen } = require("../models");
 
 //get mahasiswa id
-getMahasiswaId = (req, res, next) => {
-    Mahasiswa.findOne({
-        user: req.userId,
-    }).exec((err, mahasiswa) => {
-        if (err) {
-            res.status(500).send({ message: err });
-            return;
-        }
-        req.mahasiswaId = mahasiswa._id;
-        next();
-    });
-};
+getMahasiswaUser = async (req, res, next) => {
+    try {
+      const user = await User.findOne({
+        where: { id: req.user_id },
+      });
+  
+      if (!user) {
+        return res.status(404).send({ message: "User not found" });
+      }
+      return user;
 
-//getmahasiswaid from nim parameter if not exist return 404
-getMahasiswaIdFromNim = (req, res, next) => {
-    Mahasiswa.findOne({
-        nim: req.params.nim,
-    }).exec((err, mahasiswa) => {
-        if (err) {
-            res.status(500).send({ message: err });
-            return;
-        }
-        if (!mahasiswa) {
-            res.status(404).send({ message: "Mahasiswa not found" });
-            return;
-        }
-        req.mahasiswaId = mahasiswa._id;
-        next();
-    });
-};
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({ message: err.message || "Internal Server Error" });
+    }
+  };
 
 verifyToken = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
@@ -258,10 +244,9 @@ const authMiddleware = {
     isDosen,
     isDepartemen,
     isMahasiswa,
-    getMahasiswaId,
+    getMahasiswaUser,
     isMaster,
     isMahasiswaOrDosen,
-    getMahasiswaIdFromNim,
     isKodeWali,
 }
 

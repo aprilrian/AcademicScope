@@ -4,15 +4,17 @@ require("dotenv").config();
 const express = require('express')
 const app = express()
 const { db, initializeData } = require('./app/models')
-const multerUpload = require('./app/services/multer.service');
+const { upload, uploadTemp } = require("./app/services/multer.service");
+const { Mahasiswa } = require("./app/models");
 
 // Using services
-app.use(multerUpload)
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(upload);
+app.use(uploadTemp);
 
 // Database synchronization
-// db.sequelize.sync({ alter: true, force: false }).then(() => {
+// db.sequelize.sync({ alter: true, force: true }).then(() => {
 //   console.log('Drop and re-sync db.');
 // });
 
