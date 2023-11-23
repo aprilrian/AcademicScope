@@ -13,7 +13,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 // Database synchronization
-// db.sequelize.sync({ alter: true, force: true }).then(() => {
+// db.sequelize.sync({ alter: true, force: false }).then(() => {
 //   console.log('Drop and re-sync db.');
 // });
 
@@ -21,6 +21,9 @@ app.use(express.urlencoded({ extended: true }))
 initializeData();
 
 // Routes
+app.get('/', (req, res) => {
+  res.send('Bang udah bang')
+})
 app.use('/auth', require('./app/routes/auth.routes'));
 app.use('/user', require('./app/routes/user.routes'));
 

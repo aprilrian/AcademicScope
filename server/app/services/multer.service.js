@@ -20,11 +20,15 @@ const storage = multer.diskStorage({
             cb(null, "uploads/accountMhs");
         } else if (jenisFolder === "batch-dosen") {
             cb(null, "uploads/accountDosen");
+        } else if (jenisFolder === "updateProfil") {
+            cb(null, "uploads/foto");
         } else {
             cb(null, "uploads");
         }
     },
     filename: (req, file, cb) => {
+        const ext = file.originalname.split(".").pop();
+
         cb(null, new Date().getTime() + "-" + file.originalname);
     },
 });
@@ -46,6 +50,6 @@ const filter = (req, file, cb) => {
     }
 };
 
-const multerUpload = multer({ storage: storage, fileFilter: filter }).single("file");
+const upload = multer({ storage: storage, fileFilter: filter }).single("file");
 
-module.exports = multerUpload;
+module.exports = upload;

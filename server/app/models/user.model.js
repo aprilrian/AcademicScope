@@ -18,14 +18,14 @@ const User = sequelize.define('User', {
     },
     unique: {
       args: true,
-      msg: 'Username sudah digunakan',
+      msg: 'Username sudah terdaftar',
     },
   },
   email: {
     type: DataTypes.STRING,
     unique: {
       args: true,
-      msg: 'Email sudah digunakan',
+      msg: 'Email sudah terdaftar',
     },
   },
   password: {
@@ -43,7 +43,7 @@ const User = sequelize.define('User', {
     },
   },
   access_token: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING(1000),
   }
 });
 
