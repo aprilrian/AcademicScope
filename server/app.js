@@ -6,6 +6,7 @@ const app = express()
 const { db, initializeData } = require('./app/models')
 const multerUpload = require('./app/services/multer.service');
 
+
 // Using services
 app.use(multerUpload)
 app.use(express.json())
