@@ -46,7 +46,7 @@ const Mahasiswa = sequelize.define('Mahasiswa', {
     },
   },
   jalur_masuk: {
-    type: DataTypes.ENUM('SNMPTN', 'SBMPTN', 'Mandiri', 'Lainnya'),
+    type: DataTypes.ENUM('snmptn', 'sbmptn', 'mandiri', 'lainnya'),
   },
   email: {
     type: DataTypes.STRING,
@@ -66,7 +66,7 @@ const Mahasiswa = sequelize.define('Mahasiswa', {
     },
   },
   foto: {
-    type: DataTypes.BLOB,
+    type: DataTypes.BLOB('long'),
   },
   nip_dosen: {
     type: DataTypes.STRING,

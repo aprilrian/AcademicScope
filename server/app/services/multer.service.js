@@ -52,4 +52,11 @@ const filter = (req, file, cb) => {
 
 const upload = multer({ storage: storage, fileFilter: filter }).single("file");
 
-module.exports = upload;
+const temp = multer.memoryStorage()
+
+const uploadTemp = multer({ storage: temp, fileFilter: filter }).single("foto");
+
+module.exports = {
+    upload,
+    uploadTemp
+}
