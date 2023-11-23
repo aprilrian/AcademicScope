@@ -1,10 +1,18 @@
 const express = require('express');
+const path = require("path");
 const router = express.Router();
 const irsController = require('../controllers/irs.controller');
-const upload = require('../middlewares/upload');
+const multerUpload = require("../services/multer.service");
+
+const bodyParser = require('body-parser');
+
+const app = express();
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Submit IRS
-router.post('/submit', upload.single('file'), irsController.submitIRS);
+router.post('/submit', multerUpload.single('file'), irsController.submitIRS);
 
 // Get IRS for the logged-in Mahasiswa
 router.get('/get', irsController.getIRS);
