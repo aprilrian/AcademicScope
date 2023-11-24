@@ -1,98 +1,77 @@
-const db = require("../models");
-const IRS = db.irs;
-const Mahasiswa = db.mahasiswa;
-const Dosen = db.dosen;
-const fs = require("fs");
+const { IRS, Mahasiswa, Dosen } = require("../models");
+const fs = require("fs").promises;
 
-const submitIRS = (req, res) => {
-  let dataIrs = {
-    semesterAktif: req.body.semester_aktif,
-    sks: req.body.sks,
-    statusKonfirmasi: "belum",
-    mahasiswaId: req.mahasiswaId,
-  };
+const submitIRS = async (req, res) => {
+  try {
+    let irs = {
+      semester_aktif: req.body.semester_aktif,
+      sks: req.body.sks,
+      status_verifikasi: "belum",
+      mahasiswaId: req.mahasiswaId,
+    };
 
-  if (req.file) {
-    dataIrs.file = req.file.path;
-  }
+    if (req.file) {
+      dataIrs.file = req.file.path;
+    }
 
-  IRS.count({
-    where: {
-      mahasiswaId: dataIrs.mahasiswaId,
-      semesterAktif: dataIrs.semesterAktif,
-    },
-  })
-    .then((count) => {
-      if (count === 0) {
-        IRS.create(dataIrs)
-          .then((irs) => {
-            res.send({ message: "IRS was uploaded successfully!" });
-          })
-          .catch((err) => {
-            res.status(500).send({ message: err.message || "Some error occurred while creating the IRS." });
-          });
-      } else {
-        // Delete IRS file and then update IRS
-        IRS.findOne({
-          where: {
-            mahasiswaId: dataIrs.mahasiswaId,
-            semesterAktif: dataIrs.semesterAktif,
-          },
-        })
-          .then((irs) => {
-            if (!irs) {
-              res.status(404).send({ message: "IRS not found!" });
-              return;
-            }
-
-            // If there is a new file, update the file
-            if (req.file) {
-              fs.unlinkSync(irs.file);
-              IRS.update(
-                {
-                  file: req.file.path,
-                  sks: req.body.sks,
-                },
-                {
-                  where: {
-                    id: irs.id,
-                  },
-                }
-              )
-                .then(() => {
-                  res.send({ message: "IRS was updated successfully!" });
-                })
-                .catch((err) => {
-                  res.status(500).send({ message: err.message || "Error updating IRS." });
-                });
-            } else {
-              IRS.update(
-                {
-                  sks: req.body.sks,
-                },
-                {
-                  where: {
-                    id: irs.id,
-                  },
-                }
-              )
-                .then(() => {
-                  res.send({ message: "IRS was updated successfully!" });
-                })
-                .catch((err) => {
-                  res.status(500).send({ message: err.message || "Error updating IRS." });
-                });
-            }
-          })
-          .catch((err) => {
-            res.status(500).send({ message: err.message || "Some error occurred while retrieving the IRS." });
-          });
-      }
-    })
-    .catch((err) => {
-      res.status(500).send({ message: err.message || "Some error occurred while counting the IRS." });
+    const count = await IRS.count({
+      where: {
+        mahasiswaId: dataIrs.mahasiswaId,
+        semesterAktif: dataIrs.semesterAktif,
+      },
     });
+
+    if (count === 0) {
+      const irs = await IRS.create(dataIrs);
+      res.send({ message: "IRS was uploaded successfully!" });
+    } else {
+      const irs = await IRS.findOne({
+        where: {
+          mahasiswaId: dataIrs.mahasiswaId,
+          semesterAktif: dataIrs.semesterAktif,
+        },
+      });
+
+      if (!irs) {
+        res.status(404).send({ message: "IRS not found!" });
+        return;
+      }
+
+      // If there is a new file, update the file
+      if (req.file) {
+        await fs.unlink(irs.file);
+        await IRS.update(
+          {
+            file: req.file.path,
+            sks: req.body.sks,
+          },
+          {
+            where: {
+              id: irs.id,
+            },
+          }
+        );
+      } else {
+        await IRS.update(
+          {
+            sks: req.body.sks,
+          },
+          {
+            where: {
+              id: irs.id,
+            },
+          }
+        );
+      }
+
+      res.send({ message: "IRS was updated successfully!" });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: err.message || "Some error occurred." });
+  }
 };
+
 
 const getIRS = (req, res) => {
   IRS.findAll({

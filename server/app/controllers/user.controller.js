@@ -1,7 +1,6 @@
 const { User, Mahasiswa, Dosen } = require("../models");
 const csv = require('csvtojson');
 const fs = require('fs');
-const multerUpload = require("../services/multer.service");
 
 exports.allAccess = (req, res) => {
   res.status(200).send("Public Content.");
@@ -131,17 +130,21 @@ exports.generateBatch = async (req, res) => {
 
 exports.updateProfil = async (req, res) => {
   try {
-    const userData = global.userData;
+    const t = await User.sequelize.transaction();
     const { nama, alamat, kode_kabupatenKota, kode_provinsi, jalur_masuk, email, phone, username } = req.body;
 
-    if (req.file) {
-      await Mahasiswa.update({ foto: req.file.filename }, { where: { user_id: userData.id, user_username: userData.username } });
-    }
-    
-    const user = await User.findOne({ where: { id: userData.id, username: userData.username } });
+    const user = await User.findOne({ where: { id: req.user_id }, transaction: t });
     if (user) {
-      User.id = user_id;
-      User.username = user_username;
+      if (req.file) {
+        await Mahasiswa.update({ foto: req.file.buffer }, { where: { user_id: req.user_id } });
+      }
+      await User.update(
+        {
+          username: username,
+          email: email,
+        },
+        { where: { id: req.user_id }, transaction: t }
+      );
       await Mahasiswa.update(
         {
           nama: nama,
@@ -152,17 +155,11 @@ exports.updateProfil = async (req, res) => {
           email: email,
           phone: phone,
         },
-        { where: { user_id: userData.id, user_username: userData.username } }
+        { where: { user_id: req.user_id }, transaction: t }
       );
-      await User.update(
-        {
-          username: username,
-          email: email,
-        },
-        { where: { user_id: userData.id, user_username: userData.username } }
-      );
-      res.status(200).send('Profile berhasil diperbarui');
     }
+    await t.commit();
+    res.status(200).send('Profile berhasil diperbarui');
   } catch (error) {
     res.status(500).send({ message: error.message });
   }

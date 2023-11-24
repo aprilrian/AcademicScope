@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const controller = require("../controllers/auth.controller");
+const middleware = require("../middlewares/auth.middleware");
 const corsConfig = require("../configs/cors.config");
 
 router.use(corsConfig);

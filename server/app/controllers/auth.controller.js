@@ -79,7 +79,7 @@ exports.signin = async (req, res) => {
 
     res.status(200).send({
       ...userData,
-      accessToken: token,
+      access_token: token,
     });
   } catch (error) {
     console.error(error);
