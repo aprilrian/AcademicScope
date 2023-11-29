@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import AuthLayout from '@/components/layouts/auth-layouts'
+import AuthLayout from '@/components/auth/auth-layouts'
 
 export const metadata: Metadata = {
   title: 'AcademicScope',

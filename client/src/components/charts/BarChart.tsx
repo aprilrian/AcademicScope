@@ -18,19 +18,19 @@ interface DataPoint {
 const data: DataPoint[] = [
   {
     nilai: "1",
-    jumlah: 2400,
+    jumlah: 100,
   },
   {
     nilai: "2",
-    jumlah: 1398,
+    jumlah: 200,
   },
   {
     nilai: "3",
-    jumlah: 9800,
+    jumlah: 300,
   },
   {
     nilai: "4",
-    jumlah: 3908,
+    jumlah: 400,
   },
 ];
 
@@ -59,11 +59,14 @@ export default class CustomBarChart extends PureComponent {
               scale="point"
               padding={{ left: 10, right: 10 }}
             />
-            <YAxis />
+                        <YAxis
+              // Menetapkan ticks pada sumbu Y
+              ticks={[100, 200, 300, 400]}
+            />
             <Tooltip />
             <Legend />
             <CartesianGrid strokeDasharray="3 3" />
-            <Bar dataKey="jumlah" fill="#8884d8" background={{ fill: "#eee" }} />
+            <Bar dataKey="jumlah" fill="#" background={{ fill: "#eee" }} />
           </BarChart>
         </ResponsiveContainer>
       </div>

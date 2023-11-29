@@ -1,9 +1,9 @@
 "use client";
 
 import { ReactNode } from "react";
-import Header from "./header";
+import Header from "./Header";
 import { usePathname } from "next/navigation";
-import NavBar from "./sidebar";
+import Sidebar from "./Sidebar";
 
 type LayoutProps = {
   children: ReactNode;
@@ -22,7 +22,7 @@ export default function Layout({ children }: LayoutProps) {
       {checkLoginPathname() && <Header /> && (
         <>
           <Header />
-          <NavBar />
+          <Sidebar />
         </>
       )}
 

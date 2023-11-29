@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { UserNav } from "@/components/layouts/user-nav";
+import { UserNav } from "@/components/layouts/userNav";
 import { cn } from "@/lib/utils";
 
-export function MainNav({
+export function Header({
   className,
   ...props
 }: React.HTMLAttributes<HTMLElement>) {
@@ -50,4 +50,4 @@ export function MainNav({
   );
 }
 
-export default MainNav;
+export default Header;

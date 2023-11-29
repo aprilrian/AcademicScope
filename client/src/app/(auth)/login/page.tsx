@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
+//validasi form
 const loginSchema = yup
   .object()
   .shape({
@@ -39,7 +40,7 @@ const loginSchema = yup
 const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+  
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/dashboard";
@@ -101,6 +102,7 @@ const Login = () => {
           <CardTitle className="flex item-center">AcademicScope</CardTitle>
           <CardDescription>Log In</CardDescription>
         </CardHeader>
+        
         <CardContent className="space-y-3">
           {error && (
             <div>

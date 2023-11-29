@@ -1,10 +1,12 @@
 "use client";
 
-import { UserNav } from "@/components/layouts/user-nav";
-import { MainNav } from "@/components/layouts/header";
+
 import React from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { ReactNode } from 'react';
+import { iconMapping } from "../data/nav/iconMapping";
+
 
 const roles = {
   departemen: [
@@ -39,20 +41,31 @@ const roles = {
   ],
 };
 
-export function NavBar() {
+interface NavLink {
+  name: string;
+  href: string;
+}
+
+interface NavBarProps {
+  children?: ReactNode;
+}
+
+
+
+export function Sidebar({ children }: NavBarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { data: session } = useSession();
-  const userRole = session?.user?.role; // Retrieve the user's role from the session
+  const userRole = session?.user?.role as string | undefined; // Ensure userRole is of type string
 
-  const navigationLinks = roles[userRole] || [];
+  const navigationLinks: NavLink[] = roles[userRole] || [];
 
   return (
     <>
       <div className="flex">
         <aside className="sticky top-0 h-screen w-60 bg-white text-gray-800 p-4">
           <nav className="space-y-2">
-            {navigationLinks.map((link) => (
+            {navigationLinks.map((link: NavLink) => (
               <button
                 key={link.href}
                 className={`w-full flex items-center space-x-2 ${
@@ -62,34 +75,16 @@ export function NavBar() {
                   router.push(link.href);
                 }}
               >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  height="24"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                  width="24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                  <polyline points="9 22 9 12 15 12 15 22" />
-                </svg>
+                {iconMapping[link.name]}
                 <span className="text-sm font-medium">{link.name}</span>
               </button>
             ))}
           </nav>
+          {children}
         </aside>
-
-        {/* <div className="p-6">
-          <h1 className="text-lg font-medium">Dashboard</h1>
-          <p>hd</p>
-        </div> */}
       </div>
     </>
   );
 }
 
-export default NavBar;
+export default Sidebar;

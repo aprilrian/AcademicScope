@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
-import Providers from "@/components/providers";
+
 import { cn } from "@/lib/utils";
 
-
-
-import NavBar from "@/components/layouts/sidebar";
-import { MainNav } from "@/components/layouts/header";
+import Sidebar from "@/components/layouts/Sidebar";
+import Header from "@/components/layouts/Header";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -36,28 +34,22 @@ export default function RootLayout({
         )}
       >
         <main>
-          
-          {/* <Providers> */}
-            <div className="flex flex-col min-h-screen">
-              <div>
-                <MainNav />
-              </div>
-
-              {isLoginPage ? (
-                <div className="basis-1/6">{children}</div>
-              ) : (
-                <div className=" flex flex-row">
-                  <div className="basis-1/6">
-                    <NavBar />
-                  </div>
-                  <div className="basis-5/6">{children}</div>
-                </div>
-              )}
-              
+          <div className="flex flex-col min-h-screen">
+            <div>
+              <Header />
             </div>
-            
-          {/* </Providers> */}
-          
+
+            {isLoginPage ? (
+              <div className="basis-1/6">{children}</div>
+            ) : (
+              <div className=" flex flex-row">
+                <div className="basis-1/6">
+                  <Sidebar />
+                </div>
+                <div className="basis-5/6">{children}</div>
+              </div>
+            )}
+          </div>
         </main>
       </body>
     </html>

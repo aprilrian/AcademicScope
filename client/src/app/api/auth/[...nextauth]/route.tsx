@@ -78,7 +78,7 @@ export const authOptions: AuthOptions = {
           try {
             // Make an Axios request to your server endpoint
             const res = await axios.post(
-              "http://localhost:3000/login",
+              "http://localhost:8080/auth/signin",
               credentials
             );
 
@@ -92,14 +92,14 @@ export const authOptions: AuthOptions = {
                 password: data.password,
                 role: data.role,
                 accessToken: data.accessToken,
-                refreshToken: data.refreshToken,
+                // refreshToken: data.refreshToken,
               };
               return {
                     username: user?.username,
                     email: user?.email,
                     role: user?.role,
                     accessToken: user?.accessToken,
-                    refreshToken: user?.refreshToken,
+                    // refreshToken: user?.refreshToken,
                   }
             } else {
               return null; // Return null if the request was not successful

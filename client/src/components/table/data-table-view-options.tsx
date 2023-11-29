@@ -33,7 +33,7 @@ export function DataTableViewOptions<TData>({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[150px]">
-        <DropdownMenuLabel>Pilih</DropdownMenuLabel>
+        <DropdownMenuLabel>Pilih Kolom View</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {table
           .getAllColumns()
