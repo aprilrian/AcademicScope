@@ -22,8 +22,7 @@ initializeData();
 // Routes
 app.use('/', require('./app/routes/user.routes'));
 app.use('/auth', require('./app/routes/auth.routes'));
-app.use('/api/provinsi', require('./app/routes/provinsi.routes'));
-app.use('/api/kabupatenKota', require('./app/routes/kabupatenKota.routes'));
+app.use('/api', require('./app/routes/api.routes'));
 
 
 // Start server
