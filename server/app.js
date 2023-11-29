@@ -5,7 +5,6 @@ const express = require('express')
 const app = express()
 const { db, initializeData } = require('./app/models')
 const corsConfig = require("./app/configs/cors.config");
-const path = require('path');
 
 // Using services
 app.use(corsConfig);
