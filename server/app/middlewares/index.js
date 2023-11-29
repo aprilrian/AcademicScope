@@ -1,7 +1,7 @@
 const authMiddleware = require("../middlewares/auth.middleware");
-const mahasiswaMiddleware = require("../middlewares/mahasiswa.middleware");
+const userMiddleware = require("./user.middleware");
 
 module.exports = {
     authMiddleware,
-    mahasiswaMiddleware
+    userMiddleware
 }

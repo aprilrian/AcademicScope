@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const controller = require('../controllers/irs.controller');
-const { authMiddleware, mahasiswaMiddleware} = require('../middlewares');
+const { authMiddleware, userMiddleware} = require('../middlewares');
 const upload = require('../services/upload.service');
 
 // Submit IRS
 router.post(
     '/submit',
-    [authMiddleware.verifyToken, authMiddleware.isMahasiswa, mahasiswaMiddleware.hasUpdateProfile, mahasiswaMiddleware.getMahasiswaById, upload],
+    [authMiddleware.verifyToken, authMiddleware.isMahasiswa, userMiddleware.hasUpdateProfile, userMiddleware.getMahasiswaById, upload],
     controller.submitIRS);
 
 // // Get IRS for the logged-in Mahasiswa

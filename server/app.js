@@ -24,8 +24,8 @@ app.get('/', (req, res) => {
   res.send('Bang udah bang')
 })
 app.use('/auth', require('./app/routes/auth.routes'));
-app.use('/user', require('./app/routes/user.routes'));
-app.use('/user/irs', require('./app/routes/irs.routes'));
+app.use('/operator', require('./app/routes/user.routes'));
+app.use('/mahasiswa/irs', require('./app/routes/irs.routes'));
 
 
 // Start server

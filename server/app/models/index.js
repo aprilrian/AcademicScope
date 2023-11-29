@@ -254,8 +254,6 @@ async function initializeData() {
   }
 }
         
-        
-
 module.exports = {
     db,
     Mahasiswa: db.mahasiswa,

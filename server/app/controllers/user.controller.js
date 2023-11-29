@@ -22,53 +22,7 @@ exports.departemenBoard = (req, res) => {
   res.status(200).send("Departemen Content.");
 }
 
-// // For OP && Departemen ONLY!
-// exports.signup = async (req, res) => {
-//   try {
-//     const { username, email, password, role } = req.body;
-//     const user = await User.create({
-//       username,
-//       email,
-//       password,
-//       role,
-//     });
-//     await user.save();
-//     res.status(201).send('Akun berhasil disisipkan');
-//   } catch (error) {
-//     res.status(500).send({ message: error.message });
-//   }
-// }
-
-// exports.signupDosen = async (req, res) => {
-//   try {
-//     const { nip, nama } = req.body;
-//     const user = await User.create({
-//       username: nip,
-//       password: nip,
-//       role: "dosen",
-//     });
-
-//     await Dosen.create({
-//       nip: nip,
-//       nama: nama,
-//       user_id: user.id,
-//     });
-    
-//     res.status(201).send('Akun dosen dengan nama ' + nama + ' berhasil disisipkan');
-//   } catch (error) {
-//     res.status(500).send({ message: error.message });
-//   }
-// }
-
-exports.getTemplate = async (req, res) => {
-  try {
-    const template = './uploads/template.csv'
-    res.download(template);
-  } catch (error) {
-    res.status(500).send({ message: error.message });
-  }
-}
-
+// OPERATOR
 exports.generate = async (req, res) => {
   try {
     const { nim, nama, angkatan, nip_dosen } = req.body;
@@ -136,6 +90,21 @@ exports.generateBatch = async (req, res) => {
     });
   }
 };
+
+// DEPARTEMEN
+
+// DOSEN
+
+// MAHASISWA
+exports.getTemplate = async (req, res) => {
+  try {
+    const template = './uploads/template.csv'
+    res.download(template);
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+}
+
 
 exports.updateProfil = async (req, res) => {
   try {
