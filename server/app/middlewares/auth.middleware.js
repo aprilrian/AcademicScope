@@ -32,7 +32,7 @@ verifyToken = (req, res, next) => {
   });
 };
 
-isAdmin = async (req, res, next) => {
+isOperator = async (req, res, next) => {
     try {
         console.log(req.user_id);
         const user = await User.findByPk(req.user_id);
@@ -44,7 +44,7 @@ isAdmin = async (req, res, next) => {
         if (user.role === 'operator') {
             next();
         } else { 
-            return res.status(403).send({ message: 'Require Admin Role!' });
+            return res.status(403).send({ message: 'Require Operator Role!' });
         }
       } catch (error) {
         console.error(error);
@@ -208,7 +208,7 @@ isDosenWali = (req, res, next) => {
 
 const authMiddleware = {
     verifyToken,
-    isAdmin,
+    isOperator,
     isDosen,
     isDepartemen,
     isMahasiswa,

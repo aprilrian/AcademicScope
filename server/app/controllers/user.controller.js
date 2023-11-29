@@ -105,11 +105,10 @@ exports.getTemplate = async (req, res) => {
   }
 }
 
-
 exports.updateProfil = async (req, res) => {
   try {
     const t = await User.sequelize.transaction();
-    const { nama, alamat, kode_kabupatenKota, kode_provinsi, jalur_masuk, email, phone, username } = req.body;
+    const { nama, alamat, kode_kabupatenKota, kode_provinsi, jalur_masuk, email, phone } = req.body;
 
     const user = await User.findOne({ where: { id: req.user_id }, transaction: t });
     if (user) {

@@ -20,12 +20,10 @@ app.use(express.urlencoded({ extended: true }))
 initializeData();
 
 // Routes
-app.get('/', (req, res) => {
-  res.send('Bang udah bang')
-})
+app.use('/', require('./app/routes/user.routes'));
 app.use('/auth', require('./app/routes/auth.routes'));
-app.use('/operator', require('./app/routes/user.routes'));
-app.use('/mahasiswa/irs', require('./app/routes/irs.routes'));
+app.use('/api/provinsi', require('./app/routes/provinsi.routes'));
+app.use('/api/kabupatenKota', require('./app/routes/kabupatenKota.routes'));
 
 
 // Start server
