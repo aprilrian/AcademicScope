@@ -3,13 +3,7 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../configs/db.config');
 const User = require('./User.model');
 
-const Dosen = sequelize.define('Dosen', {
-  nip: {
-    type: DataTypes.STRING,
-    primaryKey: true,
-    allowNull: false,
-    unique: true,
-  },
+const Departemen = sequelize.define('Departemen', {
   nama: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -34,6 +28,6 @@ const Dosen = sequelize.define('Dosen', {
   },
 });
 
-Dosen.belongsTo(User, { foreignKey: 'user_id' });
+Departemen.belongsTo(User, { foreignKey: 'user_id' });
 
-module.exports = Dosen;
+module.exports = Departemen;

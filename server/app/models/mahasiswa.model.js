@@ -66,7 +66,7 @@ const Mahasiswa = sequelize.define('Mahasiswa', {
     },
   },
   foto: {
-    type: DataTypes.BLOB('long'),
+    type: DataTypes.STRING,
   },
   nip_dosen: {
     type: DataTypes.STRING,
@@ -84,7 +84,6 @@ const Mahasiswa = sequelize.define('Mahasiswa', {
 
 Mahasiswa.belongsTo(KabupatenKota, { foreignKey: 'kode_kabupatenKota' })
 Mahasiswa.belongsTo(Provinsi, { foreignKey: 'kode_provinsi' })
-Mahasiswa.belongsTo(User, { foreignKey: 'email', targetKey: 'email' })
 Mahasiswa.belongsTo(Dosen, { foreignKey: 'nip_dosen' });
 Mahasiswa.belongsTo(User, { foreignKey: 'user_id' });
 Mahasiswa.hasMany(IRS)

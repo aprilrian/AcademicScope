@@ -3,7 +3,7 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../configs/db.config');
 const User = require('./User.model');
 
-const Dosen = sequelize.define('Dosen', {
+const Operator = sequelize.define('Operator', {
   nip: {
     type: DataTypes.STRING,
     primaryKey: true,
@@ -34,6 +34,6 @@ const Dosen = sequelize.define('Dosen', {
   },
 });
 
-Dosen.belongsTo(User, { foreignKey: 'user_id' });
+Operator.belongsTo(User, { foreignKey: 'user_id' });
 
-module.exports = Dosen;
+module.exports = Operator;

@@ -1,5 +1,5 @@
 const { SECRET, SECRET_EXP} = require("../configs/auth.config");
-const { User, Mahasiswa, Dosen} = require("../models");
+const { User, Mahasiswa, Operator, Departemen, Dosen} = require("../models");
 
 //session
 
@@ -8,19 +8,15 @@ const jwt = require("jsonwebtoken");
 
 exports.signin = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, password } = req.body;
     
-    if(!username && !email) {
-      return res.status(400).send({ message: "Username atau email tidak boleh kosong" });
+    if(!username) {
+      return res.status(400).send({ message: "NIP/NIM tidak boleh kosong" });
     }
 
     let user;
-    if (username) {
-      user = await User.findOne({ where: { username: username } });
-    } else if (email) {
-      user = await User.findOne({ where: { email: email } });
-    }
-
+    user = await User.findOne({ where: { username: username } });
+    
     if (!user) {
       return res.status(404).send({ message: "User tidak ditemukan" });
     }
@@ -45,7 +41,7 @@ exports.signin = async (req, res) => {
       userData = {
         id: user.id,
         username: user.username,
-        email: user.email,
+        email: mahasiswa ? mahasiswa.email : null,
         role: user.role,
         nim: mahasiswa ? mahasiswa.nim : null,
         nama: mahasiswa ? mahasiswa.nama : null,
@@ -56,17 +52,31 @@ exports.signin = async (req, res) => {
       userData = {
         id: user.id,
         username: user.username,
-        email: user.email,
+        email: dosen ? dosen.email : null,
         role: user.role,
         nip: dosen ? dosen.nip : null,
         nama: dosen ? dosen.nama : null,
       };
-    } else {
+    } else if (user && user.role === "operator") {
+      const operator = await Operator.findOne({ where: { user_id: user.id } });
+      
       userData = {
         id: user.id,
         username: user.username,
-        email: user.email,
+        email: operator ? operator.email : null,
         role: user.role,
+        nip: operator ? operator.nip : null,
+        nama: operator ? operator.nama : null,
+      };
+    } else {
+      const departemen = await Departemen.findOne({ where: { user_id: user.id } });
+
+      userData = {
+        id: user.id,
+        username: user.username,
+        email: departemen ? departemen.email : null,
+        role: user.role,
+        nama: departemen ? departemen.nama : null,
       };
     }
 
@@ -93,7 +103,7 @@ exports.signout = async (req, res) => {
       const user = await User.findOne({ where: { access_token: token } });
       
       if (user) {
-        global.userData = null;
+        userData = null;
         user.access_token = null;
         await user.save();
         res.redirect("/");

@@ -5,7 +5,7 @@ const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const url = req.url;
         const urlSplit = url.split("/");
-        const jenisFolder = urlSplit[urlSplit.length - 1];
+        const jenisFolder = urlSplit[urlSplit.length - 2];
 
         // cek jenis folder
         if (jenisFolder === "irs") {
@@ -20,16 +20,18 @@ const storage = multer.diskStorage({
             cb(null, "uploads/accountMhs");
         } else if (jenisFolder === "batch-dosen") {
             cb(null, "uploads/accountDosen");
-        } else if (jenisFolder === "updateProfil") {
-            cb(null, "uploads/foto");
+        } else if (urlSplit[urlSplit.length - 1] === 'updateProfil') {
+            cb(null, "uploads/mahasiswa");
         } else {
             cb(null, "uploads");
         }
     },
     filename: (req, file, cb) => {
         const ext = file.originalname.split(".").pop();
+        const nama = req.user_nama;
+        const filename = `${nama}-${new Date().getTime()}.${ext}`;
 
-        cb(null, new Date().getTime() + "-" + file.originalname);
+        cb(null, filename);
     },
 });
 
@@ -52,11 +54,4 @@ const filter = (req, file, cb) => {
 
 const upload = multer({ storage: storage, fileFilter: filter }).single("file");
 
-const temp = multer.memoryStorage()
-
-const uploadTemp = multer({ storage: temp, fileFilter: filter }).single("foto");
-
-module.exports = {
-    upload,
-    uploadTemp
-}
+module.exports = upload

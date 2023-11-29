@@ -21,13 +21,6 @@ const User = sequelize.define('User', {
       msg: 'Username sudah terdaftar',
     },
   },
-  email: {
-    type: DataTypes.STRING,
-    unique: {
-      args: true,
-      msg: 'Email sudah terdaftar',
-    },
-  },
   password: {
     type: DataTypes.STRING,
     allowNull: {

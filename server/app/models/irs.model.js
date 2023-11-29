@@ -44,7 +44,7 @@ const IRS = sequelize.define('IRS', {
       },
     },
   },
-  irs_file: {
+  file: {
     type: DataTypes.STRING,
     allowNull: {
       args: false,

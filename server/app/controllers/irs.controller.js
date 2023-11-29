@@ -3,70 +3,36 @@ const fs = require("fs").promises;
 
 const submitIRS = async (req, res) => {
   try {
-    let irs = {
+    const mahasiswa = await Mahasiswa.findOne({ user: req.user_id });
+    const [IRS, created] = await mahasiswa.createIRS({
       semester_aktif: req.body.semester_aktif,
       sks: req.body.sks,
       status_verifikasi: "belum",
-      mahasiswaId: req.mahasiswaId,
-    };
-
-    if (req.file) {
-      dataIrs.file = req.file.path;
-    }
-
-    const count = await IRS.count({
-      where: {
-        mahasiswaId: dataIrs.mahasiswaId,
-        semesterAktif: dataIrs.semesterAktif,
-      },
     });
 
-    if (count === 0) {
-      const irs = await IRS.create(dataIrs);
-      res.send({ message: "IRS was uploaded successfully!" });
-    } else {
-      const irs = await IRS.findOne({
-        where: {
-          mahasiswaId: dataIrs.mahasiswaId,
-          semesterAktif: dataIrs.semesterAktif,
-        },
-      });
-
-      if (!irs) {
-        res.status(404).send({ message: "IRS not found!" });
-        return;
-      }
-
-      // If there is a new file, update the file
+    if (created) {
       if (req.file) {
-        await fs.unlink(irs.file);
-        await IRS.update(
-          {
-            file: req.file.path,
-            sks: req.body.sks,
-          },
-          {
-            where: {
-              id: irs.id,
-            },
-          }
-        );
-      } else {
-        await IRS.update(
-          {
-            sks: req.body.sks,
-          },
-          {
-            where: {
-              id: irs.id,
-            },
-          }
-        );
+        IRS.file = req.file.path;
+        await IRS.save();
       }
+      res.send({ message: "IRS was uploaded successfully!" });
+
+    } else {
+      if (req.file) {
+        if (irs.file) {
+          await fs.unlink(irs.file);
+        }
+        IRS.file = req.file.path;
+      }
+      IRS.semester_aktif = req.body.semester_aktif;
+      IRS.sks = req.body.sks;
+      IRS.status_verifikasi = "belum";
+      await IRS.save();
 
       res.send({ message: "IRS was updated successfully!" });
     }
   } catch (err) {
+    fs.unlink(req.file.path);
     console.error(err);
     res.status(500).send({ message: err.message || "Some error occurred." });
   }

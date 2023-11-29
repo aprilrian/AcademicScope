@@ -22,39 +22,48 @@ exports.departemenBoard = (req, res) => {
   res.status(200).send("Departemen Content.");
 }
 
-// For OP && Departemen ONLY!
-exports.signup = async (req, res) => {
-  try {
-    const { username, email, password, role } = req.body;
-    const user = await User.create({
-      username,
-      email,
-      password,
-      role,
-    });
-    await user.save();
-    res.status(201).send('Akun berhasil disisipkan');
-  } catch (error) {
-    res.status(500).send({ message: error.message });
-  }
-}
+// // For OP && Departemen ONLY!
+// exports.signup = async (req, res) => {
+//   try {
+//     const { username, email, password, role } = req.body;
+//     const user = await User.create({
+//       username,
+//       email,
+//       password,
+//       role,
+//     });
+//     await user.save();
+//     res.status(201).send('Akun berhasil disisipkan');
+//   } catch (error) {
+//     res.status(500).send({ message: error.message });
+//   }
+// }
 
-exports.signupDosen = async (req, res) => {
-  try {
-    const { nip, nama } = req.body;
-    const user = await User.create({
-      username: nip,
-      password: nip,
-      role: "dosen",
-    });
+// exports.signupDosen = async (req, res) => {
+//   try {
+//     const { nip, nama } = req.body;
+//     const user = await User.create({
+//       username: nip,
+//       password: nip,
+//       role: "dosen",
+//     });
 
-    await Dosen.create({
-      nip: nip,
-      nama: nama,
-      user_id: user.id,
-    });
+//     await Dosen.create({
+//       nip: nip,
+//       nama: nama,
+//       user_id: user.id,
+//     });
     
-    res.status(201).send('Akun dosen dengan nama ' + nama + ' berhasil disisipkan');
+//     res.status(201).send('Akun dosen dengan nama ' + nama + ' berhasil disisipkan');
+//   } catch (error) {
+//     res.status(500).send({ message: error.message });
+//   }
+// }
+
+exports.getTemplate = async (req, res) => {
+  try {
+    const template = './uploads/template.csv'
+    res.download(template);
   } catch (error) {
     res.status(500).send({ message: error.message });
   }
@@ -136,15 +145,8 @@ exports.updateProfil = async (req, res) => {
     const user = await User.findOne({ where: { id: req.user_id }, transaction: t });
     if (user) {
       if (req.file) {
-        await Mahasiswa.update({ foto: req.file.buffer }, { where: { user_id: req.user_id } });
+        await Mahasiswa.update({ foto: req.file.path }, { where: { user_id: req.user_id } });
       }
-      await User.update(
-        {
-          username: username,
-          email: email,
-        },
-        { where: { id: req.user_id }, transaction: t }
-      );
       await Mahasiswa.update(
         {
           nama: nama,

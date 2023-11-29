@@ -16,8 +16,18 @@ verifyToken = (req, res, next) => {
       }
       return res.status(401).json({ message: 'Unauthorized!' });
     }
-
+    
     req.user_id = decoded.id;
+    req.user_nama = decoded.nama;
+
+    if (decoded.role === 'mahasiswa') {
+      req.mahasiswa_nim = decoded.nim 
+      req.mahasiswa_nama = decoded.nama 
+    } else {
+      req.dosen_nip = decoded.nip
+      req.dosen_nama = decoded.nama
+    }
+
     next();
   });
 };
@@ -121,7 +131,7 @@ isMaster = async (req, res, next) => {
       }
 };
 
-const isMahasiswaOrDosen = (req, res, next) => {
+isMahasiswaOrDosen = (req, res, next) => {
     User.findById(req.userId).exec((err, user) => {
         if (err) {
             res.status(500).send({ message: err });
@@ -149,8 +159,7 @@ const isMahasiswaOrDosen = (req, res, next) => {
     });
 };
 
-//only kodewali can access mahasiswa file
-const isKodeWali = (req, res, next) => {
+isDosenWali = (req, res, next) => {
     User.findById(req.userId).exec((err, user) => {
         if (err) {
             res.status(500).send({ message: err });
@@ -205,7 +214,7 @@ const authMiddleware = {
     isMahasiswa,
     isMaster,
     isMahasiswaOrDosen,
-    isKodeWali,
+    isDosenWali,
 }
 
 module.exports = authMiddleware
