@@ -47,7 +47,7 @@ exports.generate = async (req, res) => {
   }
 }
 
-exports.getTemplate = async (req, res) => {
+exports.getBatchTemplate = async (req, res) => {
   try {
     const template = './uploads/template.csv'
     res.download(template);
@@ -113,7 +113,7 @@ exports.getAllDosen = async (req, res) => {
 }
 
 // MAHASISWA
-exports.updateProfil = async (req, res) => {
+exports.updateMahasiswa = async (req, res) => {
   try {
     const t = await User.sequelize.transaction();
     const { nama, alamat, kode_kabupatenKota, kode_provinsi, jalur_masuk, email, phone } = req.body;

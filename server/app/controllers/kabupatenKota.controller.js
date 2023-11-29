@@ -1,4 +1,4 @@
-const { KabupatenKota, Provinsi } = require('../models')
+const { KabupatenKota } = require('../models')
 
 exports.getAll = async (req, res) => {
     try {
@@ -16,7 +16,7 @@ exports.getAll = async (req, res) => {
     }
 };
 
-exports.getByProvinsi = async (req, res) => {
+exports.getAllByProvinsi = async (req, res) => {
     try {
         const data = await KabupatenKota.findAll({
             attributes: ['kode', 'kode_provinsi', 'kabupaten_kota'],

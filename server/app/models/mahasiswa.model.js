@@ -86,9 +86,6 @@ Mahasiswa.belongsTo(KabupatenKota, { foreignKey: 'kode_kabupatenKota' })
 Mahasiswa.belongsTo(Provinsi, { foreignKey: 'kode_provinsi' })
 Mahasiswa.belongsTo(Dosen, { foreignKey: 'nip_dosen' });
 Mahasiswa.belongsTo(User, { foreignKey: 'user_id' });
-Mahasiswa.hasMany(IRS)
-Mahasiswa.hasMany(KHS)
-Mahasiswa.hasOne(PKL)
-Mahasiswa.hasOne(Skripsi)
+Mahasiswa.hasMany(IRS, { foreignKey: 'mahasiswa_nim' });
 
 module.exports = Mahasiswa;

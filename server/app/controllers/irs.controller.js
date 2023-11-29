@@ -3,17 +3,17 @@ const fs = require("fs").promises;
 
 const submitIRS = async (req, res) => {
   try {
-    const mahasiswa = await Mahasiswa.findOne({ user: req.user_id });
-    const [IRS, created] = await mahasiswa.createIRS({
+    const mahasiswa = await Mahasiswa.findOne({ user: req.user_id }, { include: IRS });
+    const created = await IRS.create({
       semester_aktif: req.body.semester_aktif,
       sks: req.body.sks,
       status_verifikasi: "belum",
+      mahasiswa_nim: mahasiswa.nim,
     });
 
     if (created) {
       if (req.file) {
         IRS.file = req.file.path;
-        await IRS.save();
       }
       res.send({ message: "IRS was uploaded successfully!" });
 
@@ -27,7 +27,6 @@ const submitIRS = async (req, res) => {
       IRS.semester_aktif = req.body.semester_aktif;
       IRS.sks = req.body.sks;
       IRS.status_verifikasi = "belum";
-      await IRS.save();
 
       res.send({ message: "IRS was updated successfully!" });
     }

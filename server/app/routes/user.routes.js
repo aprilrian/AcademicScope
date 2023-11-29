@@ -4,21 +4,28 @@ const controller = require("../controllers/user.controller");
 const authMiddleware = require("../middlewares/auth.middleware");
 const upload = require("../services/upload.service");
 
-router.get("/all", [authMiddleware.verifyToken],controller.allAccess);
+router.get("/", [authMiddleware.verifyToken],controller.allAccess);
 router.get("/operator", [authMiddleware.verifyToken, authMiddleware.isOperator], controller.operatorBoard);
 router.get("/mahasiswa", [authMiddleware.verifyToken, authMiddleware.isMahasiswa] ,controller.mahasiswaBoard);
 router.get("/dosen", [authMiddleware.verifyToken, authMiddleware.isDosen], controller.dosenBoard);
 router.get("/departemen", [authMiddleware.verifyToken, authMiddleware.isDepartemen], controller.departemenBoard);
 
-router.get("/operator/getTemplate", controller.getTemplate)
+// OPERATOR
 router.post("/operator/generate", 
   [authMiddleware.verifyToken, authMiddleware.isOperator],
   controller.generate);
 router.post("/operator/generateBatch", 
   [authMiddleware.verifyToken, authMiddleware.isOperator],
   controller.generateBatch);
-router.post("/mahasiswa/updateProfil", 
+
+// MAHASISWA
+router.post("/mahasiswa/updateMahasiswa", 
   [authMiddleware.verifyToken, authMiddleware.isMahasiswa, upload],
-  controller.updateProfil);
+  controller.updateMahasiswa);
+router.use("/mahasiswa/irs", require("./irs.routes")); 
+
+// DOSEN
+
+// DEPARTEMEN
 
 module.exports = router;

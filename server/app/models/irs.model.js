@@ -55,6 +55,10 @@ const IRS = sequelize.define('IRS', {
     type: DataTypes.ENUM('belum', 'sedang diverifikasi' ,'sudah'),
     defaultValue: 'belum',
   },
+  mahasiswa_nim: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
 }, {
   tableName: 'IRSs',
 });
