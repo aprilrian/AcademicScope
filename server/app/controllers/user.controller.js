@@ -94,6 +94,14 @@ exports.generateBatch = async (req, res) => {
 // DEPARTEMEN
 
 // DOSEN
+exports.getAllDosen = async (req, res) => {
+  try {
+    const dosen = await Dosen.findAll();
+    res.status(200).send(dosen);
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+}
 
 // MAHASISWA
 exports.getTemplate = async (req, res) => {
