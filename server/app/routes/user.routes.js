@@ -10,14 +10,14 @@ router.get("/mahasiswa", [authMiddleware.verifyToken, authMiddleware.isMahasiswa
 router.get("/dosen", [authMiddleware.verifyToken, authMiddleware.isDosen], controller.dosenBoard);
 router.get("/departemen", [authMiddleware.verifyToken, authMiddleware.isDepartemen], controller.departemenBoard);
 
-router.get("/getTemplate", controller.getTemplate)
-router.post("/generate", 
+router.get("/operator/getTemplate", controller.getTemplate)
+router.post("/operator/generate", 
   [authMiddleware.verifyToken, authMiddleware.isOperator],
   controller.generate);
-router.post("/generateBatch", 
+router.post("/operator/generateBatch", 
   [authMiddleware.verifyToken, authMiddleware.isOperator],
   controller.generateBatch);
-router.post("/updateProfil", 
+router.post("/mahasiswa/updateProfil", 
   [authMiddleware.verifyToken, authMiddleware.isMahasiswa, upload],
   controller.updateProfil);
 

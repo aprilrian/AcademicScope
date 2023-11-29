@@ -47,6 +47,15 @@ exports.generate = async (req, res) => {
   }
 }
 
+exports.getTemplate = async (req, res) => {
+  try {
+    const template = './uploads/template.csv'
+    res.download(template);
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+}
+
 exports.generateBatch = async (req, res) => {
   try {
     const jsonFile = await csv().fromFile(req.file.path, { delimiter: ',' });
@@ -104,15 +113,6 @@ exports.getAllDosen = async (req, res) => {
 }
 
 // MAHASISWA
-exports.getTemplate = async (req, res) => {
-  try {
-    const template = './uploads/template.csv'
-    res.download(template);
-  } catch (error) {
-    res.status(500).send({ message: error.message });
-  }
-}
-
 exports.updateProfil = async (req, res) => {
   try {
     const t = await User.sequelize.transaction();
