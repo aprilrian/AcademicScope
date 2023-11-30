@@ -35,6 +35,10 @@ const User = sequelize.define('User', {
       msg: 'Role wajib diisi',
     },
   },
+  isFirstLogin: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
+  },
   access_token: {
     type: DataTypes.STRING(1000),
   }

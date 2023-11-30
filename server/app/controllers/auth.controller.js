@@ -16,6 +16,7 @@ exports.signin = async (req, res) => {
 
     let user;
     user = await User.findOne({ where: { username: username } });
+    user.isFirstLogin = false;
     
     if (!user) {
       return res.status(404).send({ message: "User tidak ditemukan" });
