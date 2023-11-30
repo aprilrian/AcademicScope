@@ -116,7 +116,7 @@ exports.getAllDosen = async (req, res) => {
 exports.updateMahasiswa = async (req, res) => {
   try {
     const t = await User.sequelize.transaction();
-    const { nama, alamat, kode_kabupatenKota, kode_provinsi, jalur_masuk, email, phone } = req.body;
+    const { alamat, kode_kabupatenKota, kode_provinsi, jalur_masuk, email, phone, foto } = req.body;
 
     const user = await User.findOne({ where: { id: req.user_id }, transaction: t });
     if (user) {
@@ -125,13 +125,13 @@ exports.updateMahasiswa = async (req, res) => {
       }
       await Mahasiswa.update(
         {
-          nama: nama,
           alamat: alamat,
           kode_kabupatenKota: kode_kabupatenKota,
           kode_provinsi: kode_provinsi,
           jalur_masuk: jalur_masuk,
           email: email,
           phone: phone,
+          foto: foto,
         },
         { where: { user_id: req.user_id }, transaction: t }
       );

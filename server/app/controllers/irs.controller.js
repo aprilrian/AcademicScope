@@ -1,7 +1,7 @@
 const { IRS, Mahasiswa, Dosen } = require("../models");
 const fs = require("fs").promises;
 
-const submitIRS = async (req, res) => {
+exports.submitIRS = async (req, res) => {
   try {
     const mahasiswa = await Mahasiswa.findOne({ where: { user_id: req.user_id } });
 
@@ -50,7 +50,7 @@ const submitIRS = async (req, res) => {
 
 
 
-const getIRS = (req, res) => {
+exports.getIRS = (req, res) => {
   IRS.findAll({
     where: {
       mahasiswaId: req.mahasiswaId,
@@ -76,7 +76,7 @@ const getIRS = (req, res) => {
     });
 };
 
-const getAllIRS = async (req, res) => {
+exports.getAllIRS = async (req, res) => {
   try {
     let array_mahasiswa = await Mahasiswa.findAll({});
     let array_irs = await IRS.findAll({});
@@ -114,7 +114,7 @@ const getAllIRS = async (req, res) => {
 };
 
 //download irs file dari database berdasarkan nim mahasiswa dan semester
-const downloadIRS = (req, res) => {
+exports.downloadIRS = (req, res) => {
   IRS.findOne({
     where: {
       mahasiswaId: req.mahasiswaId,
@@ -136,7 +136,7 @@ const downloadIRS = (req, res) => {
     });
 };
 
-const waliIRS = async (req, res) => {
+exports.waliIRS = async (req, res) => {
   try {
     const dosen = await Dosen.findOne({ user: req.userId });
     const list_mhs = await Mahasiswa.findAll({ kodeWali: dosen.id });
@@ -172,7 +172,7 @@ const waliIRS = async (req, res) => {
   }
 };
 
-const verifyIRS = async (req, res) => {
+exports.verifyIRS = async (req, res) => {
   try {
     const mhs = await Mahasiswa.findOne({ nim: req.params.nim });
     const dosen = await Dosen.findOne({ user: req.userId });
@@ -198,7 +198,7 @@ const verifyIRS = async (req, res) => {
   }
 };
 
-const deleteAllIRS = (req, res) => {
+exports.deleteAllIRS = (req, res) => {
   IRS.destroy({ truncate: true })
     .then(() => {
       res.status(200).send({ message: "All IRS records were deleted successfully!" });
@@ -207,50 +207,3 @@ const deleteAllIRS = (req, res) => {
       res.status(500).send({ message: err.message || "Some error occurred while deleting IRS records." });
     });
 };
-
-module.exports = {
-  verifyIRS,
-  waliIRS,
-  submitIRS,
-  getIRS,
-  getAllIRS,
-  downloadIRS,
-  deleteAllIRS,
-};
-
-
-// // Entry Pengambilan IRS per Semester (SRS-XXX-003)
-// app.post('/irs', authenticateToken, async (req, res) => {
-//   const { id, semester, mata_kuliah, sks, nim } = req.body;
-//   const username = req.user.username;
-
-//   try {
-//     // Simpan data IRS ke database
-//     await db.query(`
-//       INSERT INTO public.irs (id, semester, mata_kuliah, sks, nim)
-//       VALUES ($1, $2, $3, $4, $5)
-//     `, [id, semester, mata_kuliah, sks, nim]);
-
-//     res.status(201).json({ message: 'Data IRS berhasil disimpan' });
-//   } catch (err) {
-//     console.error(err.message);
-//     res.status(500).json({ error: 'Gagal menyimpan data IRS' });
-//   }
-// });
-
-// // Verifikasi progress studi
-// app.put('/verifikasiprogress', authenticateToken, async (req, res) => {
-//     const { id, status_konfirmasi } = req.body;
-  
-//     try {
-//       // Update status konfirmasi progress studi
-//       await db.query(`
-//         UPDATE public.irs SET status_konfirmasi = $1 WHERE id = $2
-//       `, [status_konfirmasi, id]);
-  
-//       res.status(200).json({ message: 'Verifikasi progress studi berhasil' });
-//     } catch (err) {
-//       console.error(err.message);
-//       res.status(500).json({ error: 'Gagal verifikasi progress studi' });
-//     }
-//   });
