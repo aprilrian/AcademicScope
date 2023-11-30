@@ -22,13 +22,13 @@
 #     "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwidXNlcm5hbWUiOiJnZWxlayIsImVtYWlsIjoiZ2VsZWtAc3R1ZGVudHMudW5kaXAuYWMuaWQiLCJwYXNzd29yZCI6IiQyYiQxMCQxRGFpZExPNHgxcW1Tcmthd08zRGRPRjYvenRtVDRkMTJ5RG14bnJuRDhEcHQvVUg1dm9HdSIsInJvbGUiOiJvcGVyYXRvciIsImlhdCI6MTY5OTE3MzAyOH0.1beYduV0a57kQ3XUUbt6w1BRt7FWv9U0ORsGTTU-8VE"
 # }
 
-# POST http://localhost:8080/auth/signin
-# Content-Type: application/json
+POST http://localhost:8080/auth/signin
+Content-Type: application/json
 
-# {
-#     "username": "operator",
-#     "password": "operator"
-# }
+{
+    "username": "24060121140120",
+    "password": "24060121140120"
+}
 
 # POST http://localhost:8080/auth/signout
 # Content-Type: application/json
@@ -45,16 +45,16 @@
 #     "nama": "Prof. Dr. Widowati, S.Si., M.Si."
 # }
 
-POST http://localhost:8080/user/generateBatch
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJvcGVyYXRvciIsImVtYWlsIjoib3BlcmF0b3JAb3BlcmF0b3IudW5kaXAuYWMuaWQiLCJyb2xlIjoib3BlcmF0b3IiLCJpYXQiOjE3MDA2NTc1MjgsImV4cCI6MTcwMDY2MTEyOH0.HCUm9KyIqDAKYihqimpSTDLPySEsL6nW3VKh6uAdZ0Y
-Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+# POST http://localhost:8080/user/generateBatch
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJvcGVyYXRvciIsImVtYWlsIjoib3BlcmF0b3JAb3BlcmF0b3IudW5kaXAuYWMuaWQiLCJyb2xlIjoib3BlcmF0b3IiLCJpYXQiOjE3MDA2NTc1MjgsImV4cCI6MTcwMDY2MTEyOH0.HCUm9KyIqDAKYihqimpSTDLPySEsL6nW3VKh6uAdZ0Y
+# Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
 
-------WebKitFormBoundary7MA4YWxkTrZu0gW
-Content-Disposition: form-data; name="file"; filename="mahasiswa.csv"
-Content-Type: text/plain
+# ------WebKitFormBoundary7MA4YWxkTrZu0gW
+# Content-Disposition: form-data; name="file"; filename="mahasiswa.csv"
+# Content-Type: text/plain
 
-This is the content of the file.
-------WebKitFormBoundary7MA4YWxkTrZu0gW
+# This is the content of the file.
+# ------WebKitFormBoundary7MA4YWxkTrZu0gW
 
 # DELETE http://localhost:3000/logout
 # Content-Type: application/json
