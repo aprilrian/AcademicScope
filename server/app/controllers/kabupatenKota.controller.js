@@ -7,10 +7,7 @@ exports.getAll = async (req, res) => {
                         ['kode_provinsi', 'kode_provinsi'],
                         ['kabupaten_kota', 'label']]
         });
-        res.status(200).send({
-        message: "Success",
-        data: data
-        });
+        res.status(200).send(data);
     } catch (err) {
         res.status(500).send({
         message: err.message || "Some error occured while retrieving kabupatenKota."
