@@ -3,7 +3,9 @@ const { KabupatenKota } = require('../models')
 exports.getAll = async (req, res) => {
     try {
         const data = await KabupatenKota.findAll({
-            attributes: ['kode', 'kode_provinsi', 'kabupaten_kota']
+            attributes: [['kode', 'value'],
+                        ['kode_provinsi', 'kode_provinsi'],
+                        ['kabupaten_kota', 'label']]
         });
         res.status(200).send({
         message: "Success",
@@ -19,7 +21,9 @@ exports.getAll = async (req, res) => {
 exports.getAllByProvinsi = async (req, res) => {
     try {
         const data = await KabupatenKota.findAll({
-            attributes: ['kode', 'kode_provinsi', 'kabupaten_kota'],
+            attributes: [['kode', 'value'],
+                        ['kode_provinsi', 'kode_provinsi'],
+                        ['kabupaten_kota', 'label']],
             where: {
                 kode_provinsi: req.params.kode_provinsi
             }
