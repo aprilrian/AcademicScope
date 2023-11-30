@@ -22,7 +22,10 @@ router.post("/operator/generateBatch",
 router.post("/mahasiswa/updateMahasiswa", 
   [authMiddleware.verifyToken, authMiddleware.isMahasiswa, upload],
   controller.updateMahasiswa);
-router.use("/mahasiswa/irs", require("./irs.routes")); 
+router.use("/mahasiswa/irs", require("./irs.routes"));
+router.use("/mahasiswa/khs", require("./khs.routes")); 
+router.use("/mahasiswa/pkl", require("./pkl.routes"));
+router.use("/mahasiswa/skripsi", require("./skripsi.routes"));
 
 // DOSEN
 

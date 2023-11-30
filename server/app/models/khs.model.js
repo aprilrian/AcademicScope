@@ -2,6 +2,10 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../configs/db.config');
 
 const KHS = sequelize.define('KHS', {
+  mahasiswa_nim: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   semester_aktif: {
     type: DataTypes.INTEGER,
     allowNull: {
@@ -106,13 +110,14 @@ const KHS = sequelize.define('KHS', {
     defaultValue: 'belum',
   },
 
-  khs_file: {
+  file: {
     type: DataTypes.STRING,
     allowNull: {
       args: false,
       msg: 'Wajib upload scan KHS',
     },
   },
+
 }, {
   tableName: 'KHSs'
 });

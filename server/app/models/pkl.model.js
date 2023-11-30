@@ -2,8 +2,14 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../configs/db.config');
 
 const PKL = sequelize.define('PKL', {
+  mahasiswa_nim: {
+    type: DataTypes.STRING,
+    allowNull: {
+      args: false,
+    },
+  },
   status: {
-    type: DataTypes.ENUM('belum', 'sedang pkl', 'lulus'),
+    type: DataTypes.ENUM('belum ambil', 'lulus'),
     allowNull: {
       args: false,
       msg: 'Status wajib diisi',
@@ -48,13 +54,14 @@ const PKL = sequelize.define('PKL', {
     defaultValue: 'belum',
   },
 
-  pkl_file: {
+  file: {
     type: DataTypes.STRING,
     allowNull: {
       args: false,
       msg: 'Wajib upload scan berita acara seminar PKL',
     },
   },
+  
 });
 
 module.exports = PKL;

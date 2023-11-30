@@ -4,6 +4,10 @@ const sequelize = require('../configs/db.config');
 const Mahasiswa = require('./Mahasiswa.model');
 
 const IRS = sequelize.define('IRS', {
+  mahasiswa_nim: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   semester_aktif: {
     type: DataTypes.INTEGER,
     allowNull: {
@@ -54,10 +58,6 @@ const IRS = sequelize.define('IRS', {
   status_verifikasi: {
     type: DataTypes.ENUM('belum', 'sedang diverifikasi' ,'sudah'),
     defaultValue: 'belum',
-  },
-  mahasiswa_nim: {
-    type: DataTypes.STRING,
-    allowNull: false,
   },
 }, {
   tableName: 'IRSs',

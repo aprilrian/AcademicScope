@@ -2,8 +2,14 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../configs/db.config');
 
 const Skripsi = sequelize.define('Skripsi', {
-  status: {
+  mahasiswa_nim: {
     type: DataTypes.STRING,
+    allowNull: {
+      args: false,
+    },
+  },
+  status: {
+    type: DataTypes.ENUM('belum ambil', 'lulus'),
     allowNull: {
       args: false,
       msg: 'Status wajib diisi',
@@ -43,11 +49,46 @@ const Skripsi = sequelize.define('Skripsi', {
     },
     defaultValue: 8,
   },
+  tanggal_lulus: {
+    type: DataTypes.DATEONLY,
+    allowNull: true,
+    validate: {
+      isDate: {
+        msg: 'Tanggal lulus harus berupa tanggal',
+      },
+    },
+  },
+  tanggal_sidang: {
+    type: DataTypes.DATEONLY,
+    allowNull: true,
+    validate: {
+      isDate: {
+        msg: 'Tanggal sidang harus berupa tanggal',
+      },
+    },
+  },
+  lama_studi: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    validate: {
+      isInt: {
+        msg: 'Lama studi harus berupa angka',
+      },
+      min: {
+        args: [0],
+        msg: 'Lama studi minimal 0',
+      },
+      max: {
+        args: [14],
+        msg: 'Lama studi maksimal 14',
+      },
+    },
+  },
   status_verifikasi: {
     type: DataTypes.ENUM('belum', 'sedang diverifikasi', 'sudah'),
     defaultValue: 'belum',
   },
-  skripsi_file: {
+  file: {
     type: DataTypes.STRING,
     allowNull: {
       args: false,

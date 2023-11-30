@@ -182,6 +182,38 @@ async function initializeData() {
         }
       }
 
+      if (mahasiswaCount === 0) {
+        try {
+          await User.sequelize.transaction(async (t) => {
+            const mahasiswaData = { nim: '24060121140120', nama: "Christian Joshua Nathanael Nadeak", angkatan: "2021", status: "aktif", nip_dosen: "196511071992031003" };
+
+            const user = await User.create(
+              {
+                username: mahasiswaData.nim,
+                password: mahasiswaData.nim,
+                role: "mahasiswa",
+              },
+              { transaction: t }
+            );
+
+            await Mahasiswa.create(
+              {
+                nim: mahasiswaData.nim,
+                nama: mahasiswaData.nama,
+                angkatan: mahasiswaData.angkatan,
+                status: mahasiswaData.status,
+                nip_dosen: mahasiswaData.nip_dosen,
+                user_id: user.id,
+              },
+              { transaction: t }
+            );
+          });
+          console.log(`Data successfully added to Mahasiswa collection`);
+        } catch (err) {
+          console.error(`Error adding data to Mahasiswa collection:`, err);
+        }
+      }
+
       if (provinsiCount === 0) {
           await Provinsi.bulkCreate([
               { kode: 11, provinsi: 'ACEH' },

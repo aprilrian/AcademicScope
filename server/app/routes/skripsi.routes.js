@@ -1,17 +1,11 @@
-const controller = require("../controllers/skripsi.controller");
+const router = require('express').Router();
+const controller = require('../controllers/skripsi.controller');
+const { authMiddleware, userMiddleware } = require('../middlewares');
+const upload = require('../services/upload.service');
 
-module.exports = function (app) {
-  app.post("/skripsi", controller.submitSkripsi);
+router.post(
+    '/submit', 
+    [authMiddleware.verifyToken, authMiddleware.isMahasiswa, userMiddleware.hasUpdateProfile, userMiddleware.getMahasiswaById, upload],
+    controller.submitSkripsi);
 
-  app.get("/skripsi", controller.getSkripsi);
-
-  app.get("/all-skripsi", controller.getRekap);
-
-  app.get("/skripsi/:nim", controller.downloadSkripsi);
-
-  app.get("/rekap/skripsi", controller.waliSkripsi);
-
-  app.get("/verifikasi/skripsi", controller.getVerifikasiSkripsi);
-
-  app.post("/verifikasi/skripsi/:nim", controller.verifSkripsi);
-};
+module.exports = router;

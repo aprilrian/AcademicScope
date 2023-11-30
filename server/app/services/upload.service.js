@@ -3,7 +3,7 @@ const multer = require('multer');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const url = req.url;
+        const url = req.originalUrl;
         const urlSplit = url.split("/");
         const jenisFolder = urlSplit[urlSplit.length - 2];
 

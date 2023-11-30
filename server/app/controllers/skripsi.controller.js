@@ -1,68 +1,74 @@
-const db = require("../models");
-const Skripsi = db.skripsi;
-const Mahasiswa = db.mahasiswa;
-const Dosen = db.dosen;
+const { Skripsi, Mahasiswa, Dosen } = require("../models");
 const fs = require("fs");
 
 exports.submitSkripsi = async (req, res) => {
   try {
-    const dataSkripsi = {
-      nilai: req.body.nilai,
-      semester: req.body.semester,
-      statusKonfirmasi: "belum",
-      mahasiswaId: req.mahasiswaId,
-      tanggal: req.body.tanggal,
-    };
+    const mahasiswa = await Mahasiswa.findOne({ where: { user_id: req.user_id } });
 
-    if (req.file) {
-      dataSkripsi.file = req.file.path;
+    if (!mahasiswa) {
+      return res.status(404).send({ message: "Mahasiswa not found!" });
     }
 
-    const skripsi = await Skripsi.findOne({
-      where: { mahasiswaId: dataSkripsi.mahasiswaId },
+    let skripsi = await Skripsi.findOne({
+      where: {
+        mahasiswa_nim: mahasiswa.nim,
+        status: req.body.status,
+      },
     });
 
-    if (!skripsi) {
-      await Skripsi.create(dataSkripsi);
-      res.send({ message: "Skripsi was uploaded successfully!" });
-    } else {
+    if (skripsi) {
       if (req.file) {
-        // Delete existing file
-        fs.unlink(skripsi.file, (err) => {
-          if (err) {
-            res.status(500).send({ message: err });
-            return;
-          }
-
-          // Update skripsi with new file
-          Skripsi.update(
-            {
-              file: req.file.path,
-              nilai: req.body.nilai,
-              semester: req.body.semester,
-              tanggal: req.body.tanggal,
-            },
-            { where: { mahasiswaId: dataSkripsi.mahasiswaId } }
-          );
-        });
-      } else {
-        // Update skripsi without new file
-        Skripsi.update(
-          {
-            nilai: req.body.nilai,
-            semester: req.body.semester,
-            tanggal: req.body.tanggal,
-          },
-          { where: { mahasiswaId: dataSkripsi.mahasiswaId } }
-        );
+        if (skripsi.file) {
+          // Use a callback function to handle unlink completion or errors
+          fs.unlink(skripsi.file, (unlinkError) => {
+            if (unlinkError) {
+              console.error("Error deleting Skripsi file:", unlinkError);
+            }
+          });
+        }
+        skripsi.file = req.file.path;
       }
+      skripsi.nilai = req.body.nilai;
+      skripsi.semester = req.body.semester;
+      skripsi.tanggal_lulus = req.body.tanggal_lulus;
+      skripsi.status_verifikasi = "sedang diverifikasi";
+      skripsi.tanggal_sidang = req.body.tanggal_sidang;
+      skripsi.lama_studi = req.body.lama_studi;
+      skripsi.status = req.body.status;
+      await skripsi.save();
 
-      res.send({ message: "Skripsi was updated successfully!" });
+      res.send({ message: "Skripsi was updated successfully." });
+    } else {
+      const newSkripsi = {
+        status: req.body.status,
+        nilai: req.body.nilai,
+        semester: req.body.semester,
+        status_verifikasi: "sedang diverifikasi",
+        tanggal_lulus: req.body.tanggal_lulus,
+        tanggal_sidang: req.body.tanggal_sidang,
+        lama_studi: req.body.lama_studi,
+        file: req.file.path,
+        mahasiswa_nim: mahasiswa.nim,
+      };
+
+      await Skripsi.create(newSkripsi);
+
+      res.status(201).send({ message: "Skripsi was created successfully." });
     }
-  } catch (error) {
-    res.status(500).send({ message: error.message });
+  } catch (err) {
+    if (req.file) {
+      // Use a callback function to handle unlink completion or errors
+      fs.unlink(req.file.path, (unlinkError) => {
+        if (unlinkError) {
+          console.error("Error deleting uploaded file:", unlinkError);
+        }
+      });
+    }
+    console.error(err);
+    res.status(500).send({ message: err.message || "Some error occurred while creating the Skripsi." });
   }
 };
+
 
 exports.getSkripsi = async (req, res) => {
   try {

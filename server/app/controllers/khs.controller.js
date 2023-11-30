@@ -1,56 +1,63 @@
-const db = require("../models");
 const fs = require("fs");
-const { KHS } = require("../models");
-const Khs = db.KHS;
-const Mahasiswa = db.Mahasiswa;
-const Dosen = db.Dosen;
+const { KHS, Mahasiswa, Dosen } = require("../models");
 
 const submitKHS = async (req, res) => {
   try {
-    const existingKHS = await Khs.findOne({
+    const mahasiswa = await Mahasiswa.findOne({ where: { user_id: req.user_id } });
+
+    if (!mahasiswa) {
+      return res.status(404).send({ message: "Mahasiswa not found!" });
+    }
+
+    let khs = await KHS.findOne({
       where: {
-        mahasiswaId: req.mahasiswaId,
-        semesterAktif: req.body.semester_aktif,
+        mahasiswa_nim: mahasiswa.nim,
+        semester_aktif: req.body.semester_aktif,
       },
     });
 
-    if (!existingKHS) {
-      const khs = await Khs.create({
-        semesterAktif: req.body.semester_aktif,
-        sks: req.body.sks,
-        sksKumulatif: req.body.sks_kumulatif,
-        ip: req.body.ip,
-        ipKumulatif: req.body.ip_kumulatif,
-        statusKonfirmasi: "belum",
-        file: req.file.path,
-        mahasiswaId: req.mahasiswaId,
-      });
-
-      res.status(201).send({ message: "KHS was uploaded successfully!", khs });
-    } else {
-      // Hapus file KHS yang sudah ada dan update dengan yang baru
-      fs.unlink(existingKHS.file, async (err) => {
-        if (err) {
-          res.status(500).send({ message: err });
-          return;
+    if (khs) {
+      if (req.file) {
+        if (khs.file) {
+          // Use a callback function to handle unlink completion or errors
+          fs.unlink(khs.file, (unlinkError) => {
+            if (unlinkError) {
+              console.error("Error deleting KHS file:", unlinkError);
+            }
+          });
         }
+        khs.file = req.file.path;
+      }
+      khs.sks = req.body.sks;
+      await khs.save();
 
-        const updatedKHS = await existingKHS.update({
-          file: req.file.path,
-          semesterAktif: req.body.semester_aktif,
-          sks: req.body.sks,
-          sksKumulatif: req.body.sks_kumulatif,
-          ip: req.body.ip,
-          ipKumulatif: req.body.ip_kumulatif,
-        });
+      res.send({ message: "KHS was updated successfully." });
+    } else {
+      const newKHS = {
+        semester_aktif: req.body.semester_aktif,
+        sks: req.body.sks,
+        file: req.file.path,
+        mahasiswa_nim: mahasiswa.nim,
+      };
 
-        res.send({ message: "KHS was updated successfully!", khs: updatedKHS });
+      await KHS.create(newKHS);
+
+      res.status(201).send({ message: "KHS was created successfully." });
+    }
+  } catch (err) {
+    if (req.file) {
+      // Use a callback function to handle unlink completion or errors
+      fs.unlink(req.file.path, (unlinkError) => {
+        if (unlinkError) {
+          console.error("Error deleting uploaded file:", unlinkError);
+        }
       });
     }
-  } catch (error) {
-    res.status(500).send({ message: error.message || "Some error occurred while submitting KHS." });
+    console.error(err);
+    res.status(500).send({ message: err.message || "Some error occurred while creating the KHS." });
   }
 };
+
 
 const getKHS = async (req, res) => {
   try {

@@ -3,39 +3,51 @@ const fs = require("fs").promises;
 
 const submitIRS = async (req, res) => {
   try {
-    const mahasiswa = await Mahasiswa.findOne({ user: req.user_id }, { include: IRS });
-    const created = await IRS.create({
-      semester_aktif: req.body.semester_aktif,
-      sks: req.body.sks,
-      status_verifikasi: "belum",
-      mahasiswa_nim: mahasiswa.nim,
+    const mahasiswa = await Mahasiswa.findOne({ where: { user_id: req.user_id } });
+
+    if (!mahasiswa) {
+      return res.status(404).send({ message: "Mahasiswa not found!" });
+    }
+
+    let irs = await IRS.findOne({
+      where: {
+        mahasiswa_nim: mahasiswa.nim,
+        semester_aktif: req.body.semester_aktif,
+      },
     });
 
-    if (created) {
-      if (req.file) {
-        IRS.file = req.file.path;
-      }
-      res.send({ message: "IRS was uploaded successfully!" });
-
-    } else {
+    if (irs) {
       if (req.file) {
         if (irs.file) {
           await fs.unlink(irs.file);
         }
-        IRS.file = req.file.path;
+        irs.file = req.file.path;
       }
-      IRS.semester_aktif = req.body.semester_aktif;
-      IRS.sks = req.body.sks;
-      IRS.status_verifikasi = "belum";
+      irs.sks = req.body.sks;
+      await irs.save();
 
-      res.send({ message: "IRS was updated successfully!" });
+      res.send({ message: "IRS was updated successfully." });
+    } else {
+      const newIRS = {
+        semester_aktif: req.body.semester_aktif,
+        sks: req.body.sks,
+        file: req.file.path,
+        mahasiswa_nim: mahasiswa.nim,
+      };
+
+      await IRS.create(newIRS);
+
+      res.status(201).send({ message: "IRS was created successfully." });
     }
   } catch (err) {
-    fs.unlink(req.file.path);
-    console.error(err);
-    res.status(500).send({ message: err.message || "Some error occurred." });
+    if (req.file) {
+      await fs.unlink(req.file.path);
+    }
+    console.log(err);
+    res.status(500).send({ message: err.message || "Some error occurred while creating the IRS." });
   }
 };
+
 
 
 const getIRS = (req, res) => {

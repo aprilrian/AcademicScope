@@ -1,61 +1,65 @@
-const db = require('../models');
 const fs = require('fs');
 const { PKL, Mahasiswa, Dosen } = require('../models');
-const PKLModel = db.PKL;
-const MahasiswaModel = db.Mahasiswa;
-const DosenModel = db.Dosen;
 
 exports.submitPKL = async (req, res) => {
   try {
-    const existingPKL = await PKLModel.findOne({
+    const mahasiswa = await Mahasiswa.findOne({ where: { user_id: req.user_id } });
+
+    if (!mahasiswa) {
+      return res.status(404).send({ message: "Mahasiswa not found!" });
+    }
+
+    let pkl = await PKL.findOne({
       where: {
-        mahasiswaId: req.mahasiswaId,
+        mahasiswa_nim: mahasiswa.nim,
         semester: req.body.semester,
       },
     });
 
-    if (!existingPKL) {
-      const pkl = await PKLModel.create({
+    if (pkl) {
+      if (req.file) {
+        if (pkl.file) {
+          // Use a callback function to handle unlink completion or errors
+          fs.unlink(pkl.file, (unlinkError) => {
+            if (unlinkError) {
+              console.error("Error deleting PKL file:", unlinkError);
+            }
+          });
+        }
+        pkl.file = req.file.path;
+      }
+      pkl.nilai = req.body.nilai;
+      await pkl.save();
+
+      res.send({ message: "PKL was updated successfully." });
+    } else {
+      const newPKL = {
+        status: req.body.status,
         nilai: req.body.nilai,
         semester: req.body.semester,
-        statusKonfirmasi: 'belum',
+        status_verifikasi: "sedang diverifikasi",
         file: req.file.path,
-        mahasiswaId: req.mahasiswaId,
-      });
+        mahasiswa_nim: mahasiswa.nim,
+      };
 
-      res.status(201).send({ message: 'PKL was submitted successfully!', pkl });
-    } else {
-      // Hapus file PKL yang sudah ada dan update dengan yang baru
-      fs.unlink(existingPKL.file, async (err) => {
-        if (err) {
-          res.status(500).send({ message: err });
-          return;
+      await PKL.create(newPKL);
+
+      res.status(201).send({ message: "PKL was created successfully." });
+    }
+  } catch (err) {
+    if (req.file) {
+      // Use a callback function to handle unlink completion or errors
+      fs.unlink(req.file.path, (unlinkError) => {
+        if (unlinkError) {
+          console.error("Error deleting uploaded file:", unlinkError);
         }
-
-        const updatedPKL = await existingPKL.update({
-          file: req.file.path,
-          nilai: req.body.nilai,
-          semester: req.body.semester,
-        });
-
-        res.send({ message: 'PKL was updated successfully!', pkl: updatedPKL });
       });
     }
-  } catch (error) {
-    res.status(500).send({ message: error.message || 'Error submitting PKL.' });
+    console.error(err);
+    res.status(500).send({ message: err.message || "Some error occurred while creating the PKL." });
   }
 };
 
-exports.getPKL = async (req, res) => {
-  try {
-    const pklData = await PKLModel.findAll({
-      where: { mahasiswaId: req.mahasiswaId },
-    });
-    res.status(200).send(pklData);
-  } catch (error) {
-    res.status(500).send({ message: error.message || 'Error retrieving PKL.' });
-  }
-};
 
 exports.getRekapPKL = async (req, res) => {
   try {
