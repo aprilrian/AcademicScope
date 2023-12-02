@@ -59,6 +59,7 @@ export function Sidebar({ children }: NavBarProps) {
   const userRole = session?.user?.role as string | undefined; // Ensure userRole is of type string
 
   const navigationLinks: NavLink[] = roles[userRole] || [];
+  console.log("UserRole sidebar:", userRole);
 
   return (
     <>

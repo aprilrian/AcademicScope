@@ -17,14 +17,27 @@ import {
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
 import { signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
   import { useRouter, usePathname } from "next/navigation"
 import { Toggle } from "../ui/toggle";
 import { ModeToggle } from "../theme/toggle";
   
+
   export function UserNav() {
     const router = useRouter()
-    
+    const { data: session } = useSession();
+    if (!session) {
+      // Render loading state or redirect to login
+      return (
+        <div>
+          {/* <Progress value={33} /> */}
+          {/* <Loader/> */}
+        </div>
+      );
+    }
+    const { user } = session;
+
       return (
         <div className="flex items-center space-x-4">
           <ModeToggle />
@@ -33,7 +46,11 @@ import { ModeToggle } from "../theme/toggle";
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src="../monkey.jpg" alt="avatar" />
+
+                  <AvatarImage
+            alt="User Avatar"
+            src={user.image || "/placeholder-avatar.jpg"}
+          />
                   <AvatarFallback>SC</AvatarFallback>
                 </Avatar>
               </Button>

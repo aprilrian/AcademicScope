@@ -43,7 +43,7 @@ const Login = () => {
   
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") ?? "/dashboard";
+  // const callbackUrl = searchParams.get("callbackUrl") ?? "/dashboard";
   const { data: session } = useSession();
 
   const form = useForm({ resolver: yupResolver(loginSchema) });
@@ -62,9 +62,8 @@ const Login = () => {
       });
 
       if (!res?.error) {
-        const userRole = session?.user?.role;
-        // const userRole = res?.user?.role; // Assuming the user's role is provided in the response
-
+        const userRole = session?.user?.role as string | undefined;
+        console.log("UserRole:", userRole);
         switch (userRole) {
           case "operator":
             router.push("/admin/dashboard");
@@ -79,7 +78,7 @@ const Login = () => {
             router.push("/dept/dashboard");
             break;
           default:
-            router.push("/dashboard"); // Redirect to a default dashboard if the role is not recognized
+            router.push("/mhs/dashboard");
             break;
         }
       } else {

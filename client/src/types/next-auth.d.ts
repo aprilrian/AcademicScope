@@ -3,13 +3,18 @@ import NextAuth from "next-auth/next";
 declare module "next-auth" {
   interface Session {
     user: {
+      image: string;
       id: string;
       username: string;
       email: string;
       role: string;
       password: string;
-      accessToken: string;
+      access_token: string;
       refreshToken: string;
+      nama : string;
     };
+  }
+  interface CustomUser extends DefaultUser {
+    isFirstLogin?: boolean;
   }
 }

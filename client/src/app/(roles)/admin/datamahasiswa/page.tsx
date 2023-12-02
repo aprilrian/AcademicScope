@@ -13,10 +13,10 @@ export const metadata: Metadata = {
   description: "A task and issue tracker build using Tanstack Table.",
 };
 
-// Simulate a database read for tasks.
+
 async function getTasks() {
   const data = await fs.readFile(
-    path.join(process.cwd(), "src/components/data/dataMahasiswa.json")
+    path.join(process.cwd(), "src/components/data/tabelDataMahasiswa/dataMahasiswa.json")
   );
 
   const dataMahasiswa = JSON.parse(data.toString());

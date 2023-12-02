@@ -36,7 +36,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
 
@@ -224,10 +224,10 @@ const GenerateForm = () => {
                 )}
               />
             </div>
-            <p>IsValid: {isValid ? 'true' : 'false'}</p>
 
 
-            <Button className="w-full mt-6" type="submit" disabled={!isValid}>
+
+            <Button className="w-full mt-6" type="submit">
               Generate
             </Button>
           </form>

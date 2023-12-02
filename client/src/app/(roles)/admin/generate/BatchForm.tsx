@@ -22,7 +22,7 @@ const batchFormSchema = z.object({
 const BatchForm = () => {
   // Retrieve the accessToken from the session
   const { data: session } = useSession();
-  const accessToken = session?.user?.accessToken;
+  const accessToken = session?.user?.access_token;
 
   const form = useForm<z.infer<typeof batchFormSchema>>({
     resolver: zodResolver(batchFormSchema),

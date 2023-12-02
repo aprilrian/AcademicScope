@@ -27,171 +27,132 @@ import {
   Card,
 } from "@/components/ui/card";
 import axios from "axios";
+import { useSession } from "next-auth/react";
 
-// const formSchema = z.object({
-//   username: z.string().min(2, {
-//     message: "Username must be at least 2 characters.",
-//   }),
-// });
-
-const loginSchema = yup
-  .object()
-  .shape({
-    semester_aktif: yup.string().required(),
-    sks: yup.string().required(),
-    sks_kumulatif: yup.string().required(),
-    ip: yup.string().required(),
-    ip_kumulatif: yup.string().required(),
-    file: yup.string().required(),
-    mahasiswa_id: yup.string().required(),
-  })
-  .required();
+const khsSchema = z.object({
+  semester_aktif: z.string(),
+  sks: z.string().min(2, {
+    message: "Jumlah SKS must be at least 2 characters.",
+  }),
+  file: z.unknown(),
+});
 
 const KHSForm = () => {
-  const form = useForm({ resolver: yupResolver(loginSchema) });
-
-  async function onSubmit(values: any) {
+  const { data: session } = useSession();
+  const accessToken = session?.user?.access_token;
+  const form = useForm<z.infer<typeof khsSchema>>({
+    resolver: zodResolver(khsSchema),
+    defaultValues: {
+      file: "",
+    },
+  });
+  const onSubmit = async (value: z.infer<typeof khsSchema>) => {
     try {
-      const res = await axios.post("http://localhost:3000/khs", values);
+      if (!accessToken) {
+        console.error("Access token not available");
+        return;
+      }
+      // Di sini Anda dapat melakukan pengiriman data ke server atau melakukan tindakan lain sesuai kebutuhan aplikasi Anda.
+      // Contoh pengiriman data menggunakan fetch API:
+      const response = await fetch(
+        "http://localhost:8080/mahasiswa/khs/submit",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "multipart/form-data",
+          },
+          body: JSON.stringify(value),
+        }
+      );
 
-      if (res.status === 200) {
+      if (response.ok) {
+
         alert("KHS berhasil disubmit!");
       } else {
-        alert("Gagal menambahkan KHS. Silakan coba lagi.");
+        
+        alert("Gagal submit khs. Silakan coba lagi.");
       }
     } catch (error) {
-      console.error("Terjadi kesalahan:", error);
-      // Handle other errors if needed.
+      console.error("Error submitting the form:", error);
     }
-  }
+  };
 
   return (
     <>
-      <div className="hidden space-y-6 p-10 pb-16 md:block">
-        <div className="space-y-0.5">
-          <h2 className="text-2xl font-bold tracking-tight">KHS</h2>
-          <p className="text-muted-foreground">Isi KHS</p>
-        </div>
-        <Separator className="my-6" />
-
-        <div className="mt-10 flex-grow mb-10">
-          <Card className="max-w-2xl mx-auto">
-            <CardHeader>
-              <CardTitle>Isi form KHS</CardTitle>
-              <CardDescription>Isi dengan benar</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <Form {...form}>
-                  <form
-                    onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-8"
-                  >
-                    <FormField
-                      control={form.control}
-                      name="semester_aktif"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel htmlFor="semester_aktif">
-                            Pilih Semester
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              id="semester_aktif"
-                              type="semester_aktif"
-                              placeholder="Masukkan semester"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="sks"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Jumlah SKS</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Masukkan Jumlah SKS"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="sks_kumulatif"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>SKS Kumulatif</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Masukkan SKS Kumulatif"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="ip"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>IP Semester</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Masukkan IP Semester"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="ip_kumulatif"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>IP Kumulatif</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Masukkan IPK" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <div className="grid w-full max-w-sm items-center gap-1.5">
-                      <Label htmlFor="file">Upload Scan</Label>
-                      <Input className="w-full" id="file" type="file" />
-                    </div>
-
-                    <CardFooter>
-                      <Button type="submit" className="w-full">
-                        Submit
-                      </Button>
-                    </CardFooter>
-                  </form>
-                </Form>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+    <div className="hidden space-y-6 p-10 pb-16 md:block">
+      <div className="space-y-0.5">
+        <h2 className="text-2xl font-bold tracking-tight">IRS</h2>
+        <p className="text-muted-foreground">Isi IRS anda</p>
       </div>
-    </>
-  );
-};
+      <Separator className="my-6" />
+      <div className="mt-10 flex-grow mb-10">
+        <Card className="max-w-2xl mx-auto">
+          <CardHeader>
+            <CardTitle>Isi form KHS</CardTitle>
+            <CardDescription>Isi dengan benar</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-8"
+                >
+                  <FormField
+                    control={form.control}
+                    name="semester_aktif"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Semester</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Contoh: 1" {...field} />
+                        </FormControl>
+                        <FormDescription>
+                          Masukkan sesuai semester
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="sks"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Jumlah SKS</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Contoh: 24" {...field} />
+                        </FormControl>
+                        <FormDescription>
+                          Masukkan jumlah sks anda
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="grid w-full max-w-sm items-center gap-1.5">
+                    <Label htmlFor="scan">Upload Scan</Label>
+                    <Input id="scan" type="file" />
+                    <FormDescription>Masukkan file PDF</FormDescription>
+                  </div>
+
+                  <CardFooter>
+                    <Button type="submit" className="w-full">
+                      Submit
+                    </Button>
+                  </CardFooter>
+                </form>
+              </Form>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  </>
+);
+}
 
 export default KHSForm;

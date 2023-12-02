@@ -1,12 +1,12 @@
 "use client";
 
 import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+
 import { Card } from "@/components/ui/card";
 import { useSession } from "next-auth/react";
-import { EditProfile } from "./sheetDemo";
-import { Progress } from "@/components/ui/progress";
+
 import { Loader } from "lucide-react";
+import EditProfile from "./EditProfile";
 
 export default function UserProfile() {
   const { data: session } = useSession();
@@ -23,11 +23,11 @@ export default function UserProfile() {
 
   const { user } = session;
 
-  const handleEditProfile = () => {
-    // Add logic to handle the edit profile action
-    console.log("Edit Profile clicked!");
-    // You can redirect to the edit profile page or show a modal for editing.
-  };
+  // const handleEditProfile = () => {
+  //   // Add logic to handle the edit profile action
+  //   console.log("Edit Profile clicked!");
+  //   // You can redirect to the edit profile page or show a modal for editing.
+  // };
 
   return (
     <Card className="mx-auto max-w-md p-6 rounded-lg shadow-xl bg-white dark:bg-zinc-900">
@@ -38,13 +38,13 @@ export default function UserProfile() {
             src={user.image || "/placeholder-avatar.jpg"}
           />
           <AvatarFallback>
-            {user.username && user.username.charAt(0)}
+            {user.nama && user.nama.charAt(0)}
           </AvatarFallback>
         </Avatar>
         <div className="text-center">
-          <h2 className="text-2xl font-bold">{user.username || "John Doe"}</h2>
+          <h2 className="text-2xl font-bold">{user.nama || "John Doe"}</h2>
           <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            {user.role || "Full Stack Developer at Acme Inc."}
+            {user.role || "role"}
           </p>
         </div>
       </div>
@@ -57,7 +57,7 @@ export default function UserProfile() {
         </div>
         <div className="flex justify-end">
           {/* <Button onClick={handleEditProfile}>Edit Profile</Button> */}
-          <EditProfile />
+          <EditProfile/>
         </div>
       </div>
     </Card>
