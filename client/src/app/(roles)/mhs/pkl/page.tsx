@@ -3,18 +3,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
+
 import { Label } from "@/components/ui/label";
-import React from "react";
+
 import { Separator } from "@/components/ui/separator";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+
 
 import { Button } from "@/components/ui/button";
 import {
@@ -35,66 +28,69 @@ import {
   CardFooter,
   Card,
 } from "@/components/ui/card";
+import axios from "axios";
+import { useSession } from "next-auth/react";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
+const pklSchema = z.object({
+  status: z.string(),
+  nilai: z.string(),
+  semester: z.string(),
+  status_verifikasi: z.string(),
+  file: z.unknown(),
 });
 
-const loginSchema = yup
-  .object()
-  .shape({
-    status: yup.string().required(),
-    pkl: yup.string().required(),
-    scan: yup.string().required(),
-  })
-  .required();
-
-export function ProfileForm() {
-  const form = useForm({ resolver: yupResolver(loginSchema) });
-  const [position, setPosition] = React.useState("bottom");
-
-  const onSubmit = async (value: any) => {
+const PKLForm = () => {
+  const { data: session } = useSession();
+  const accessToken = session?.user?.access_token;
+  const form = useForm<z.infer<typeof pklSchema>>({
+    resolver: zodResolver(pklSchema),
+    defaultValues: {
+      file: "",
+    },
+  });
+  const onSubmit = async (value: z.infer<typeof pklSchema>) => {
     try {
+      if (!accessToken) {
+        console.error("Access token not available");
+        return;
+      }
       // Di sini Anda dapat melakukan pengiriman data ke server atau melakukan tindakan lain sesuai kebutuhan aplikasi Anda.
       // Contoh pengiriman data menggunakan fetch API:
-      const response = await fetch("/api/submit-profile", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(value),
-      });
+      const response = await fetch(
+        "http://localhost:8080/mahasiswa/pkl/submit",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "multipart/form-data",
+          },
+          body: JSON.stringify(value),
+        }
+      );
 
       if (response.ok) {
-        // Handle sukses, misalnya menavigasi ke halaman lain atau menampilkan pesan sukses.
-        alert("Profil berhasil disubmit!");
+        alert("KHS berhasil disubmit!");
       } else {
-        // Handle kesalahan, misalnya menampilkan pesan kesalahan.
-        alert("Gagal menambahkan profil. Silakan coba lagi.");
+        alert("Gagal submit khs. Silakan coba lagi.");
       }
     } catch (error) {
-      console.error("Terjadi kesalahan:", error);
-      // Handle kesalahan lain jika ada.
+      console.error("Error submitting the form:", error);
     }
   };
 
   return (
     <>
-      <div className="hidden space-y-6 p-10 pb-16 md:block">
+      <div className="hidden space-y-6 p-10 pb-16 md:block  bg-gray-100">
         <div className="space-y-0.5">
           <h2 className="text-2xl font-bold tracking-tight">PKL</h2>
-          <p className="text-muted-foreground">Isi PKL</p>
+          <p className="text-muted-foreground">Isi PKL anda</p>
         </div>
         <Separator className="my-6" />
         <div className="mt-10 flex-grow mb-10">
@@ -105,61 +101,114 @@ export function ProfileForm() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FormField
-              control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Status Mahasiswa</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
+                <Form {...form}>
+                  <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="space-y-8"
                   >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue className="text-muted-foreground" placeholder="Status skripsi" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="belum">
-                        Belum ambil
-                      </SelectItem>
-                      <SelectItem value="sudah">Sedang ambil</SelectItem>
-                      <SelectItem value="lulus">
-                        Lulus
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                   Isi status anda
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormField
+                      control={form.control}
+                      name="status"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Status Mahasiswa</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue
+                                  className="text-muted-foreground"
+                                  placeholder="Status skripsi"
+                                />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="belum">Belum ambil</SelectItem>
+                              <SelectItem value="sudah">
+                                Sedang ambil
+                              </SelectItem>
+                              <SelectItem value="lulus">Lulus</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormDescription>Isi status anda</FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-            <FormField
-              control={form.control}
-              name="pkl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nilai PKL</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Masukkan Nilai PKL" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormField
+                      control={form.control}
+                      name="nilai"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nilai</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Contoh: 1" {...field} />
+                          </FormControl>
+                          <FormDescription>
+                            Masukkan nilai PKL
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-            <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Label htmlFor="scan">Upload Scan</Label>
-              <Input id="scan" type="file" />
-            </div>
+                    <FormField
+                      control={form.control}
+                      name="semester"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Semester</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Contoh: 1" {...field} />
+                          </FormControl>
+                          <FormDescription>
+                            Masukkan sesuai semester
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-            <CardFooter>
+
+                    <FormField
+                      control={form.control}
+                      name="status_verifikasi"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Status</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Pilih status anda" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="belum">belum</SelectItem>
+                              <SelectItem value="sedang diverifikasi">
+                                sedang diverifikasi
+                              </SelectItem>
+                              <SelectItem value="sudah">sudah</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormDescription>Pilih status anda</FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="grid w-full max-w-sm items-center gap-1.5">
+                      <Label htmlFor="scan">Upload Scan</Label>
+                      <Input id="scan" type="file" />
+                      <FormDescription>Masukkan file PDF</FormDescription>
+                    </div>
+
+                    <CardFooter>
                       <Button type="submit" className="w-full">
                         Submit
                       </Button>
@@ -175,4 +224,4 @@ export function ProfileForm() {
   );
 };
 
-export default ProfileForm;
+export default PKLForm;

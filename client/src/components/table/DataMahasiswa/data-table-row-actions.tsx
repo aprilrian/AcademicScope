@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 // import { labels } from "../data/data"
-import { mahasiswaSchema } from "../data/tabelDataMahasiswa/schema";
+import { mahasiswaSchema } from "../../data/tabelDataMahasiswa/schema";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;

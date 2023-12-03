@@ -1,0 +1,15 @@
+{
+    "nama": "Alice Smith",
+    "image": "/alice-avatar.jpg",
+    "username": "alice_smith",
+    "role": "Software Engineer",
+    "email": "alice.smith@example.com",
+    "phone": "+1234567890",
+    "address": {
+      "street": "123 Main Street",
+      "city": "Anytown",
+      "country": "Wonderland",
+      "zip": "12345"
+    }
+  }
+  

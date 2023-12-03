@@ -17,14 +17,14 @@ export default function AuthenticationPage() {
     <>
       <div className="md:hidden">
         <Image
-          src="/public/wallpaper.jpeg"
+          src="/public/auth.jpg"
           width={1200}
           height={843}
           alt="Authentication"
           className="block dark:hidden"
         />
         <Image
-          src="/public/wallpaper.jpeg"
+          src="/public/auth.jpg"
           width={1280}
           height={843}
           alt="Authentication"

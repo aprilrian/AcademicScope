@@ -133,7 +133,7 @@ export const authOptions: AuthOptions = {
       session.user = token;
       return session;
     },
-    async signIn({ user, email, credentials }) {
+    async signIn({ user, email, credentials} : any) {
       console.log("signIn", user, email, credentials);
       if (user?.isFirstLogin) {
         // Redirect to the update profile page

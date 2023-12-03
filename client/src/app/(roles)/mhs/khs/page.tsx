@@ -3,8 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
+
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
@@ -28,12 +27,23 @@ import {
 } from "@/components/ui/card";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const khsSchema = z.object({
   semester_aktif: z.string(),
   sks: z.string().min(2, {
     message: "Jumlah SKS must be at least 2 characters.",
   }),
+  sks_kumulatif: z.string().min(2, {
+    message: "Jumlah SKS must be at least 2 characters.",
+  }),
+  ip: z.string().min(2, {
+    message: "Indeks Prestasi must be at least 2 characters.",
+  }),
+  ip_kumulatif: z.string().min(2, {
+    message: "Indeks Prestasi must be at least 2 characters.",
+  }),
+  status_verifikasi: z.string(),
   file: z.unknown(),
 });
 
@@ -67,10 +77,8 @@ const KHSForm = () => {
       );
 
       if (response.ok) {
-
         alert("KHS berhasil disubmit!");
       } else {
-        
         alert("Gagal submit khs. Silakan coba lagi.");
       }
     } catch (error) {
@@ -80,79 +88,165 @@ const KHSForm = () => {
 
   return (
     <>
-    <div className="hidden space-y-6 p-10 pb-16 md:block">
-      <div className="space-y-0.5">
-        <h2 className="text-2xl font-bold tracking-tight">IRS</h2>
-        <p className="text-muted-foreground">Isi IRS anda</p>
+      <div className="hidden space-y-6 p-10 pb-16 md:block  bg-gray-100">
+        <div className="space-y-0.5">
+          <h2 className="text-2xl font-bold tracking-tight">IRS</h2>
+          <p className="text-muted-foreground">Isi IRS anda</p>
+        </div>
+        <Separator className="my-6" />
+        <div className="mt-10 flex-grow mb-10">
+          <Card className="max-w-2xl mx-auto">
+            <CardHeader>
+              <CardTitle>Isi form KHS</CardTitle>
+              <CardDescription>Isi dengan benar</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <Form {...form}>
+                  <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="space-y-8"
+                  >
+                    <FormField
+                      control={form.control}
+                      name="semester_aktif"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Semester</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Contoh: 1" {...field} />
+                          </FormControl>
+                          <FormDescription>
+                            Masukkan sesuai semester
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="sks"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Jumlah SKS</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Contoh: 24" {...field} />
+                          </FormControl>
+                          <FormDescription>
+                            Masukkan jumlah sks anda
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="sks_kumulatif"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Jumlah SKS Kumulatif</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Contoh: 24" {...field} />
+                          </FormControl>
+                          <FormDescription>
+                            Masukkan jumlah sks anda
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="ip"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Indeks Prestasi</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Contoh: 2.1, 4.0" {...field} />
+                          </FormControl>
+                          <FormDescription>
+                            Masukkan Indeks Prestasi anda
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="ip_kumulatif"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Indeks Prestasi Kumulatif</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Contoh: 2.1, 4.0" {...field} />
+                          </FormControl>
+                          <FormDescription>
+                            Masukkan Indeks Prestasi Kumulatif anda
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="status_verifikasi"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Status</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Pilih status anda" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="belum">
+                                belum
+                              </SelectItem>
+                              <SelectItem value="sedang diverifikasi">
+                                sedang diverifikasi
+                              </SelectItem>
+                              <SelectItem value="sudah">
+                                sudah
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormDescription>
+                            Pilih status anda
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="grid w-full max-w-sm items-center gap-1.5">
+                      <Label htmlFor="scan">Upload Scan</Label>
+                      <Input id="scan" type="file" />
+                      <FormDescription>Masukkan file PDF</FormDescription>
+                    </div>
+
+                    <CardFooter>
+                      <Button type="submit" className="w-full">
+                        Submit
+                      </Button>
+                    </CardFooter>
+                  </form>
+                </Form>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
-      <Separator className="my-6" />
-      <div className="mt-10 flex-grow mb-10">
-        <Card className="max-w-2xl mx-auto">
-          <CardHeader>
-            <CardTitle>Isi form KHS</CardTitle>
-            <CardDescription>Isi dengan benar</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-8"
-                >
-                  <FormField
-                    control={form.control}
-                    name="semester_aktif"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Semester</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Contoh: 1" {...field} />
-                        </FormControl>
-                        <FormDescription>
-                          Masukkan sesuai semester
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="sks"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Jumlah SKS</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Contoh: 24" {...field} />
-                        </FormControl>
-                        <FormDescription>
-                          Masukkan jumlah sks anda
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="grid w-full max-w-sm items-center gap-1.5">
-                    <Label htmlFor="scan">Upload Scan</Label>
-                    <Input id="scan" type="file" />
-                    <FormDescription>Masukkan file PDF</FormDescription>
-                  </div>
-
-                  <CardFooter>
-                    <Button type="submit" className="w-full">
-                      Submit
-                    </Button>
-                  </CardFooter>
-                </form>
-              </Form>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  </>
-);
-}
+    </>
+  );
+};
 
 export default KHSForm;

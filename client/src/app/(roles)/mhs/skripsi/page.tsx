@@ -7,11 +7,10 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
+
 import { Label } from "@/components/ui/label";
 import React from "react";
 import { CalendarIcon } from "@radix-ui/react-icons";
@@ -44,190 +43,261 @@ import {
   CardFooter,
   Card,
 } from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { useSession } from "next-auth/react";
 
-const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
+const skripsiSchema = z.object({
+  status: z.string(),
+  nilai: z.string(),
+  semester: z.string(),
+  tanggal_lulus: z.date({
+    required_error: "tanggal sidang is required.",
   }),
+  tanggal_sidang: z.date({
+    required_error: "tanggal sidang is required.",
+  }),
+  lama_studi: z.string(),
+  file: z.unknown(),
 });
 
-const loginSchema = yup
-  .object()
-  .shape({
-    status: yup.string().required(),
-    skripsi: yup.string().required(),
-    scan: yup.string().required(),
-    tglSidang: yup.string().required(),
-    lamaStudi: yup.string().required(),
-  })
-  .required();
-
-export function ProfileForm() {
-  const form = useForm({ resolver: yupResolver(loginSchema) });
-  const [position, setPosition] = React.useState("bottom");
-  const [date, setDate] = React.useState<Date>();
-
-  const onSubmit = async (value: any) => {
+const SKRIPSIForm = () => {
+  const { data: session } = useSession();
+  const accessToken = session?.user?.access_token;
+  const form = useForm<z.infer<typeof skripsiSchema>>({
+    resolver: zodResolver(skripsiSchema),
+    defaultValues: {
+      file: "",
+    },
+  });
+  const onSubmit = async (value: z.infer<typeof skripsiSchema>) => {
     try {
+      if (!accessToken) {
+        console.error("Access token not available");
+        return;
+      }
       // Di sini Anda dapat melakukan pengiriman data ke server atau melakukan tindakan lain sesuai kebutuhan aplikasi Anda.
       // Contoh pengiriman data menggunakan fetch API:
-      const response = await fetch("/api/submit-profile", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(value),
-      });
+      const response = await fetch(
+        "http://localhost:8080/mahasiswa/skripsi/submit",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "multipart/form-data",
+          },
+          body: JSON.stringify(value),
+        }
+      );
 
       if (response.ok) {
-        // Handle sukses, misalnya menavigasi ke halaman lain atau menampilkan pesan sukses.
-        alert("Profil berhasil disubmit!");
+        alert("KHS berhasil disubmit!");
       } else {
-        // Handle kesalahan, misalnya menampilkan pesan kesalahan.
-        alert("Gagal menambahkan profil. Silakan coba lagi.");
+        alert("Gagal submit khs. Silakan coba lagi.");
       }
     } catch (error) {
-      console.error("Terjadi kesalahan:", error);
-      // Handle kesalahan lain jika ada.
+      console.error("Error submitting the form:", error);
     }
   };
 
   return (
     <>
-      <div className="hidden space-y-6 p-10 pb-16 md:block">
+      <div className="hidden space-y-6 p-10 pb-16 md:block  bg-gray-100">
         <div className="space-y-0.5">
           <h2 className="text-2xl font-bold tracking-tight">Skripsi</h2>
-          <p className="text-muted-foreground">Isi Skripsi</p>
+          <p className="text-muted-foreground">Isi Skripsi anda</p>
         </div>
         <Separator className="my-6" />
         <div className="mt-10 flex-grow mb-10">
           <Card className="max-w-2xl mx-auto">
             <CardHeader>
-              <CardTitle>Isi form PKL</CardTitle>
+              <CardTitle>Isi form Skripsi</CardTitle>
               <CardDescription>Isi dengan benar</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <FormField
-              control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Status Mahasiswa</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
+                <Form {...form}>
+                  <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="space-y-8"
                   >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue className="text-muted-foreground" placeholder="Status skripsi" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="belum">
-                        Belum ambil
-                      </SelectItem>
-                      <SelectItem value="sudah">Sedang ambil</SelectItem>
-                      <SelectItem value="lulus">
-                        Lulus
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                   Isi status anda
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormField
+                      control={form.control}
+                      name="status"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Status Mahasiswa</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue
+                                  className="text-muted-foreground"
+                                  placeholder="Status skripsi"
+                                />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="belum">Belum ambil</SelectItem>
+                              <SelectItem value="sudah">
+                                Sedang ambil
+                              </SelectItem>
+                              <SelectItem value="lulus">Lulus</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormDescription>Isi status anda</FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-            <FormField
-              control={form.control}
-              name="skripsi"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nilai Skripsi</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Masukkan Nilai Skripsi" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormField
+                      control={form.control}
+                      name="nilai"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nilai</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Contoh: 1" {...field} />
+                          </FormControl>
+                          <FormDescription>Masukkan nilai PKL</FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-            <FormField
-              control={form.control}
-              name="tglSidang"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Tanggal Sidang</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={"outline"}
-                          className={cn(
-                            "w-[240px] pl-3 text-left font-normal w-full",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value ? (
-                            format(field.value, "PPP")
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
-                        }
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormField
+                      control={form.control}
+                      name="semester"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Semester</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Contoh: 1" {...field} />
+                          </FormControl>
+                          <FormDescription>
+                            Masukkan sesuai semester
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-            <FormField
-              control={form.control}
-              name="lamaStudi"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Lama Studi</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Masukkan Lama Studi" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormField
+                      control={form.control}
+                      name="tanggal_sidang"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col">
+                          <FormLabel>Tanggal Sidang</FormLabel>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant={"outline"}
+                                  className={cn(
+                                    "w-[240px] pl-3 text-left font-normal w-full",
+                                    !field.value && "text-muted-foreground"
+                                  )}
+                                >
+                                  {field.value ? (
+                                    format(field.value, "PPP")
+                                  ) : (
+                                    <span>Pick a date</span>
+                                  )}
+                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent
+                              className="w-auto p-0"
+                              align="start"
+                            >
+                              <Calendar
+                                mode="single"
+                                selected={field.value}
+                                onSelect={field.onChange}
+                                disabled={(date) =>
+                                  date > new Date() ||
+                                  date < new Date("1900-01-01")
+                                }
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-            <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Label htmlFor="scan">Upload Scan</Label>
-              <Input id="scan" type="file" />
-            </div>
+                    <FormField
+                      control={form.control}
+                      name="tanggal_lulus"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col">
+                          <FormLabel>Tanggal Lulus</FormLabel>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant={"outline"}
+                                  className={cn(
+                                    "w-[240px] pl-3 text-left font-normal w-full",
+                                    !field.value && "text-muted-foreground"
+                                  )}
+                                >
+                                  {field.value ? (
+                                    format(field.value, "PPP")
+                                  ) : (
+                                    <span>Pick a date</span>
+                                  )}
+                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent
+                              className="w-auto p-0"
+                              align="start"
+                            >
+                              <Calendar
+                                mode="single"
+                                selected={field.value}
+                                onSelect={field.onChange}
+                                disabled={(date) =>
+                                  date > new Date() ||
+                                  date < new Date("1900-01-01")
+                                }
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-            <CardFooter>
+                    <FormField
+                      control={form.control}
+                      name="lama_studi"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Lama Studi</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Masukkan Lama Studi"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="grid w-full max-w-sm items-center gap-1.5">
+                      <Label htmlFor="scan">Upload Scan</Label>
+                      <Input id="scan" type="file" />
+                    </div>
+
+                    <CardFooter>
                       <Button type="submit" className="w-full">
                         Submit
                       </Button>
@@ -243,4 +313,4 @@ export function ProfileForm() {
   );
 };
 
-export default ProfileForm;
+export default SKRIPSIForm;

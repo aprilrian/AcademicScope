@@ -71,10 +71,11 @@ import { ModeToggle } from "../theme/toggle";
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() => {
-                  signOut();
-                  router.push('/');
+                onClick={async () => {
+                  await signOut();
+                  router.push('/login');
                 }}
+                
               >
                 Log out
                 <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>

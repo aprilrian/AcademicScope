@@ -16,7 +16,7 @@ export default async function middleware(request: NextRequest) {
   if (!session && isProtected) {
     return NextResponse.redirect(new URL('/login', request.url))
   } else if (session && path === '/login') {
-    return NextResponse.redirect(new URL('/admin/dashboard', request.url))
+    return NextResponse.redirect(new URL('/mhs/dashboard', request.url))
   }
   return NextResponse.next()
 }

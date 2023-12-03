@@ -11,10 +11,8 @@ declare module "next-auth" {
       password: string;
       access_token: string;
       refreshToken: string;
-      nama : string;
+      nama: string;
+      isFirstLogin?: boolean;
     };
   }
-  interface CustomUser extends DefaultUser {
-    isFirstLogin?: boolean;
-  }
-}
+};

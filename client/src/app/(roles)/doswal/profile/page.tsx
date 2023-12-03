@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/card";
 import { useSession } from "next-auth/react";
 
 
-import EditProfile from "./updProfil";
+import EditProfile from "./EditProfile";
 import { Loader } from 'lucide-react';
 
 interface UserProfileProps {}
@@ -27,8 +27,6 @@ const UserProfile: FC<UserProfileProps> = () => {
 
   const { user } = session;
 
-
-  
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-800">
       <Card className="mx-auto max-w-md p-6 rounded-lg shadow-xl bg-white dark:bg-zinc-900">
