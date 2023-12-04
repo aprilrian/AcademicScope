@@ -8,4 +8,8 @@ router.post(
     [authMiddleware.verifyToken, authMiddleware.isMahasiswa, userMiddleware.hasUpdateProfile, userMiddleware.getMahasiswaById, upload],
     controller.submitPKL);
 
+router.post('/getPKLByDosen', 
+    [authMiddleware.verifyToken, authMiddleware.isDosen],
+    controller.getPKLByDosen);
+
 module.exports = router;

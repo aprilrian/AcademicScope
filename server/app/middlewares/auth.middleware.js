@@ -19,15 +19,6 @@ verifyToken = (req, res, next) => {
     
     req.user_id = decoded.id;
     req.user_nama = decoded.nama;
-
-    if (decoded.role === 'mahasiswa') {
-      req.mahasiswa_nim = decoded.nim 
-      req.mahasiswa_nama = decoded.nama 
-    } else {
-      req.dosen_nip = decoded.nip
-      req.dosen_nama = decoded.nama
-    }
-
     next();
   });
 };

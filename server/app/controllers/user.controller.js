@@ -1,6 +1,7 @@
 const { User, Mahasiswa, Dosen } = require("../models");
 const csv = require('csvtojson');
 const fs = require('fs');
+const bcrypt = require('bcryptjs');
 
 exports.allAccess = (req, res) => {
   res.status(200).send("Public Content.");
@@ -20,6 +21,16 @@ exports.dosenBoard = (req, res) => {
 
 exports.departemenBoard = (req, res) => {
   res.status(200).send("Departemen Content.");
+}
+
+exports.changePassword = async (req, res) => {
+  try {
+    const { password } = req.body;
+    const passwordHash = bcrypt.hashSync(password, 8);
+    await User.update({ password: passwordHash }, { where: { id: req.user_id } });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
 }
 
 // OPERATOR
@@ -103,6 +114,32 @@ exports.generateBatch = async (req, res) => {
 // DEPARTEMEN
 
 // DOSEN
+exports.updateDosen = async (req, res) => {
+  try {
+    const t = await User.sequelize.transaction();
+    const { alamat, phone } = req.body;
+
+    const user = await User.findOne({ where: { id: req.user_id }, transaction: t });
+    if (user) {
+      this.changePassword(req, res);
+      if (req.file) {
+        await Dosen.update({ foto: req.file.path }, { where: { user_id: req.user_id } });
+      }
+      await Dosen.update(
+        {
+          alamat: alamat,
+          phone: phone,
+        },
+        { where: { user_id: req.user_id }, transaction: t }
+      );
+    }
+    await t.commit();
+    res.status(200).send('Profile berhasil diperbarui');
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+}
+
 exports.getAllDosen = async (req, res) => {
   try {
     const dosen = await Dosen.findAll();
@@ -120,6 +157,7 @@ exports.updateMahasiswa = async (req, res) => {
 
     const user = await User.findOne({ where: { id: req.user_id }, transaction: t });
     if (user) {
+      this.changePassword(req, res);
       if (req.file) {
         await Mahasiswa.update({ foto: req.file.path }, { where: { user_id: req.user_id } });
       }
@@ -152,9 +190,9 @@ exports.getAllMahasiswa = async (req, res) => {
   }
 }
 
-exports.getMahasiswaByDosen = async (req, res) => {
+exports.getAllMahasiswaByDosen = async (req, res) => {
   try {
-    const mahasiswa = await Mahasiswa.findAll({ where: { nip_dosen: req.params.nip_dosen } });
+    const mahasiswa = await Mahasiswa.findAll({ where: { nip_dosen: req.dosen_nip } });
     res.status(200).send(mahasiswa);
   } catch (error) {
     res.status(500).send({ message: error.message });

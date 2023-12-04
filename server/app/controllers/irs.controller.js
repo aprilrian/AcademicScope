@@ -3,78 +3,60 @@ const fs = require("fs").promises;
 
 exports.submitIRS = async (req, res) => {
   try {
-    const mahasiswa = await Mahasiswa.findOne({ where: { user_id: req.user_id } });
-
-    if (!mahasiswa) {
-      return res.status(404).send({ message: "Mahasiswa not found!" });
-    }
-
-    let irs = await IRS.findOne({
+    const mahasiswa = req.mahasiswa;
+    let existingIRS = await IRS.findOne({
       where: {
         mahasiswa_nim: mahasiswa.nim,
         semester_aktif: req.body.semester_aktif,
       },
     });
 
-    if (irs) {
+    if (existingIRS) {
       if (req.file) {
-        if (irs.file) {
-          await fs.unlink(irs.file);
+        if (existingIRS.file) {
+          await fs.unlink(existingIRS.file);
         }
-        irs.file = req.file.path;
+        existingIRS.file = req.file.path;
       }
-      irs.sks = req.body.sks;
-      await irs.save();
+      existingIRS.sks = req.body.sks;
+      await existingIRS.save();
 
-      res.send({ message: "IRS was updated successfully." });
-    } else {
-      const newIRS = {
-        semester_aktif: req.body.semester_aktif,
-        sks: req.body.sks,
-        file: req.file.path,
-        mahasiswa_nim: mahasiswa.nim,
-      };
-
-      await IRS.create(newIRS);
-
-      res.status(201).send({ message: "IRS was created successfully." });
+      return res.send({ message: "IRS was updated successfully." });
     }
+
+    const newIRS = {
+      mahasiswa_nim: mahasiswa.nim,
+      semester_aktif: req.body.semester_aktif,
+      sks: req.body.sks,
+      file: req.file.path,
+    };
+
+    await IRS.create(newIRS);
+
+    res.status(201).send({ message: "IRS was created successfully." });
   } catch (err) {
     if (req.file) {
       await fs.unlink(req.file.path);
     }
-    console.log(err);
-    res.status(500).send({ message: err.message || "Some error occurred while creating the IRS." });
+    console.error(err);
+    res.status(500).send({ message: "Internal Server Error" });
   }
 };
 
-
-
-exports.getIRS = (req, res) => {
-  IRS.findAll({
-    where: {
-      mahasiswaId: req.mahasiswaId,
-    },
-  })
-    .then((data) => {
-      let list_obj = [];
-      data.forEach((irs) => {
-        let filename = irs.file.split("\\").pop().split("/").pop();
-        filename = filename.split("-").slice(1).join("-");
-        const newObj = {
-          semester_aktif: irs.semesterAktif,
-          sks: irs.sks,
-          status_konfirmasi: irs.statusKonfirmasi,
-          file: filename,
-        };
-        list_obj.push(newObj);
-      });
-      res.status(200).send(list_obj);
-    })
-    .catch((err) => {
-      res.status(500).send({ message: err.message || "Some error occurred while retrieving IRS." });
+exports.getIRSByMahasiswa = async (req, res) => {
+  try {
+    const irs = await IRS.findAll({
+      where: {
+        mahasiswa_nim: req.mahasiswa.nim,
+      },
     });
-};
+
+    res.status(200).send(irs);
+
+  } catch (err) {
+    res.status(500).send({ message: err.message || "Some error occurred while retrieving IRS." });
+  }
+}
 
 exports.getAllIRS = async (req, res) => {
   try {

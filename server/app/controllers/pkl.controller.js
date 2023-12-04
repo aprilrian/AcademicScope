@@ -102,25 +102,25 @@ exports.getRekapPKL = async (req, res) => {
   }
 };
 
-exports.getWaliPKL = async (req, res) => {
+exports.getPKLByDosen = async (req, res) => {
   try {
-    const dosen = await DosenModel.findOne({ user: req.userId });
-    const resultMhs = await MahasiswaModel.findAll({ kodeWali: dosen.id });
-    const resultPKL = await PKLModel.findAll();
-    let result = [];
+    const resultMhs = await Mahasiswa.findAll({ nip_dosen: req.dosen_nip });
+    const resultPKL = await PKL.findAll();
 
+    let result = [];
     for (let i = 0; i < resultMhs.length; i++) {
       let ck = false;
       for (let j = 0; j < resultPKL.length; j++) {
-        if (resultMhs[i].id === resultPKL[j].mahasiswaId) {
+        if (resultMhs[i].id === resultPKL[j].mahasiswa_nim) {
           result.push({
             id: resultPKL[j].id,
-            name: resultMhs[i].name,
+            name: resultMhs[i].nama,
             nim: resultMhs[i].nim,
             angkatan: resultMhs[i].angkatan,
+            status: resultPKL[j].status,
             nilai: resultPKL[j].nilai,
             semester: resultPKL[j].semester,
-            status_konfirmasi: resultPKL[j].statusKonfirmasi,
+            status_verifikasi: resultPKL[j].status_verifikasi,
             file: resultPKL[j].file,
           });
           ck = true;

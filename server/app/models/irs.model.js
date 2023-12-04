@@ -56,7 +56,7 @@ const IRS = sequelize.define('IRS', {
     },
   },
   status_verifikasi: {
-    type: DataTypes.ENUM('belum', 'sedang diverifikasi' ,'sudah'),
+    type: DataTypes.ENUM('belum', 'sudah'),
     defaultValue: 'belum',
   },
 }, {

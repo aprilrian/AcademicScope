@@ -25,10 +25,7 @@ exports.getAllByProvinsi = async (req, res) => {
                 kode_provinsi: req.params.kode_provinsi
             }
         });
-        res.status(200).send({
-        message: "Success",
-        data: data
-        });
+        res.status(200).send(data);
     } catch (err) {
         res.status(500).send({
         message: err.message || "Some error occured while retrieving kabupatenKota."
