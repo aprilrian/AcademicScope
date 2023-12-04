@@ -142,3 +142,21 @@ exports.updateMahasiswa = async (req, res) => {
     res.status(500).send({ message: error.message });
   }
 }
+
+exports.getAllMahasiswa = async (req, res) => {
+  try {
+    const mahasiswa = await Mahasiswa.findAll();
+    res.status(200).send(mahasiswa);
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+}
+
+exports.getMahasiswaByDosen = async (req, res) => {
+  try {
+    const mahasiswa = await Mahasiswa.findAll({ where: { nip_dosen: req.params.nip_dosen } });
+    res.status(200).send(mahasiswa);
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+}

@@ -92,6 +92,7 @@ exports.signin = async (req, res) => {
       ...userData,
       access_token: token,
     });
+
   } catch (error) {
     console.error(error);
     res.status(500).send({ message: error.message });

@@ -6,14 +6,21 @@ const kabupatenKotaController = require('../controllers/kabupatenKota.controller
 const provinsiController = require('../controllers/provinsi.controller');
 
 // Kabupaten Kota
-router.get('/kabupatenKota', kabupatenKotaController.getAll);
+router.get('/getKabupatenKota', kabupatenKotaController.getAll);
 router.get('/kabupatenKota/:kode_provinsi', kabupatenKotaController.getAllByProvinsi);
 
 // Provinsi
-router.get('/provinsi', provinsiController.getAll);
+router.get('/getAllProvinsi', provinsiController.getAll);
 
 // User
-router.get('/dosen', userController.getAllDosen);
-router.get("/batchTemplate", userController.getBatchTemplate)
+router.get('/getAllDosen', userController.getAllDosen);
+router.get("/getBatchTemplate", userController.getBatchTemplate)
+
+// Mahasiswa
+router.get('/getAllMahasiswa', userController.getAllMahasiswa);
+router.get('/getMahasiswaByDosen/:nip_dosen', userController.getMahasiswaByDosen);
+
+// PKL
+
 
 module.exports = router;

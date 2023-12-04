@@ -41,16 +41,12 @@ getDosenById = async (req, res, next) => {
 
 hasUpdateProfile = async (req, res, next) => {
     try {
-        if (req.dosen) {
-            if (req.dosen.email === null) {
-                return res.redirect("http://localhost:3000/doswal/updProfil");
-            }
+        if (req.dosen && req.dosen.alamat === null) {
+            return res.redirect("http://localhost:3000/doswal/updProfil");
         }
 
-        if (req.mahasiswa) {
-            if (req.mahasiswa.email === null) {
-                return res.redirect("http://localhost:3000/mhs/updProfil");
-            }
+        if (req.mahasiswa && req.mahasiswa.email === null) {
+            return res.redirect("http://localhost:3000/mhs/updProfil");
         }
         next();
     } catch (error) {
@@ -60,6 +56,7 @@ hasUpdateProfile = async (req, res, next) => {
 
 const mahasiswaMiddleware = {
     getMahasiswaById,
+    getDosenById,
     hasUpdateProfile,
 }
 
