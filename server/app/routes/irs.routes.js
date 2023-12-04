@@ -15,4 +15,19 @@ router.get(
     [authMiddleware.verifyToken, authMiddleware.isMahasiswa, userMiddleware.getMahasiswaByID],
     controller.getIRSByMahasiswa);
 
+router.get(
+    '/getIRSByDosen',
+    [authMiddleware.verifyToken, authMiddleware.isDosen, userMiddleware.getDosenByID],
+    controller.getIRSByDosen);
+
+router.put(
+    '/verifikasi/:nim/:semester_aktif',
+    [authMiddleware.verifyToken, authMiddleware.isDosen, userMiddleware.getDosenByID],
+    controller.verifyIRS);
+
+router.delete(
+    '/delete/:nim/:semester_aktif',
+    [authMiddleware.verifyToken, authMiddleware.isDosen, userMiddleware.getDosenByID],
+    controller.deleteIRS);
+
 module.exports = router;

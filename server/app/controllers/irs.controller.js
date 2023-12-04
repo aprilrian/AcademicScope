@@ -1,9 +1,24 @@
 const { IRS, Mahasiswa, Dosen } = require("../models");
 const fs = require("fs").promises;
+const userController = require("./user.controller");
 
 exports.submitIRS = async (req, res) => {
   try {
     const mahasiswa = req.mahasiswa;
+
+    const lastSubmittedIRS = await IRS.findOne({
+      where: {
+        mahasiswa_nim: mahasiswa.nim,
+      },
+      order: [["semester_aktif", "DESC"]],
+    });
+
+    if (lastSubmittedIRS) {
+      if (req.body.semester_aktif != lastSubmittedIRS.semester_aktif + 1) {
+        return res.status(400).json({ message: "IRS semester must be sequential." });
+      }
+    }
+
     let existingIRS = await IRS.findOne({
       where: {
         mahasiswa_nim: mahasiswa.nim,
@@ -58,44 +73,28 @@ exports.getIRSByMahasiswa = async (req, res) => {
   }
 }
 
+exports.getIRSByDosen = async (req, res) => {
+  try {
+    const dosen = req.dosen;
+    const list_mhs = await Mahasiswa.findAll({ where: { nip_dosen: dosen.nip } });
+    const list_irs = await IRS.findAll({ where: { mahasiswa_nim: list_mhs.map(mhs => mhs.nim), status_verifikasi: "belum" } });
+
+    res.status(200).json(list_irs);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message || "Some error occurred while retrieving IRS." });
+  }
+}
+
 exports.getAllIRS = async (req, res) => {
   try {
-    let array_mahasiswa = await Mahasiswa.findAll({});
-    let array_irs = await IRS.findAll({});
-
-    let result = [];
-    for (let i = 0; i < array_mahasiswa.length; i++) {
-      let irs_mahasiswa = [];
-      for (let j = 0; j < array_irs.length; j++) {
-        // cek tiap irs yang punya nilai mahasiswa == mahasiswa.id
-        if (array_mahasiswa[i].id === array_irs[j].mahasiswaId) {
-          let obj_irs = {
-            semester_aktif: array_irs[j].semesterAktif,
-            sks: array_irs[j].sks,
-            file: array_irs[j].file,
-            status_konfirmasi: array_irs[j].statusKonfirmasi,
-          };
-
-          irs_mahasiswa.push(obj_irs);
-        }
-      }
-      let obj_mahasiswa = {
-        name: array_mahasiswa[i].name,
-        nim: array_mahasiswa[i].nim,
-        angkatan: array_mahasiswa[i].angkatan,
-        irs: irs_mahasiswa,
-      };
-
-      result.push(obj_mahasiswa);
-    }
-
-    res.status(200).send(result);
+    const irs = await IRS.findAll();
+    res.status(200).send(irs);
   } catch (err) {
     res.status(500).send({ message: err.message || "Some error occurred while retrieving IRS." });
   }
 };
 
-//download irs file dari database berdasarkan nim mahasiswa dan semester
 exports.downloadIRS = (req, res) => {
   IRS.findOne({
     where: {
@@ -156,20 +155,18 @@ exports.waliIRS = async (req, res) => {
 
 exports.verifyIRS = async (req, res) => {
   try {
-    const mhs = await Mahasiswa.findOne({ nim: req.params.nim });
-    const dosen = await Dosen.findOne({ user: req.userId });
-
-    if (!dosen.id === mhs.kodeWali) {
-      res.status(403).send(`You are not the academic advisor of ${mhs.name}`);
-      return;
-    }
+    const dosen = req.dosen;
+    const mhsList = await Mahasiswa.findAll({ where: { nip_dosen: dosen.nip } });
+    const mhs = mhsList.find((mhs) => mhs.nim == req.params.nim);
 
     await IRS.update(
-      { statusKonfirmasi: "sudah" },
+      {
+        status_verifikasi: "sudah",
+      },
       {
         where: {
-          mahasiswaId: mhs.id,
-          semesterAktif: req.params.semester_aktif,
+          mahasiswa_nim: mhs.nim,
+          semester_aktif: req.params.semester_aktif,
         },
       }
     );
@@ -177,6 +174,41 @@ exports.verifyIRS = async (req, res) => {
     res.status(200).send({ message: "OK" });
   } catch (err) {
     res.status(500).send({ message: err.message || "Some error occurred while updating IRS." });
+  }
+};
+
+exports.deleteIRS = async (req, res) => {
+  try {
+    const dosen = req.dosen;
+    const mhs = await Mahasiswa.findOne({ where: { nip_dosen: dosen.nip, nim: req.params.nim } });
+
+    if (!mhs) {
+      return res.status(404).send({ message: "Mahasiswa not found!" });
+    }
+
+    const irs = await IRS.findOne({
+      where: {
+        mahasiswa_nim: mhs.nim,
+        semester_aktif: req.params.semester_aktif,
+      },
+    });
+
+    if (!irs) {
+      return res.status(404).send({ message: "IRS not found!" });
+    }
+
+    await fs.unlink(irs.file);
+    await IRS.destroy({
+      where: {
+        mahasiswa_nim: mhs.nim,
+        semester_aktif: req.params.semester_aktif,
+      },
+    });
+
+    res.status(200).send({ message: "IRS was deleted successfully!" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: err.message || "Some error occurred while processing the request." });
   }
 };
 

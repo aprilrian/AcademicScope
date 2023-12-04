@@ -47,6 +47,7 @@ router.post("/dosen/updateProfile",
 router.get('/getAllMahasiswaByDosen', 
   [authMiddleware.verifyToken, authMiddleware.isDosen, userMiddleware.getDosenByID ,userMiddleware.hasUpdateProfile],
   controller.getAllMahasiswaByDosen);
+  router.use("/dosen/irs", require("./irs.routes"));
 
 // DEPARTEMEN x OPERATOR
 router.get('/getAllDosen', 
