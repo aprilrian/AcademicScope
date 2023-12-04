@@ -8,8 +8,8 @@ const corsConfig = require("./app/configs/cors.config");
 
 // Using services
 app.use(corsConfig);
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Database synchronization
 // db.sequelize.sync({ alter: true, force: true }).then(() => {
