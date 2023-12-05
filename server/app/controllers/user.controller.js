@@ -192,7 +192,7 @@ exports.getAllMahasiswa = async (req, res) => {
 
 exports.getAllMahasiswaByDosen = async (req, res) => {
   try {
-    const mahasiswa = await Mahasiswa.findAll({ where: { nip_dosen: req.dosen_nip } });
+    const mahasiswa = await Mahasiswa.findAll({ where: { nip_dosen: req.dosen.nip } });
     res.status(200).send(mahasiswa);
   } catch (error) {
     res.status(500).send({ message: error.message });

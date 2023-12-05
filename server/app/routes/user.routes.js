@@ -27,7 +27,7 @@ router.post("/operator/generate",
 router.post("/operator/generateBatch", 
   [authMiddleware.verifyToken, authMiddleware.isOperator],
   controller.generateBatch);
-router.get("/getBatchTemplate", 
+router.get("/operator/getBatchTemplate", 
   [authMiddleware.verifyToken, authMiddleware.isOperator],
   controller.getBatchTemplate)
 
@@ -35,7 +35,9 @@ router.get("/getBatchTemplate",
 router.post("/mahasiswa/updateProfile", 
   [authMiddleware.verifyToken, authMiddleware.isMahasiswa, upload],
   controller.updateMahasiswa);
-router.use("/mahasiswa/irs", require("./irs.routes"));
+router.use("/mahasiswa/irs", 
+  // [authMiddleware.verifyToken, authMiddleware.isMahasiswa, userMiddleware.getMahasiswaByID ,userMiddleware.hasUpdateProfile],
+  require("./irs.routes"));
 // router.use("/mahasiswa/khs", require("./khs.routes")); 
 // router.use("/mahasiswa/pkl", require("./pkl.routes"));
 // router.use("/mahasiswa/skripsi", require("./skripsi.routes"));
@@ -44,17 +46,22 @@ router.use("/mahasiswa/irs", require("./irs.routes"));
 router.post("/dosen/updateProfile", 
   [authMiddleware.verifyToken, authMiddleware.isDosen, upload],
   controller.updateDosen);
-router.get('/getAllMahasiswaByDosen', 
-  [authMiddleware.verifyToken, authMiddleware.isDosen, userMiddleware.getDosenByID ,userMiddleware.hasUpdateProfile],
+router.get('/dosen/getAllMahasiswaByDosen', 
+  [authMiddleware.verifyToken, authMiddleware.isDosen, userMiddleware.getDosenByID],
   controller.getAllMahasiswaByDosen);
-  router.use("/dosen/irs", require("./irs.routes"));
+  router.use("/dosen/irs", 
+  [authMiddleware.verifyToken, authMiddleware.isDosen, userMiddleware.getDosenByID ,userMiddleware.hasUpdateProfile],
+  require("./irs.routes"));
 
-// DEPARTEMEN x OPERATOR
-router.get('/getAllDosen', 
+// DEPARTEMEN x OPERATOR = MASTER
+router.get('/master/getAllDosen', 
   [authMiddleware.verifyToken, authMiddleware.isMaster],
   controller.getAllDosen);
-router.get('/getAllMahasiswa', 
+router.get('/master/getAllMahasiswa', 
   [authMiddleware.verifyToken, authMiddleware.isMaster],
   controller.getAllMahasiswa);
+router.get('/master/irs',
+  [authMiddleware.verifyToken, authMiddleware.isMaster],
+  require("./irs.routes"));
 
 module.exports = router;

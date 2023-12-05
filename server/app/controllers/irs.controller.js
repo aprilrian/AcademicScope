@@ -19,6 +19,12 @@ exports.submitIRS = async (req, res) => {
       }
     }
 
+    if (!lastSubmittedIRS) {
+      if (req.body.semester_aktif != 1) {
+        return res.status(400).json({ message: "IRS semester must be started from 1." });
+      }
+    }
+
     let existingIRS = await IRS.findOne({
       where: {
         mahasiswa_nim: mahasiswa.nim,
@@ -95,26 +101,35 @@ exports.getAllIRS = async (req, res) => {
   }
 };
 
-exports.downloadIRS = (req, res) => {
-  IRS.findOne({
-    where: {
-      mahasiswaId: req.mahasiswaId,
-      semesterAktif: req.params.semester_aktif,
-    },
-  })
-    .then((irs) => {
-      if (!irs) {
-        res.status(404).send({ message: "File not found!" });
-        return;
-      }
-      const file = fs.createReadStream(irs.file);
-      const filename = "IRS_" + irs.semesterAktif;
-      res.setHeader("Content-disposition", "attachment; filename=" + filename);
-      file.pipe(res);
-    })
-    .catch((err) => {
-      res.status(500).send({ message: err.message || "Some error occurred while retrieving IRS." });
+exports.showIRS = async (req, res) => {
+  try {
+    const irs = await IRS.findOne({
+      where: {
+        mahasiswa_nim: req.params.nim,
+        semester_aktif: req.params.semester_aktif,
+      },
     });
+
+    if (!irs) {
+      return res.status(404).send({ message: "File not found!" });
+    }
+
+    // const fileStream = fs.createReadStream(irs.file);
+
+    // Set the appropriate content type based on the file type
+    const contentType = "application/pdf"; // Sesuaikan berdasarkan jenis file Anda
+    res.setHeader("Content-type", contentType);
+
+    // Set Content-Disposition to inline for displaying in a new tab
+    res.setHeader("Content-disposition", `inline; filename=IRS_${irs.semesterAktif}`);
+
+    res.send(irs.file);
+
+    // Pipe the file stream to the response
+    fileStream.pipe(res);
+  } catch (err) {
+    res.status(500).send({ message: err.message || "Error occurred while retrieving IRS." });
+  }
 };
 
 exports.waliIRS = async (req, res) => {

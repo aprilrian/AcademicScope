@@ -27,6 +27,9 @@ const storage = multer.diskStorage({
         }
     },
     filename: (req, file, cb) => {
+        const url = req.originalUrl;
+        const urlSplit = url.split("/");
+        const jenisFolder = urlSplit[urlSplit.length - 2];
         const ext = file.originalname.split(".").pop();
         const nama = req.user_nama;
         const filename = `${nama}-${new Date().getTime()}.${ext}`;
