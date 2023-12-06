@@ -96,8 +96,8 @@ const Login = () => {
   return (
     <div className="flex justify-center items-center flex-col min-h-screen">
       <Card className="w-full max-w-xs shadow-none">
-        <CardHeader className="pb-3">
-          <img src="/public/logo.png" alt="" />
+      <CardHeader className="pb-3 flex flex-col items-center">
+          <img src="/logo.png" alt="AcademicScope" className="w-16 h-16"/>
           <CardTitle className="flex item-center">AcademicScope</CardTitle>
           <CardDescription>Log In</CardDescription>
         </CardHeader>

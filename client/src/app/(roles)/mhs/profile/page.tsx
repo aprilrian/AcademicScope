@@ -31,16 +31,13 @@ const UserProfile: FC<UserProfileProps> = () => {
 
   const fetchUserProfile = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:8080/profileDetail",
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            // "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-  
+      const response = await axios.get("http://localhost:8080/profileDetail", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          // "Content-Type": "multipart/form-data",
+        },
+      });
+
       if (response.status === 200) {
         const userProfile = response.data;
         setUserData(userProfile);
@@ -71,9 +68,9 @@ const UserProfile: FC<UserProfileProps> = () => {
 
   return (
     <div className="flex items-center justify-center  bg-gray-100 dark:bg-gray-800">
-<Card className="w-full mx-auto p-6 rounded-lg shadow-xl bg-white dark:bg-zinc-900">
+      <Card className="w-11/12 p-6 rounded-lg shadow-xl">
         <div className="flex flex-col items-center space-y-4">
-        <Avatar className="h-64 w-64">
+          <Avatar className="h-64 w-64">
             <AvatarImage
               alt="User Avatar"
               src={`http://localhost:8080/${userData.foto}`}
@@ -88,7 +85,9 @@ const UserProfile: FC<UserProfileProps> = () => {
               {userData.nama || "John Doe"}
             </h2>
             <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            {role ? role.charAt(0).toUpperCase() + role.slice(1) : "Full Stack Developer at Acme Inc."}
+              {role
+                ? role.charAt(0).toUpperCase() + role.slice(1)
+                : "Full Stack Developer at Acme Inc."}
             </p>
           </div>
         </div>

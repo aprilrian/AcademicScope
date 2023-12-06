@@ -2,10 +2,13 @@
 
 import React, { PureComponent } from "react";
 
-import CustomPieChart from "@/components/charts/PieChart";
-import CustomBarChart from "@/components/charts/BarChart";
+
+import { LineChart } from '@mui/x-charts/LineChart';
+import { PieChart } from '@mui/x-charts/PieChart';
 
 import Image from "next/image";
+
+import { Plus } from "lucide-react"
 
 import { Button } from "@/components/ui/button";
 import {
@@ -15,9 +18,92 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+import { Check, ChevronsUpDown } from "lucide-react"
+ 
+import { cn } from "@/lib/utils"
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+
+const data = [
+  { id: 0, value: 600, label: 'Mahasiswa' },
+  { id: 1, value: 40, label: 'Dosen' },
+];
+
+const summarys = [
+  {
+    value: "ipk",
+    label: "IPK",
+  },
+  {
+    value: "irs",
+    label: "IRS",
+  },
+  {
+    value: "khs",
+    label: "KHS",
+  },
+  {
+    value: "pkl",
+    label: "PKL",
+  },
+  {
+    value: "skripsi",
+    label: "Skripsi",
+  },
+]
+
+const angkatans = [
+  {
+    value: "2016",
+    label: "2016",
+  },
+  {
+    value: "2017",
+    label: "2017",
+  },
+  {
+    value: "2018",
+    label: "2018",
+  },
+  {
+    value: "2019",
+    label: "2019",
+  },
+  {
+    value: "2020",
+    label: "2020",
+  },
+  {
+    value: "2021",
+    label: "2021",
+  },
+  {
+    value: "2022",
+    label: "2022",
+  },
+  {
+    value: "2023",
+    label: "2023",
+  },
+]
 
 export default function DashboardPage() {
+  const [open, setOpen] = React.useState(false)
+  const [opens, setOpens] = React.useState(false)
+  const [value, setValue] = React.useState("")
+  const [values, setValues] = React.useState("")
+
   return (
     <>
       <div className="md:hidden">
@@ -36,144 +122,254 @@ export default function DashboardPage() {
           className="hidden dark:block"
         />
       </div>
-      <div className="hidden flex-col md:flex  bg-gray-100 dark:bg-gray-800">
-        <div className="border-b">
-          <div className="flex h-16 items-center px-4">
-            <div className="ml-auto flex items-center space-x-4"></div>
-          </div>
-        </div>
+      
+      <div className="hidden flex-col md:flex">
         <div className="flex-1 space-y-4 p-8 pt-6">
+
           <div className="flex items-center justify-between space-y-2">
             <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
             <div className="flex items-center space-x-2"></div>
           </div>
-          <Tabs defaultValue="overview" className="space-y-4">
 
-            <TabsContent value="overview" className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Total Revenue
-                    </CardTitle>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="h-4 w-4 text-muted-foreground"
-                    >
-                      <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                    </svg>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">$45,231.89</div>
-                    <p className="text-xs text-muted-foreground">
-                      +20.1% from last month
-                    </p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Subscriptions
-                    </CardTitle>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="h-4 w-4 text-muted-foreground"
-                    >
-                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                      <circle cx="9" cy="7" r="4" />
-                      <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-                    </svg>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">+2350</div>
-                    <p className="text-xs text-muted-foreground">
-                      +180.1% from last month
-                    </p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Sales</CardTitle>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="h-4 w-4 text-muted-foreground"
-                    >
-                      <rect width="20" height="14" x="2" y="5" rx="2" />
-                      <path d="M2 10h20" />
-                    </svg>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">+12,234</div>
-                    <p className="text-xs text-muted-foreground">
-                      +19% from last month
-                    </p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Active Now
-                    </CardTitle>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="h-4 w-4 text-muted-foreground"
-                    >
-                      <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-                    </svg>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">+573</div>
-                    <p className="text-xs text-muted-foreground">
-                      +201 since last hour
-                    </p>
-                  </CardContent>
-                </Card>
+          <div className="border-b">
+              <div className="ml-auto flex items-center space-x-4"></div>
+          </div>
+
+          <div>
+            <div className="flex items-start mt-5 mb-2">
+              <h2 className="text-xl font-bold">Summary Akun</h2>
+              <div className="ml-auto">
+              <Button>
+                <Plus className="mr-2 h-4 w-4" /> Generate Akun
+              </Button>
               </div>
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                <Card className="col-span-4">
-                  <CardHeader>
-                    <CardTitle>Overview</CardTitle>
-                  </CardHeader>
-                  <CardContent className="pl-2">
-                    <CustomBarChart></CustomBarChart>
+            </div>
+
+            <div>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-l font-semibold">
+                    Diagram Akun
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pl-2">
+                  
+                  <div className="my-3">
+                    <PieChart
+                      series={[
+                        {
+                          data,
+                          highlightScope: { faded: 'global', highlighted: 'item' },
+                          faded: { innerRadius: 30, additionalRadius: -30, color: 'gray' },
+                        },
+                      ]}
+                      height={200}
+                    />
+                  </div>
+                  
+                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 ml-3 my-3">
+                    <Card>
+                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">
+                          Total Akun
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold">645</div>
+                        <p className="text-xs text-muted-foreground">
+                          Akun
+                        </p>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">
+                          Total Akun Mahasiswa
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold">174</div>
+                        <p className="text-xs text-muted-foreground">
+                          Akun Mahasiswa
+                        </p>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card>
+                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">
+                          Total Akun Dosen
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold">40</div>
+                        <p className="text-xs text-muted-foreground">
+                          Total Akun Dosen
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </div>
+                  
+
                   </CardContent>
-                </Card>
-                <Card className="col-span-3">
-                  <CardHeader>
-                    <CardTitle>Recent Sales</CardTitle>
-                    <CardDescription>Jalur Masuk</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <CustomPieChart></CustomPieChart>
-                  </CardContent>
-                </Card>
+              </Card>
+            </div>
+          </div>
+
+          <div>
+            <div className="flex items-start mt-10 mb-2">
+              <h2 className="text-xl font-bold tracking-tight">Status Mahasiswa</h2>
+              <div className="ml-auto">
+                <Popover open={opens} onOpenChange={setOpens}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={opens}
+                      className="w-[200px] justify-between"
+                    >
+                      {values
+                        ? angkatans.find((angkatan) => angkatan.value === values)?.label
+                        : "Pilih angkatan"}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[200px] p-0">
+                    <Command>
+                      {/* <CommandInput placeholder="Search angkatan..." /> */}
+                      {/* <CommandEmpty>No angkatan found.</CommandEmpty> */}
+                      <CommandGroup>
+                        {angkatans.map((angkatan) => (
+                          <CommandItem
+                            key={angkatan.value}
+                            value={angkatan.value}
+                            onSelect={(currentValue) => {
+                              setValues(currentValue === values ? "" : currentValue)
+                              setOpens(false)
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                values === angkatan.value ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            {angkatan.label}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </div>
-            </TabsContent>
-          </Tabs>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Total Mahasiswa
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">174</div>
+                  <p className="text-xs text-muted-foreground">
+                    Mahasiswa
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Mahasiswa Aktif
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">40</div>
+                  <p className="text-xs text-muted-foreground">
+                    Mahasiswa
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Mahasiswa Lulus</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">70</div>
+                  <p className="text-xs text-muted-foreground">
+                    mahasiswa
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Mahasiswa Cuti
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">8</div>
+                  <p className="text-xs text-muted-foreground">
+                    Mahasiswa
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Mahasiswa Mangkir
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">12</div>
+                  <p className="text-xs text-muted-foreground">
+                    Mahasiswa
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Mahasiswa DO
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">3</div>
+                  <p className="text-xs text-muted-foreground">
+                    Mahasiswa 
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Mahasiswa Undur Diri
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">8</div>
+                  <p className="text-xs text-muted-foreground">
+                    Mahasiswa
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Mahasiswa Meninggal Duni
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">0</div>
+                  <p className="text-xs text-muted-foreground">
+                    Mahasiswa
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         </div>
       </div>
     </>

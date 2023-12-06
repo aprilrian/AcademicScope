@@ -116,17 +116,16 @@ const KHSForm = () => {
 
   return (
     <>
-      <div className="hidden space-y-6 p-10 pb-16 md:block  bg-gray-100">
-        <div className="space-y-0.5">
+      <div className="hidden space-y-6 p-10 pb-16 md:block  bg-gray-100 dark:bg-gray-800">
+        {/* <div className="space-y-0.5">
           <h2 className="text-2xl font-bold tracking-tight">KHS</h2>
           <p className="text-muted-foreground">Isi KHS anda</p>
         </div>
-        <Separator className="my-6" />
+        <Separator className="my-6" /> */}
         <div className="mt-10 flex-grow mb-10">
-          <Card className="max-w-2xl mx-auto">
-            <CardHeader>
-              <CardTitle>Isi form KHS</CardTitle>
-              <CardDescription>Isi dengan benar</CardDescription>
+        <Card className="w-11/12 p-6 rounded-lg shadow-xl">
+        <CardHeader className="pb-3 flex flex-col items-center">
+              <CardTitle>Form Submit KHS</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
