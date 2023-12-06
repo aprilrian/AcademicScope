@@ -45,6 +45,7 @@ exports.viewProfile = async (req, res) => {
       const provinsi = await Provinsi.findByPk(mahasiswa.kode_provinsi);
 
       res.status(200).send({
+        role: user.role,
         nim: mahasiswa.nim,
         nama: mahasiswa.nama,
         angkatan: mahasiswa.angkatan,
