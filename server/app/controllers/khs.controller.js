@@ -5,73 +5,60 @@ const fs = require('fs').promises;
 exports.submitKHS = async (req, res) => {
   try {
     const mahasiswa = req.mahasiswa;
-    const { semester_aktif } = req.body;
+    const { semester_aktif, ip } = req.body;
 
-    const lastSubmittedKHS = await KHS.findOne({
-      where: { mahasiswa_nim: mahasiswa.nim },
+    const khs = await KHS.findOne({
+      where: {
+        mahasiswa_nim: mahasiswa.nim,
+        semester_aktif: semester_aktif,
+      },
+    });
+
+    const lastKHS = await KHS.findOne({
+      where: {
+        mahasiswa_nim: mahasiswa.nim,
+      },
       order: sequelize.literal('"semester_aktif"::int DESC'),
     });
 
-    const submittedIRS = await IRS.findOne({
-      where: { mahasiswa_nim: mahasiswa.nim, semester_aktif: semester_aktif },
+    if (khs) {
+      return res.status(400).send({ message: "KHS already exists!" });
+    }
+
+    const irs = await IRS.findOne({
+      where: {
+        mahasiswa_nim: mahasiswa.nim,
+        semester_aktif: semester_aktif,
+      },
     });
 
-    if (!submittedIRS) {
-      return res.status(400).json({ message: "IRS must be submitted first." });
+    if (!irs) {
+      return res.status(404).send({ message: "IRS must be submitted first!" });
     }
 
-    if (semester_aktif != submittedIRS.semester_aktif) {
-      return res.status(400).json({ message: "IRS and KHS must be in the same semester" });
+    if (semester_aktif != irs.semester_aktif) {
+      return res.status(400).send({ message: "IRS and KHS semester must be the same!" });
     }
 
-    const ip = parseFloat(req.body.ip).toFixed(2);
-    const ipk = lastSubmittedKHS ? parseFloat(lastSubmittedKHS.ip_kumulatif).toFixed(2) : 0;
-    const sks = parseInt(submittedIRS.sks, 10);
-    const sksk = lastSubmittedKHS ? parseInt(lastSubmittedKHS.sks_kumulatif, 10) : 0;
-
-    let existingKHS = await KHS.findOne({
-      where: { mahasiswa_nim: mahasiswa.nim, semester_aktif: semester_aktif },
-    });
-
-    if (existingKHS) {
-      if (req.file) {
-        await fs.unlink(existingKHS.file);
-      }
-      existingKHS.file = req.file.path
-      existingKHS.sks = sks;
-      existingKHS.sks_kumulatif = sksk + sks;
-      existingKHS.ip = ip;
-      existingKHS.ip_kumulatif = parseFloat((ipk + ip) / semester_aktif).toFixed(2);
-      await existingKHS.save();
-
-      console.log(ipk)
-      console.log(ip)
-      console.log(semester_aktif)
-      return res.send({ message: "KHS was updated successfully." });
-    }
-
-    const newKHS = {
+    await KHS.create({
       mahasiswa_nim: mahasiswa.nim,
       semester_aktif: semester_aktif,
-      sks : sks,
-      sks_kumulatif : sksk + sks,
-      ip : ip,
-      ip_kumulatif : parseFloat((ipk + ip) / semester_aktif).toFixed(2),
+      sks: irs.sks,
+      sks_kumulatif: lastKHS ? parseInt(lastKHS.sks_kumulatif, 10) + parseInt(irs.sks, 10) : irs.sks,
+      ip: parseFloat(ip).toFixed(2),
+      ip_kumulatif: lastKHS ? parseFloat((parseFloat(lastKHS.ip_kumulatif) + parseFloat(ip)) / 2).toFixed(2) : parseFloat(ip).toFixed(2),
       file: req.file.path,
-    };
+    });
 
-    await KHS.create(newKHS);
-    res.status(201).send({ message: "KHS was created successfully." });
-
+    res.status(200).send("KHS was submitted successfully!");
   } catch (err) {
     if (req.file) {
       await fs.unlink(req.file.path);
     }
     console.error(err);
-    res.status(500).send({ message: "Internal Server Error" });
+    res.status(500).send({ message: err.message || "Some error occurred while submitting KHS." });
   }
-};
-
+}
 
 exports.getKHSByMahasiswa = async (req, res) => {
   try {
@@ -88,13 +75,38 @@ exports.getKHSByMahasiswa = async (req, res) => {
   }
 }
 
-exports.getKHSByDosen = async (req, res) => {
+exports.getKHSBelumByDosen = async (req, res) => {
   try {
     const dosen = req.dosen;
-    const list_mhs = await Mahasiswa.findAll({ where: { nip_dosen: dosen.nip } });
-    const list_khs = await KHS.findAll({ where: { mahasiswa_nim: list_mhs.map(mhs => mhs.nim), status_verifikasi: "belum" } });
+    const list_khs = await KHS.findAll({
+      where: { status_verifikasi: "belum" },
+      include: [
+        {
+          model: Mahasiswa,
+          attributes: ["nama", "angkatan"],
+          where: { nip_dosen: dosen.nip },
+          as: "Mahasiswa",
+        },
+      ],
+    });
 
-    res.status(200).json(list_khs);
+    const transformedListKHS = list_khs.map(khs => ({
+      id: khs.id,
+      nama: khs.Mahasiswa?.nama || null,
+      mahasiswa_nim: khs.mahasiswa_nim,
+      angkatan: khs.Mahasiswa?.angkatan || null,
+      semester_aktif: khs.semester_aktif,
+      sks: khs.sks,
+      sks_kumulatif: khs.sks_kumulatif,
+      ip: khs.ip,
+      ip_kumulatif: khs.ip_kumulatif,
+      file: khs.file,
+      status_verifikasi: khs.status_verifikasi,
+      createdAt: khs.createdAt,
+      updatedAt: khs.updatedAt,
+    }));
+
+    res.status(200).json(transformedListKHS);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: err.message || "Some error occurred while retrieving KHS." });

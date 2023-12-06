@@ -57,9 +57,9 @@ exports.submitIRS = async (req, res) => {
     res.status(201).send({ message: "IRS was created successfully." });
   } catch (err) {
     console.error(req.file);
-    // if (req.file) {
-    //   await fs.unlink(req.file.path);
-    // }
+    if (req.file) {
+      await fs.unlink(req.file.path);
+    }
     console.error(err);
     res.status(500).send({ message: "Internal Server Error" });
   }
@@ -83,7 +83,6 @@ exports.getIRSByMahasiswa = async (req, res) => {
 exports.getIRSBelumByDosen = async (req, res) => {
   try {
     const dosen = req.dosen;
-    const list_mhs = await Mahasiswa.findAll({ where: { nip_dosen: dosen.nip } });
     const list_irs = await IRS.findAll({
       where: { status_verifikasi: "belum" },
       include: [
