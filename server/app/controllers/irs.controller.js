@@ -84,9 +84,32 @@ exports.getIRSBelumByDosen = async (req, res) => {
   try {
     const dosen = req.dosen;
     const list_mhs = await Mahasiswa.findAll({ where: { nip_dosen: dosen.nip } });
-    const list_irs = await IRS.findAll({ where: { mahasiswa_nim: list_mhs.map(mhs => mhs.nim), status_verifikasi: "belum" } });
+    const list_irs = await IRS.findAll({
+      where: { status_verifikasi: "belum" },
+      include: [
+        {
+          model: Mahasiswa,
+          attributes: ["nama", "angkatan"],
+          where: { nip_dosen: dosen.nip },
+          as: "Mahasiswa",
+        },
+      ],
+    });
 
-    res.status(200).json(list_irs);
+    const transformedListIRS = list_irs.map(irs => ({
+      id: irs.id,
+      nama: irs.Mahasiswa?.nama || null,
+      angkatan: irs.Mahasiswa?.angkatan || null,
+      mahasiswa_nim: irs.mahasiswa_nim,
+      semester_aktif: irs.semester_aktif,
+      sks: irs.sks,
+      file: irs.file,
+      status_verifikasi: irs.status_verifikasi,
+      createdAt: irs.createdAt,
+      updatedAt: irs.updatedAt,
+    }));
+
+    res.status(200).json(transformedListIRS);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: err.message || "Some error occurred while retrieving IRS." });

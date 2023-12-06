@@ -52,7 +52,7 @@ router.get('/dosen/getAllMahasiswaByDosen',
   [authMiddleware.verifyToken, authMiddleware.isDosen, userMiddleware.getDosenByID],
   controller.getAllMahasiswaByDosen);
   router.use("/dosen/irs", 
-  [authMiddleware.verifyToken, authMiddleware.isDosen, userMiddleware.getDosenByID ,userMiddleware.hasUpdateProfile],
+  [authMiddleware.verifyToken, authMiddleware.isDosen, userMiddleware.getDosenByID],
   require("./irs.routes"));
 
 // DEPARTEMEN
