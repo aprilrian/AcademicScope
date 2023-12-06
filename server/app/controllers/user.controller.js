@@ -33,6 +33,36 @@ exports.changePassword = async (req, res) => {
   }
 }
 
+exports.viewProfile = async (req, res) => {
+  try {
+    const user = await User.findOne({ where: { id: req.user_id } });
+    if (user.role === 'mahasiswa') {
+      const mahasiswa = await Mahasiswa.findOne(
+        { where: { user_id: req.user_id } });
+      const dosen = await Dosen.findOne(
+        { where: { nip: mahasiswa.nip_dosen } });
+      res.status(200).send({
+        nim: mahasiswa.nim,
+        nama: mahasiswa.nama,
+        angkatan: mahasiswa.angkatan,
+        alamat: mahasiswa.alamat,
+        kode_kabupatenKota: mahasiswa.kode_kabupatenKota,
+        kode_provinsi: mahasiswa.kode_provinsi,
+        jalur_masuk: mahasiswa.jalur_masuk,
+        email: mahasiswa.email,
+        phone: mahasiswa.phone,
+        foto: mahasiswa.foto,
+        nama_dosen: dosen.nama,
+      });
+    } else if (user.role === 'dosen') {
+      const dosen = await Dosen.findOne({ where: { user_id: req.user_id } });
+      res.status(200).send(dosen);
+    }
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+}
+
 // OPERATOR
 exports.generate = async (req, res) => {
   try {
@@ -161,6 +191,7 @@ exports.updateMahasiswa = async (req, res) => {
     const user = await User.findOne({ where: { id: req.user_id }, transaction: t });
     if (user) {
       this.changePassword(req, res);
+      console.log(req.file);
       if (req.file) {
         await Mahasiswa.update({ foto: req.file.path }, { where: { user_id: req.user_id } });
       }

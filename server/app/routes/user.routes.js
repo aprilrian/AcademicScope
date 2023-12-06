@@ -19,6 +19,9 @@ router.get("/dosen",
 router.get("/departemen", 
   [authMiddleware.verifyToken, authMiddleware.isDepartemen], 
   controller.departemenBoard);
+router.get("/profileDetail",
+  [authMiddleware.verifyToken],
+  controller.viewProfile)
 
 // OPERATOR
 router.post("/operator/generate", 

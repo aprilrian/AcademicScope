@@ -21,7 +21,7 @@ const storage = multer.diskStorage({
             cb(null, "uploads/accountMhs");
         } else if (jenisFolder === "batch-dosen") {
             cb(null, "uploads/accountDosen");
-        } else if (urlSplit[urlSplit.length - 1] === 'editMahasiswa' || urlSplit[urlSplit.length - 1] === 'updateMahasiswa') {
+        } else if (urlSplit[urlSplit.length - 1] === 'editProfile' || urlSplit[urlSplit.length - 1] === 'updateProfile') {
             cb(null, "uploads/mahasiswa");
         } else {
             cb(null, "uploads");
