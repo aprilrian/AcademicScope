@@ -16,38 +16,12 @@ const Skripsi = sequelize.define('Skripsi', {
     },
   },
   nilai: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: true,
-    validate: {
-      isInt: {
-        msg: 'Nilai harus berupa angka',
-      },
-      min: {
-        args: [0],
-        msg: 'Nilai dalam rentang 0-100',
-      },
-      max: {
-        args: [100],
-        msg: 'Nilai dalam rentang 0-100',
-      },
-    },
   },
   semester: {
-    type: DataTypes.INTEGER,
-    validate: {
-      isInt: {
-        msg: 'Semester harus berupa angka',
-      },
-      min: {
-        args: [1],
-        msg: 'Semester dalam rentang 1-14',
-      },
-      max: {
-        args: [14],
-        msg: 'Semester dalam rentang 1-14',
-      },
-    },
-    defaultValue: 8,
+    type: DataTypes.STRING,
+    allowNull: true,
   },
   tanggal_lulus: {
     type: DataTypes.DATEONLY,
@@ -68,24 +42,11 @@ const Skripsi = sequelize.define('Skripsi', {
     },
   },
   lama_studi: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: true,
-    validate: {
-      isInt: {
-        msg: 'Lama studi harus berupa angka',
-      },
-      min: {
-        args: [0],
-        msg: 'Lama studi minimal 0',
-      },
-      max: {
-        args: [14],
-        msg: 'Lama studi maksimal 14',
-      },
-    },
   },
   status_verifikasi: {
-    type: DataTypes.ENUM('belum', 'sedang diverifikasi', 'sudah'),
+    type: DataTypes.ENUM('belum', 'sudah'),
     defaultValue: 'belum',
   },
   file: {

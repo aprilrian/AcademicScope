@@ -1,5 +1,6 @@
-const { Skripsi, Mahasiswa, Dosen } = require("../models");
-const fs = require("fs");
+const { IRS, Skripsi, Mahasiswa, Dosen } = require("../models");
+const fs = require("fs").promises;
+const sequelize = require("sequelize");
 
 exports.submitSkripsi = async (req, res) => {
   try {
@@ -9,24 +10,34 @@ exports.submitSkripsi = async (req, res) => {
     let findSkripsi = await Skripsi.findOne({
       where: {
         mahasiswa_nim: mahasiswa.nim,
-        status: req.body.status,
+        semester: semester,
       },
     });
 
-    if (skripsi) {
-      if (req.file) {
-        await fs.unlink(skripsi.file);
+    let irs = await IRS.findOne({
+      where: {
+        mahasiswa_nim: mahasiswa.nim,
+        semester_aktif: semester,
+      },
+      order: sequelize.literal('"semester_aktif"::int DESC'),
+    });
 
-      res.send({ message: "Skripsi was updated successfully." });
+    if (status == "belum ambil") {
+      return res.status(400).send({ message: "You are not eligible to submit Skripsi" });
+    }
+
+    if (findSkripsi) {
+      if (req.file) {
+        await fs.unlink(req.file.path);
+      res.send({ message: "Your skripsi is already exists!" });
     } else {
       const newSkripsi = {
-        status: req.body.status,
-        nilai: req.body.nilai,
-        semester: req.body.semester,
-        status_verifikasi: "sedang diverifikasi",
-        tanggal_lulus: req.body.tanggal_lulus,
-        tanggal_sidang: req.body.tanggal_sidang,
-        lama_studi: req.body.lama_studi,
+        status: status,
+        nilai: nilai,
+        semester: semester,
+        tanggal_lulus: tanggal_lulus,
+        tanggal_sidang: tanggal_sidang,
+        lama_studi: irs.semester_aktif,
         file: req.file.path,
         mahasiswa_nim: mahasiswa.nim,
       };
@@ -34,21 +45,20 @@ exports.submitSkripsi = async (req, res) => {
       await Skripsi.create(newSkripsi);
 
       res.status(201).send({ message: "Skripsi was created successfully." });
+      }
     }
   } catch (err) {
     if (req.file) {
-      // Use a callback function to handle unlink completion or errors
-      fs.unlink(req.file.path, (unlinkError) => {
-        if (unlinkError) {
-          console.error("Error deleting uploaded file:", unlinkError);
-        }
-      });
+      try {
+        await fs.unlink(req.file.path);
+      } catch (unlinkError) {
+        console.error("Error deleting uploaded file:", unlinkError);
+      }
     }
     console.error(err);
     res.status(500).send({ message: err.message || "Some error occurred while creating the Skripsi." });
   }
 };
-
 
 exports.getSkripsi = async (req, res) => {
   try {

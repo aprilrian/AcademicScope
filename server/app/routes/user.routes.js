@@ -44,7 +44,9 @@ router.use("/mahasiswa/khs",
 router.use("/mahasiswa/pkl", 
   [authMiddleware.verifyToken, authMiddleware.isMahasiswa, userMiddleware.getMahasiswaByID ,userMiddleware.hasUpdateProfile],
   require("./pkl.routes"));
-// router.use("/mahasiswa/skripsi", require("./skripsi.routes"));
+router.use("/mahasiswa/skripsi", 
+  [authMiddleware.verifyToken, authMiddleware.isMahasiswa, userMiddleware.getMahasiswaByID ,userMiddleware.hasUpdateProfile],
+  require("./skripsi.routes"));
 
 // DOSEN
 router.post("/dosen/updateProfile", 

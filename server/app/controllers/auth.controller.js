@@ -46,6 +46,7 @@ exports.signin = async (req, res) => {
         role: user.role,
         nim: mahasiswa ? mahasiswa.nim : null,
         nama: mahasiswa ? mahasiswa.nama : null,
+        foto: mahasiswa ? mahasiswa.foto : null,
       };
     } else if (user && user.role === "dosen") {
       const dosen = await Dosen.findOne({ where: { user_id: user.id } });
@@ -57,6 +58,7 @@ exports.signin = async (req, res) => {
         role: user.role,
         nip: dosen ? dosen.nip : null,
         nama: dosen ? dosen.nama : null,
+        foto: dosen ? dosen.foto : null,
       };
     } else if (user && user.role === "operator") {
       const operator = await Operator.findOne({ where: { user_id: user.id } });
@@ -78,6 +80,7 @@ exports.signin = async (req, res) => {
         email: departemen ? departemen.email : null,
         role: user.role,
         nama: departemen ? departemen.nama : null,
+        foto: departemen ? departemen.foto : operator.foto,
       };
     }
 

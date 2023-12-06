@@ -18,7 +18,7 @@ router.get(
     controller.getIRSBelumByDosen);
 
 router.put(
-    '/verifikasi/:nim/:semester_aktif',
+    '/verifyIRS/:nim/:semester_aktif',
     controller.verifyIRS);
 
 router.get(
