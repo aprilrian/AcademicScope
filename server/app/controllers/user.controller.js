@@ -293,6 +293,8 @@ exports.getAllMahasiswaCount = async (req, res) => {
   }
 }
 
+exports.
+
 exports.getAllMahasiswaByDosen = async (req, res) => {
   try {
     const mahasiswa = await Mahasiswa.findAll({ where: { nip_dosen: req.dosen.nip } });

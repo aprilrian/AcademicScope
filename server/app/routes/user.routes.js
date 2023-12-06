@@ -66,6 +66,10 @@ router.get('/dosen/getAllMahasiswaByDosen',
 router.get('/departemen/irs',
   [authMiddleware.verifyToken, authMiddleware.isDepartemen],
   require("./irs.routes"));
+router.get('/departemen/mahasiswaCount',
+  [authMiddleware.verifyToken, authMiddleware.isDepartemen],
+  controller.getAllMahasiswaCount);
+
 
 // DEPARTEMEN x OPERATOR = MASTER
 router.get('/master/getAllDosen', 

@@ -46,8 +46,10 @@ exports.submitSkripsi = async (req, res) => {
         mahasiswa_nim: mahasiswa.nim,
       };
 
-      console.log(newSkripsi);
       await Skripsi.create(newSkripsi);
+      
+      mahasiswa.status = "lulus";
+      await mahasiswa.save();
 
       res.status(201).send({ message: "Skripsi was created successfully." });
     }
