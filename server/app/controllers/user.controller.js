@@ -124,12 +124,14 @@ exports.viewProfile = async (req, res) => {
 
 exports.getAllAccount = async (req, res) => {
   try {
-    const user = await User.findAll(
-      {}
-      {
-      attributes: ['username'],
-    },
-    );
+    const user = await User.findAll({
+      include: [
+        { model: Mahasiswa, attributes: ['nama', 'email'] },
+        { model: Dosen, attributes: ['nama', 'email'] },
+        { model: Operator, attributes: ['nama', 'email'] },
+      ],
+      attributes: ['username', 'role'],
+    });
     res.status(200).send(user);
   } catch (error) {
     res.status(500).send({ message: error.message });

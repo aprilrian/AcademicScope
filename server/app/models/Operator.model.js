@@ -34,6 +34,4 @@ const Operator = sequelize.define('Operator', {
   },
 });
 
-Operator.belongsTo(User, { foreignKey: 'user_id' });
-
 module.exports = Operator;

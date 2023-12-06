@@ -21,6 +21,4 @@ const KabupatenKota = sequelize.define('KabupatenKota', {
     },
     });
 
-KabupatenKota.belongsTo(Provinsi, { foreignKey: 'kode_provinsi' })
-
 module.exports = KabupatenKota;

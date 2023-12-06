@@ -28,6 +28,4 @@ const Departemen = sequelize.define('Departemen', {
   },
 });
 
-Departemen.belongsTo(User, { foreignKey: 'user_id' });
-
 module.exports = Departemen;

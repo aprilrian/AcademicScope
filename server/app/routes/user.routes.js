@@ -33,6 +33,9 @@ router.post("/operator/generateBatch",
 router.get("/operator/getBatchTemplate", 
   [authMiddleware.verifyToken, authMiddleware.isOperator],
   controller.getBatchTemplate)
+router.get("/operator/getAllAccount",
+  [authMiddleware.verifyToken, authMiddleware.isOperator],
+  controller.getAllAccount);
 
 // MAHASISWA
 router.post("/mahasiswa/updateProfile", 
@@ -69,7 +72,6 @@ router.get('/departemen/irs',
 router.get('/departemen/mahasiswaCount',
   [authMiddleware.verifyToken, authMiddleware.isDepartemen],
   controller.getAllMahasiswaCount);
-
 
 // DEPARTEMEN x OPERATOR = MASTER
 router.get('/master/getAllDosen', 

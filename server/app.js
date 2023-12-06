@@ -24,7 +24,7 @@ app.use('/', require('./app/routes/user.routes'));
 app.use('/auth', require('./app/routes/auth.routes'));
 app.use('/kabupatenKota', require('./app/routes/kabupatenKota.routes'));
 app.use('/provinsi', require('./app/routes/provinsi.routes'));
-
+app.use(express.static('uploads'));
 
 // Start server
 app.listen((process.env.SERVER_PORT || 8080), () => {

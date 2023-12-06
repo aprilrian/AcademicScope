@@ -7,27 +7,59 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-db.mahasiswa = require("./Mahasiswa.model");
-db.dosen = require("./Dosen.model");
-db.operator = require("./Operator.model");
-db.departemen = require("./Departemen.model");
 db.user = require("./User.model");
-db.KabupatenKota = require("./KabupatenKota.model");    
+db.dosen = require("./Dosen.model");
+db.kabupatenKota = require("./KabupatenKota.model");    
 db.provinsi = require("./Provinsi.model");
+db.mahasiswa = require("./Mahasiswa.model");
 db.irs = require("./IRS.model");
 db.khs = require("./KHS.model");
 db.pkl = require("./PKL.model");
 db.skripsi = require("./Skripsi.model");
+db.operator = require("./Operator.model");
+db.departemen = require("./Departemen.model");
+
+const User = db.user;
+const Dosen = db.dosen;
+const KabupatenKota = db.kabupatenKota;
+const Provinsi = db.provinsi;
+const Mahasiswa = db.mahasiswa;
+const IRS = db.irs;
+const KHS = db.khs;
+const PKL = db.pkl;
+const Skripsi = db.skripsi;
+const Operator = db.operator;
+const Departemen = db.departemen;
+
+User.hasOne(require('./Mahasiswa.model'), { foreignKey: 'user_id', onDelete: 'CASCADE' });
+User.hasOne(require('./Operator.model'), { foreignKey: 'user_id', onDelete: 'CASCADE' });
+User.hasOne(require('./Dosen.model'), { foreignKey: 'user_id', onDelete: 'CASCADE' });
+User.hasOne(require('./Departemen.model'), { foreignKey: 'user_id', onDelete: 'CASCADE' });
+
+Dosen.belongsTo(User, { foreignKey: 'user_id' });
+Dosen.hasMany(Mahasiswa, { foreignKey: 'nip_dosen' });
+
+KabupatenKota.belongsTo(Provinsi, { foreignKey: 'kode_provinsi' })
+
+Mahasiswa.belongsTo(KabupatenKota, { foreignKey: 'kode_kabupatenKota' })
+Mahasiswa.belongsTo(Provinsi, { foreignKey: 'kode_provinsi' })
+Mahasiswa.belongsTo(Dosen, { foreignKey: 'nip_dosen' });
+Mahasiswa.belongsTo(User, { foreignKey: 'user_id' });
+Mahasiswa.hasMany(IRS, { foreignKey: 'mahasiswa_nim' });
+Mahasiswa.hasMany(KHS, { foreignKey: 'mahasiswa_nim' });
+Mahasiswa.hasOne(PKL, { foreignKey: 'mahasiswa_nim' });
+Mahasiswa.hasOne(Skripsi, { foreignKey: 'mahasiswa_nim' });
+
+IRS.belongsTo(Mahasiswa, { foreignKey: 'mahasiswa_nim' });
+KHS.belongsTo(Mahasiswa, { foreignKey: 'mahasiswa_nim' });
+Skripsi.belongsTo(Mahasiswa, { foreignKey: 'mahasiswa_nim' });
+PKL.belongsTo(Mahasiswa, { foreignKey: 'mahasiswa_nim' });
+
+Operator.belongsTo(User, { foreignKey: 'user_id' });
+
+Departemen.belongsTo(User, { foreignKey: 'user_id' });
 
 async function initializeData() {
-  const Provinsi = db.provinsi;
-  const KabupatenKota = db.KabupatenKota;
-  const Mahasiswa = db.mahasiswa;
-  const Dosen = db.dosen;
-  const Operator = db.operator;
-  const Departemen = db.departemen;
-  const User = db.user;
-
   try {
       const provinsiCount = await Provinsi.count();
       const kabupatenKotaCount = await KabupatenKota.count();
@@ -293,7 +325,7 @@ module.exports = {
     Operator: db.operator,
     Departemen: db.departemen,
     User: db.user,
-    KabupatenKota: db.KabupatenKota,
+    KabupatenKota: db.kabupatenKota,
     Provinsi: db.provinsi,
     IRS: db.irs,
     KHS: db.khs,
