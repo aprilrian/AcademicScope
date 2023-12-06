@@ -180,6 +180,13 @@ exports.generateBatch = async (req, res) => {
 
     await User.sequelize.transaction(async (t) => {
       for (const row of jsonFile) {
+        const existingUser = await User.findOne({ where: { username: row.nim } });
+
+        if (existingUser) {
+          createdAccounts.push('Akun mahasiswa dengan nama ' + row.nama + ' sudah ada');
+          continue;
+        }
+
         const user = await User.create({
           username: row.nim,
           password: row.nim,

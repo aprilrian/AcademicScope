@@ -47,6 +47,7 @@ exports.getPKLByDosen = async (req, res) => {
   try {
     const dosen = req.dosen;
     const { status, angkatan } = req.params;
+
     const mahasiswas = await Mahasiswa.findAll({
       where: {
         nip_dosen: dosen.nip,
@@ -63,15 +64,14 @@ exports.getPKLByDosen = async (req, res) => {
         },
       });
 
-      pkl.dataValues.mahasiswa = {
-        nim: mahasiswa.nim,
-        nama: mahasiswa.nama,
+      if (pkl) {
+        pkl.dataValues.nama = mahasiswa.nama
       };
 
       return pkl;
     }));
 
-    res.status(200).send(pkls);
+    res.status(200).send(pkls.filter((pkl) => pkl !== null));
   } catch (error) {
     res.status(500).send({ message: error.message || 'Error retrieving PKL.' });
   }

@@ -70,6 +70,9 @@ router.use("/dosen/khs",
 router.use("/dosen/pkl",
   [authMiddleware.verifyToken, authMiddleware.isDosen, userMiddleware.getDosenByID],
   require("./pkl.routes"));
+router.use("/dosen/skripsi",
+  [authMiddleware.verifyToken, authMiddleware.isDosen, userMiddleware.getDosenByID],
+  require("./skripsi.routes"));
 
 // DEPARTEMEN
 router.get('/departemen/irs',

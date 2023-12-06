@@ -7,4 +7,8 @@ router.post(
     [upload],
     controller.submitSkripsi);
 
+router.get(
+    '/rekap/:status/:angkatan', 
+    controller.getSkripsiByDosen);
+
 module.exports = router;

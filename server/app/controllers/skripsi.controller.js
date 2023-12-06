@@ -62,6 +62,40 @@ exports.submitSkripsi = async (req, res) => {
   }
 };
 
+exports.getSkripsiByDosen = async (req, res) => {
+  try {
+    const dosen = req.dosen;
+    const { status, angkatan } = req.params;
+
+    const mahasiswas = await Mahasiswa.findAll({
+      where: {
+        nip_dosen: dosen.nip,
+        angkatan: angkatan,
+      },
+    });
+
+    const skripsis = await Promise.all(mahasiswas.map(async (mahasiswa) => {
+      const skripsi = await Skripsi.findOne({
+        where: {
+          mahasiswa_nim: mahasiswa.nim,
+          status: status,
+          status_verifikasi: 'sudah',
+        },
+      });
+
+      if (skripsi) {
+        skripsi.dataValues.nama = mahasiswa.nama
+      };
+
+      return skripsi;
+    }));
+
+    res.status(200).send(skripsis.filter((skripsi) => skripsi !== null));
+  } catch (error) {
+    res.status(500).send({ message: error.message || 'Error retrieving Skripsi.' });
+  }
+}
+
 exports.getSkripsi = async (req, res) => {
   try {
     const skripsi = await Skripsi.findOne({
