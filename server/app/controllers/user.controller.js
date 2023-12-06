@@ -122,6 +122,19 @@ exports.viewProfile = async (req, res) => {
   }
 };
 
+exports.getAllAccount = async (req, res) => {
+  try {
+    const user = await User.findAll(
+      {}
+      {
+      attributes: ['username'],
+    },
+    );
+    res.status(200).send(user);
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+}
 
 // OPERATOR
 exports.generate = async (req, res) => {
@@ -287,6 +300,15 @@ exports.getAllMahasiswa = async (req, res) => {
 exports.getAllMahasiswaCount = async (req, res) => {
   try {
     const mahasiswa = await Mahasiswa.count();
+    res.status(200).send(mahasiswa.toString());
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+}
+
+exports.getAllMahasiswaLulusCount = async (req, res) => {
+  try {
+    const mahasiswa = await Mahasiswa.count({ where: { status: 'lulus' } });
     res.status(200).send(mahasiswa.toString());
   } catch (error) {
     res.status(500).send({ message: error.message });

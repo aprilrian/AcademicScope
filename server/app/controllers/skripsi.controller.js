@@ -33,7 +33,7 @@ exports.submitSkripsi = async (req, res) => {
       if (req.file) {
         await fs.unlink(req.file.path);
       }
-      res.send({ message: "Your skripsi is already exists!" });
+      return res.send({ message: "Your skripsi is already exists!" });
     } else {
       const newSkripsi = {
         status: status,
