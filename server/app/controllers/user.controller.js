@@ -1,4 +1,4 @@
-const { User, Mahasiswa, Dosen } = require("../models");
+const { User, Mahasiswa, Dosen, KabupatenKota, Provinsi } = require("../models");
 const csv = require('csvtojson');
 const fs = require('fs');
 const bcrypt = require('bcryptjs');
@@ -41,13 +41,16 @@ exports.viewProfile = async (req, res) => {
         { where: { user_id: req.user_id } });
       const dosen = await Dosen.findOne(
         { where: { nip: mahasiswa.nip_dosen } });
+      const kabupatenKota = await KabupatenKota.findByPk(mahasiswa.kode_kabupatenKota);
+      const provinsi = await Provinsi.findByPk(mahasiswa.kode_provinsi);
+
       res.status(200).send({
         nim: mahasiswa.nim,
         nama: mahasiswa.nama,
         angkatan: mahasiswa.angkatan,
         alamat: mahasiswa.alamat,
-        kode_kabupatenKota: mahasiswa.kode_kabupatenKota,
-        kode_provinsi: mahasiswa.kode_provinsi,
+        kabupatenKota: (kabupatenKota.kabupaten_kota),
+        provinsi: provinsi.provinsi,
         jalur_masuk: mahasiswa.jalur_masuk,
         email: mahasiswa.email,
         phone: mahasiswa.phone,
@@ -56,7 +59,13 @@ exports.viewProfile = async (req, res) => {
       });
     } else if (user.role === 'dosen') {
       const dosen = await Dosen.findOne({ where: { user_id: req.user_id } });
-      res.status(200).send(dosen);
+      res.status(200).send(dosen, user.role);
+    } else if (user.role === 'operator') {
+      const operator = await Operator.findOne({ where: { user_id: req.user_id } });
+      res.status(200).send(operator, user.role);
+    } else {
+      const departemen = await Departemen.findOne({ where: { user_id: req.user_id } });
+      res.status(200).send(departemen, user.role);
     }
   } catch (error) {
     res.status(500).send({ message: error.message });
