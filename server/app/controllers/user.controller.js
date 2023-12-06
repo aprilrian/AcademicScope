@@ -142,7 +142,10 @@ exports.updateDosen = async (req, res) => {
 
 exports.getAllDosen = async (req, res) => {
   try {
-    const dosen = await Dosen.findAll();
+    const dosen = await Dosen.findAll({
+      attributes: [['nip', 'value'],
+                  ['nama', 'label']]
+  });
     res.status(200).send(dosen);
   } catch (error) {
     res.status(500).send({ message: error.message });

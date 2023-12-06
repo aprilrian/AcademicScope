@@ -29,4 +29,8 @@ router.delete(
     '/delete/:nim/:semester_aktif',
     controller.deleteIRS);
 
+router.put(
+    '/edit/:nim/:semester_aktif',
+    controller.editIRS);
+
 module.exports = router;

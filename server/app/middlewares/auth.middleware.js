@@ -19,6 +19,7 @@ verifyToken = (req, res, next) => {
     
     req.user_id = decoded.id;
     req.user_nama = decoded.nama;
+    req.user_username = decoded.username;
     next();
   });
 };

@@ -32,9 +32,16 @@ const storage = multer.diskStorage({
         const jenisFolder = urlSplit[urlSplit.length - 2];
         const ext = file.originalname.split(".").pop();
         const nama = req.user_nama;
-        const filename = `${nama}-${new Date().getTime()}.${ext}`;
+        const username = req.user_username;
+        if (jenisFolder === 'irs' || jenisFolder === 'khs') {
+            const smt = req.body.semester_aktif;
+            const filename = `${nama}_${username}_${smt}.${ext}`;
+            cb(null, filename);
+        } else {
+            const filename = `${nama}_${username}.${ext}`;
+            cb(null, filename);
+        }
 
-        cb(null, filename);
     },
 });
 

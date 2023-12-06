@@ -1,5 +1,5 @@
 const { IRS, Mahasiswa, Dosen } = require("../models");
-const fs = require("fs").promises;
+const fs = require("fs");
 const userController = require("./user.controller");
 
 exports.submitIRS = async (req, res) => {
@@ -113,22 +113,21 @@ exports.showIRS = async (req, res) => {
     if (!irs) {
       return res.status(404).send({ message: "File not found!" });
     }
+    const mhs = await Mahasiswa.findOne({ where: { nim: req.params.nim } });
 
-    // const fileStream = fs.createReadStream(irs.file);
+    const fileStream = fs.createReadStream(irs.file);
 
     // Set the appropriate content type based on the file type
     const contentType = "application/pdf"; // Sesuaikan berdasarkan jenis file Anda
     res.setHeader("Content-type", contentType);
 
     // Set Content-Disposition to inline for displaying in a new tab
-    res.setHeader("Content-disposition", `inline; filename=IRS_${irs.semesterAktif}`);
-
-    res.send(irs.file);
+    res.setHeader("Content-disposition", `inline; filename=IRS_${mhs.nama}_${mhs.nim}_${irs.semester_aktif}.pdf`);
 
     // Pipe the file stream to the response
     fileStream.pipe(res);
   } catch (err) {
-    res.status(500).send({ message: err.message || "Error occurred while retrieving IRS." });
+    console.log({ message: err.message || "Error occurred while retrieving IRS." });
   }
 };
 
@@ -167,6 +166,29 @@ exports.waliIRS = async (req, res) => {
     res.status(500).send({ message: err.message || "Some error occurred while retrieving IRS." });
   }
 };
+
+exports.editIRS = async (req, res) => {
+  try {
+    const irs = await IRS.findOne({
+      where: {
+        mahasiswa_nim: req.params.nim,
+        semester_aktif: req.params.semester_aktif,
+      },
+    });
+
+    if (!irs) {
+      return res.status(404).send({ message: "IRS not found!" });
+    }
+
+    irs.sks = req.body.sks;
+    await irs.save(); // Simpan perubahan ke dalam database
+
+    res.status(200).send({ message: "IRS was updated successfully." });
+  } catch (err) {
+    res.status(500).send({ message: err.message || "Some error occurred while editing IRS." });
+  }
+};
+
 
 exports.verifyIRS = async (req, res) => {
   try {

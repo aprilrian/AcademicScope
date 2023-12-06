@@ -36,7 +36,7 @@ router.post("/mahasiswa/updateProfile",
   [authMiddleware.verifyToken, authMiddleware.isMahasiswa, upload],
   controller.updateMahasiswa);
 router.use("/mahasiswa/irs", 
-  // [authMiddleware.verifyToken, authMiddleware.isMahasiswa, userMiddleware.getMahasiswaByID ,userMiddleware.hasUpdateProfile],
+  [authMiddleware.verifyToken, authMiddleware.isMahasiswa, userMiddleware.getMahasiswaByID ,userMiddleware.hasUpdateProfile],
   require("./irs.routes"));
 // router.use("/mahasiswa/khs", require("./khs.routes")); 
 // router.use("/mahasiswa/pkl", require("./pkl.routes"));
@@ -53,6 +53,11 @@ router.get('/dosen/getAllMahasiswaByDosen',
   [authMiddleware.verifyToken, authMiddleware.isDosen, userMiddleware.getDosenByID ,userMiddleware.hasUpdateProfile],
   require("./irs.routes"));
 
+// DEPARTEMEN
+router.get('/departemen/irs',
+  [authMiddleware.verifyToken, authMiddleware.isDepartemen],
+  require("./irs.routes"));
+
 // DEPARTEMEN x OPERATOR = MASTER
 router.get('/master/getAllDosen', 
   [authMiddleware.verifyToken, authMiddleware.isMaster],
@@ -60,8 +65,5 @@ router.get('/master/getAllDosen',
 router.get('/master/getAllMahasiswa', 
   [authMiddleware.verifyToken, authMiddleware.isMaster],
   controller.getAllMahasiswa);
-router.get('/master/irs',
-  [authMiddleware.verifyToken, authMiddleware.isMaster],
-  require("./irs.routes"));
 
 module.exports = router;
