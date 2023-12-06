@@ -63,4 +63,6 @@ const KHS = sequelize.define('KHS', {
   tableName: 'KHSs'
 });
 
+
+
 module.exports = KHS;

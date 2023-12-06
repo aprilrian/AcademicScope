@@ -37,4 +37,8 @@ const IRS = sequelize.define('IRS', {
   tableName: 'IRSs',
 });
 
+IRS.beforeSave(async (irs, options) => {
+  irs.sks = irs.sks.toString();
+});
+
 module.exports = IRS;

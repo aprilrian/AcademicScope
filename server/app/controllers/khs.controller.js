@@ -9,7 +9,7 @@ exports.submitKHS = async (req, res) => {
       where: {
         mahasiswa_nim: mahasiswa.nim,
       },
-      order: [["semester_aktif", "DESC"]],
+      order: sequelize.literal('"semester_aktif"::int DESC'),
     });
 
     const lastSubmittedIRS = await IRS.findOne({
