@@ -21,45 +21,46 @@ exports.submitKHS = async (req, res) => {
     }
 
     if (semester_aktif != submittedIRS.semester_aktif) {
-      return res.status(400).json({ message: "IRS and KHS must match in semester" });
+      return res.status(400).json({ message: "IRS and KHS must be in the same semester" });
     }
 
-    const ip = parseFloat(req.body.ip);
-    const ipk = lastSubmittedKHS ? parseFloat(lastSubmittedKHS.ip_kumulatif) : 0;
+    const ip = parseFloat(req.body.ip).toFixed(2);
+    const ipk = lastSubmittedKHS ? parseFloat(lastSubmittedKHS.ip_kumulatif).toFixed(2) : 0;
     const sks = parseInt(submittedIRS.sks, 10);
     const sksk = lastSubmittedKHS ? parseInt(lastSubmittedKHS.sks_kumulatif, 10) : 0;
-
 
     let existingKHS = await KHS.findOne({
       where: { mahasiswa_nim: mahasiswa.nim, semester_aktif: semester_aktif },
     });
 
     if (existingKHS) {
-      if (req.file && existingKHS.file) {
+      if (req.file) {
         await fs.unlink(existingKHS.file);
       }
-      existingKHS.file = req.file?.path || existingKHS.file;
+      existingKHS.file = req.file.path
       existingKHS.sks = sks;
       existingKHS.sks_kumulatif = sksk + sks;
       existingKHS.ip = ip;
-      existingKHS.ip_kumulatif = parseFloat(ipk + ip / semester_aktif);
+      existingKHS.ip_kumulatif = parseFloat((ipk + ip) / semester_aktif).toFixed(2);
       await existingKHS.save();
 
+      console.log(ipk)
+      console.log(ip)
+      console.log(semester_aktif)
       return res.send({ message: "KHS was updated successfully." });
     }
 
     const newKHS = {
       mahasiswa_nim: mahasiswa.nim,
       semester_aktif: semester_aktif,
-      sks: parseInt(submittedIRS.sks, 10),
-      sks_kumulatif: lastSubmittedKHS ? parseInt(lastSubmittedKHS.sks_kumulatif, 10) + parseInt(submittedIRS.sks, 10) : parseInt(submittedIRS.sks, 10),
-      ip: parseFloat(ip),
-      ip_kumulatif: lastSubmittedKHS ? parseFloat(parseFloat(lastSubmittedKHS.ip_kumulatif) + parseFloat(ip) / semester_aktif) : parseFloat(parseFloat(ip) / semester_aktif),
-      file: req.file?.path || null,
+      sks : sks,
+      sks_kumulatif : sksk + sks,
+      ip : ip,
+      ip_kumulatif : parseFloat((ipk + ip) / semester_aktif).toFixed(2),
+      file: req.file.path,
     };
 
     await KHS.create(newKHS);
-    console.log(newKHS)
     res.status(201).send({ message: "KHS was created successfully." });
 
   } catch (err) {

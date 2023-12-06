@@ -80,7 +80,7 @@ exports.getIRSByMahasiswa = async (req, res) => {
   }
 }
 
-exports.getIRSByDosen = async (req, res) => {
+exports.getIRSBelumByDosen = async (req, res) => {
   try {
     const dosen = req.dosen;
     const list_mhs = await Mahasiswa.findAll({ where: { nip_dosen: dosen.nip } });

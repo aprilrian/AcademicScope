@@ -25,7 +25,7 @@ router.post("/operator/generate",
   [authMiddleware.verifyToken, authMiddleware.isOperator],
   controller.generate);
 router.post("/operator/generateBatch", 
-  [authMiddleware.verifyToken, authMiddleware.isOperator],
+  [authMiddleware.verifyToken, authMiddleware.isOperator, upload],
   controller.generateBatch);
 router.get("/operator/getBatchTemplate", 
   [authMiddleware.verifyToken, authMiddleware.isOperator],
