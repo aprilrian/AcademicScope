@@ -34,7 +34,13 @@ const PKL = sequelize.define('PKL', {
       msg: 'Wajib upload scan berita acara seminar PKL',
     },
   },
+
   
+});
+
+PKL.beforeSave(async (pkl, options) => {
+  pkl.nilai = pkl.nilai.toString();
+  pkl.semester = pkl.semester.toString();
 });
 
 module.exports = PKL;

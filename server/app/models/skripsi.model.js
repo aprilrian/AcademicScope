@@ -59,9 +59,9 @@ const Skripsi = sequelize.define('Skripsi', {
 });
 
 Skripsi.beforeSave(async (skripsi, options) => {
-  nilai = skripsi.nilai.toString();
-  semester = skripsi.semester.toString();
-  lama_studi = skripsi.lama_studi.toString();
+  skripsi.nilai = skripsi.nilai.toString();
+  skripsi.semester = skripsi.semester.toString();
+  skripsi.lama_studi = skripsi.lama_studi.toString();
 });
 
 module.exports = Skripsi;

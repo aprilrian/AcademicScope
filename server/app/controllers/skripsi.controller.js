@@ -17,18 +17,22 @@ exports.submitSkripsi = async (req, res) => {
     let irs = await IRS.findOne({
       where: {
         mahasiswa_nim: mahasiswa.nim,
-        semester_aktif: semester,
       },
       order: sequelize.literal('"semester_aktif"::int DESC'),
     });
 
-    if (status == "belum ambil") {
+    if (!irs) {
+      return res.status(400).send({ message: "Please fill IRS first!" });
+    }
+
+    if (status === "belum ambil") {
       return res.status(400).send({ message: "You are not eligible to submit Skripsi" });
     }
 
     if (findSkripsi) {
       if (req.file) {
         await fs.unlink(req.file.path);
+      }
       res.send({ message: "Your skripsi is already exists!" });
     } else {
       const newSkripsi = {
@@ -42,18 +46,14 @@ exports.submitSkripsi = async (req, res) => {
         mahasiswa_nim: mahasiswa.nim,
       };
 
+      console.log(newSkripsi);
       await Skripsi.create(newSkripsi);
 
       res.status(201).send({ message: "Skripsi was created successfully." });
-      }
     }
   } catch (err) {
     if (req.file) {
-      try {
-        await fs.unlink(req.file.path);
-      } catch (unlinkError) {
-        console.error("Error deleting uploaded file:", unlinkError);
-      }
+      await fs.unlink(req.file.path);
     }
     console.error(err);
     res.status(500).send({ message: err.message || "Some error occurred while creating the Skripsi." });

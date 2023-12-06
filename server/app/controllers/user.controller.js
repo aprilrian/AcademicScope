@@ -1,4 +1,4 @@
-const { User, Mahasiswa, Dosen, KabupatenKota, Provinsi, Operator } = require("../models");
+const { User, Mahasiswa, Dosen, KabupatenKota, Provinsi, Operator, Departemen } = require("../models");
 const csv = require('csvtojson');
 const fs = require('fs');
 const bcrypt = require('bcryptjs');
@@ -279,6 +279,15 @@ exports.getAllMahasiswa = async (req, res) => {
   try {
     const mahasiswa = await Mahasiswa.findAll();
     res.status(200).send(mahasiswa);
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+}
+
+exports.getAllMahasiswaCount = async (req, res) => {
+  try {
+    const mahasiswa = await Mahasiswa.count();
+    res.status(200).send(mahasiswa.toString());
   } catch (error) {
     res.status(500).send({ message: error.message });
   }
