@@ -1,4 +1,5 @@
 // multer.js
+const { parse } = require('dotenv');
 const multer = require('multer');
 
 const storage = multer.diskStorage({
@@ -34,7 +35,7 @@ const storage = multer.diskStorage({
         const nama = req.user_nama;
         const username = req.user_username;
         if (jenisFolder === 'irs' || jenisFolder === 'khs') {
-            const smt = req.body.semester_aktif;
+            const smt = parseInt(req.body.semester_aktif);
             const filename = `${nama}_${username}_${smt}.${ext}`;
             cb(null, filename);
         } else {

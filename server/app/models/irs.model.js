@@ -9,43 +9,17 @@ const IRS = sequelize.define('IRS', {
     allowNull: false,
   },
   semester_aktif: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: {
       args: false,
       msg: 'Semester aktif wajib diisi',
     },
-    validate: {
-      isInt: {
-        msg: 'Semester aktif harus berupa angka',
-      },
-      min: {
-        args: [1],
-        msg: 'Semester aktif dalam rentang 1-14',
-      },
-      max: {
-        args: [14],
-        msg: 'Semester aktif dalam rentang 1-14',
-      },
-    },
   },
   sks: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: {
       args: false,
       msg: 'Jumlah SKS wajib diisi',
-    },
-    validate: {
-      isInt: {
-        msg: 'Jumlah SKS harus berupa angka',
-      },
-      min: {
-        args: [1],
-        msg: 'Jumlah SKS minimal 1 SKS',
-      },
-      max: {
-        args: [24],
-        msg: 'Jumlah SKS maksimal 24 SKS',
-      },
     },
   },
   file: {

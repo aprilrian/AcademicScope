@@ -1,6 +1,6 @@
-const { IRS, Mahasiswa, Dosen } = require("../models");
+const { IRS, Mahasiswa } = require("../models");
 const fs = require("fs");
-const userController = require("./user.controller");
+const sequelize = require("sequelize");
 
 exports.submitIRS = async (req, res) => {
   try {
@@ -10,11 +10,11 @@ exports.submitIRS = async (req, res) => {
       where: {
         mahasiswa_nim: mahasiswa.nim,
       },
-      order: [["semester_aktif", "DESC"]],
+      order: sequelize.literal('"semester_aktif"::int DESC'),
     });
 
     if (lastSubmittedIRS) {
-      if (req.body.semester_aktif != lastSubmittedIRS.semester_aktif + 1) {
+      if (req.body.semester_aktif != parseInt(lastSubmittedIRS.semester_aktif, 10) + 1) {
         return res.status(400).json({ message: "IRS semester must be sequential." });
       }
     }
@@ -56,9 +56,10 @@ exports.submitIRS = async (req, res) => {
 
     res.status(201).send({ message: "IRS was created successfully." });
   } catch (err) {
-    if (req.file) {
-      await fs.unlink(req.file.path);
-    }
+    console.error(req.file);
+    // if (req.file) {
+    //   await fs.unlink(req.file.path);
+    // }
     console.error(err);
     res.status(500).send({ message: "Internal Server Error" });
   }
@@ -131,42 +132,6 @@ exports.showIRS = async (req, res) => {
   }
 };
 
-exports.waliIRS = async (req, res) => {
-  try {
-    const dosen = await Dosen.findOne({ user: req.userId });
-    const list_mhs = await Mahasiswa.findAll({ kodeWali: dosen.id });
-    // Get all irs from list_mhs that have status_konfirmasi == belum
-    let list_irs = [];
-    for (let i = 0; i < list_mhs.length; i++) {
-      let mhs = list_mhs[i];
-      let irs = await IRS.findAll({
-        where: {
-          mahasiswaId: list_mhs[i].id,
-          statusKonfirmasi: "belum",
-        },
-      });
-      // Merge mhs data and irs data
-      for (let j = 0; j < irs.length; j++) {
-        let obj = {
-          nim: mhs.nim,
-          name: mhs.name,
-          angkatan: mhs.angkatan,
-          semester_aktif: irs[j].semesterAktif,
-          sks: irs[j].sks,
-          file: irs[j].file,
-          irs_id: irs[j].id,
-        };
-        list_irs.push(obj);
-      }
-    }
-
-    // Send the data
-    res.status(200).send(list_irs);
-  } catch (err) {
-    res.status(500).send({ message: err.message || "Some error occurred while retrieving IRS." });
-  }
-};
-
 exports.editIRS = async (req, res) => {
   try {
     const irs = await IRS.findOne({
@@ -188,7 +153,6 @@ exports.editIRS = async (req, res) => {
     res.status(500).send({ message: err.message || "Some error occurred while editing IRS." });
   }
 };
-
 
 exports.verifyIRS = async (req, res) => {
   try {
@@ -247,14 +211,4 @@ exports.deleteIRS = async (req, res) => {
     console.error(err);
     res.status(500).send({ message: err.message || "Some error occurred while processing the request." });
   }
-};
-
-exports.deleteAllIRS = (req, res) => {
-  IRS.destroy({ truncate: true })
-    .then(() => {
-      res.status(200).send({ message: "All IRS records were deleted successfully!" });
-    })
-    .catch((err) => {
-      res.status(500).send({ message: err.message || "Some error occurred while deleting IRS records." });
-    });
 };
