@@ -124,15 +124,52 @@ exports.viewProfile = async (req, res) => {
 
 exports.getAllAccount = async (req, res) => {
   try {
-    const user = await User.findAll({
+    const users = await User.findAll({
       include: [
-        { model: Mahasiswa, attributes: ['nama', 'email'] },
-        { model: Dosen, attributes: ['nama', 'email'] },
-        { model: Operator, attributes: ['nama', 'email'] },
+        { model: Mahasiswa, attributes: ['nama', 'email'], required: false },
+        { model: Dosen, attributes: ['nama', 'email'], required: false },
+        { model: Operator, attributes: ['nama', 'email'], required: false },
+        { model: Departemen, attributes: ['nama', 'email'], required: false }
       ],
       attributes: ['username', 'role'],
     });
-    res.status(200).send(user);
+
+    res.status(200).send(users.map((user) => {
+        if (user.role === 'mahasiswa') {
+          return {
+            username: user.username,
+            role: user.role,
+            nama: user.Mahasiswa.nama,
+            email: user.Mahasiswa.email,
+          }
+        } else if (user.role === 'dosen') {
+          return {
+            username: user.username,
+            role: user.role,
+            nama: user.Dosen.nama,
+            email: user.Dosen.email,
+          }
+        } else if (user.role === 'operator') {
+          return {
+            username: user.username,
+            role: user.role,
+            nama: user.Operator.nama,
+            email: user.Operator.email,
+          }
+        } else if (user.role === 'departemen') {
+          return {
+            username: user.username,
+            role: user.role,
+            nama: user.Departemen.nama,
+            email: user.Departemen.email,
+          }
+        } else {
+          return {
+            username: user.username,
+            role: user.role,
+          }
+        }
+      }))
   } catch (error) {
     res.status(500).send({ message: error.message });
   }
