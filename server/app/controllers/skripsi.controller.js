@@ -3,13 +3,10 @@ const fs = require("fs");
 
 exports.submitSkripsi = async (req, res) => {
   try {
-    const mahasiswa = await Mahasiswa.findOne({ where: { user_id: req.user_id } });
+    const mahasiswa = req.mahasiswa;
+    const { status, nilai, semester, tanggal_lulus, tanggal_sidang } = req.body;
 
-    if (!mahasiswa) {
-      return res.status(404).send({ message: "Mahasiswa not found!" });
-    }
-
-    let skripsi = await Skripsi.findOne({
+    let findSkripsi = await Skripsi.findOne({
       where: {
         mahasiswa_nim: mahasiswa.nim,
         status: req.body.status,
@@ -18,24 +15,7 @@ exports.submitSkripsi = async (req, res) => {
 
     if (skripsi) {
       if (req.file) {
-        if (skripsi.file) {
-          // Use a callback function to handle unlink completion or errors
-          fs.unlink(skripsi.file, (unlinkError) => {
-            if (unlinkError) {
-              console.error("Error deleting Skripsi file:", unlinkError);
-            }
-          });
-        }
-        skripsi.file = req.file.path;
-      }
-      skripsi.nilai = req.body.nilai;
-      skripsi.semester = req.body.semester;
-      skripsi.tanggal_lulus = req.body.tanggal_lulus;
-      skripsi.status_verifikasi = "sedang diverifikasi";
-      skripsi.tanggal_sidang = req.body.tanggal_sidang;
-      skripsi.lama_studi = req.body.lama_studi;
-      skripsi.status = req.body.status;
-      await skripsi.save();
+        await fs.unlink(skripsi.file);
 
       res.send({ message: "Skripsi was updated successfully." });
     } else {

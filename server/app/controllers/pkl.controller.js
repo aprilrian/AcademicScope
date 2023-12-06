@@ -1,65 +1,47 @@
-const fs = require('fs');
-const { PKL, Mahasiswa, Dosen } = require('../models');
+const { PKL, Mahasiswa } = require('../models');
+const fs = require('fs').promises;
 
 exports.submitPKL = async (req, res) => {
   try {
-    const mahasiswa = await Mahasiswa.findOne({ where: { user_id: req.user_id } });
-
-    if (!mahasiswa) {
-      return res.status(404).send({ message: "Mahasiswa not found!" });
-    }
+    const mahasiswa = req.mahasiswa;
+    const { status, nilai, semester } = req.body;
 
     let pkl = await PKL.findOne({
       where: {
         mahasiswa_nim: mahasiswa.nim,
-        semester: req.body.semester,
+        semester: semester,
       },
     });
 
-    if (pkl) {
-      if (req.file) {
-        if (pkl.file) {
-          // Use a callback function to handle unlink completion or errors
-          fs.unlink(pkl.file, (unlinkError) => {
-            if (unlinkError) {
-              console.error("Error deleting PKL file:", unlinkError);
-            }
-          });
-        }
-        pkl.file = req.file.path;
-      }
-      pkl.nilai = req.body.nilai;
-      await pkl.save();
-
-      res.send({ message: "PKL was updated successfully." });
-    } else {
-      const newPKL = {
-        status: req.body.status,
-        nilai: req.body.nilai,
-        semester: req.body.semester,
-        status_verifikasi: "sedang diverifikasi",
-        file: req.file.path,
-        mahasiswa_nim: mahasiswa.nim,
-      };
-
-      await PKL.create(newPKL);
-
-      res.status(201).send({ message: "PKL was created successfully." });
+    if (status == "belum ambil") {
+      return res.status(400).send({ message: "You are not eligible to submit PKL" });
     }
+
+    if (pkl) {
+      return res.status(400).send({ message: "PKL already exists!" });
+    }
+
+    await PKL.create({
+      mahasiswa_nim: mahasiswa.nim,
+      status: status,
+      nilai: nilai,
+      semester: semester,
+      file: req.file.path,
+    });
+
+    res.status(201).send({ message: "PKL was created successfully." });
   } catch (err) {
     if (req.file) {
-      // Use a callback function to handle unlink completion or errors
-      fs.unlink(req.file.path, (unlinkError) => {
-        if (unlinkError) {
-          console.error("Error deleting uploaded file:", unlinkError);
-        }
-      });
+      try {
+        await fs.unlink(req.file.path);
+      } catch (unlinkError) {
+        console.error("Error deleting uploaded file:", unlinkError);
+      }
     }
     console.error(err);
     res.status(500).send({ message: err.message || "Some error occurred while creating the PKL." });
   }
 };
-
 
 exports.getRekapPKL = async (req, res) => {
   try {

@@ -1,5 +1,5 @@
 const { IRS, Mahasiswa } = require("../models");
-const fs = require("fs");
+const fs = require("fs").promises;
 const sequelize = require("sequelize");
 
 exports.submitIRS = async (req, res) => {
@@ -34,15 +34,13 @@ exports.submitIRS = async (req, res) => {
 
     if (existingIRS) {
       if (req.file) {
-        if (existingIRS.file) {
-          await fs.unlink(existingIRS.file);
+        try {
+          await fs.unlink(req.file.path);
+        } catch (err) {
+          console.log(err);
         }
-        existingIRS.file = req.file.path;
       }
-      existingIRS.sks = req.body.sks;
-      await existingIRS.save();
-
-      return res.send({ message: "IRS was updated successfully." });
+      return res.status(400).send({ message: "IRS already exists!"})
     }
 
     const newIRS = {
@@ -221,6 +219,7 @@ exports.deleteIRS = async (req, res) => {
     }
 
     await fs.unlink(irs.file);
+    
     await IRS.destroy({
       where: {
         mahasiswa_nim: mhs.nim,

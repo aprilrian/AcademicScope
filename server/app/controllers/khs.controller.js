@@ -22,6 +22,13 @@ exports.submitKHS = async (req, res) => {
     });
 
     if (khs) {
+      if (req.file) {
+        try {
+          await fs.unlink(req.file.path);
+        } catch (err) {
+          console.log(err);
+        }
+      }
       return res.status(400).send({ message: "KHS already exists!" });
     }
 
