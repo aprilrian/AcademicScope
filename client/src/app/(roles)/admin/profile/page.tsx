@@ -1,20 +1,56 @@
-// UserProfile.tsx
-'use client';
+"use client";
 
-import { FC } from 'react';
+import { FC, useEffect, useState } from "react";
 import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar";
-
 import { Card } from "@/components/ui/card";
 import { useSession } from "next-auth/react";
-
-
 import EditProfile from "./EditProfile";
-import { Loader } from 'lucide-react';
+import { Loader } from "lucide-react";
+import axios from "axios";
+import monkey from "../../../../../public/jamal.png";
 
 interface UserProfileProps {}
 
 const UserProfile: FC<UserProfileProps> = () => {
   const { data: session } = useSession();
+  const role = session?.user?.role;
+  const accessToken = session?.user?.access_token;
+
+  const [userData, setUserData] = useState({
+    nip: "",
+    nama: "",
+    email: "",
+    phone: "",
+    foto: "",
+  });
+
+  const fetchUserProfile = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/profileDetail", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          // "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (response.status === 200) {
+        const userProfile = response.data;
+        setUserData(userProfile);
+      } else {
+        // Handle error
+        console.error("Failed to fetch user profile");
+      }
+    } catch (error) {
+      // Handle error
+      console.error("Error fetching user profile:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (session) {
+      fetchUserProfile();
+    }
+  }, [session]);
 
   if (!session) {
     // Render loading state or redirect to login
@@ -25,25 +61,37 @@ const UserProfile: FC<UserProfileProps> = () => {
     );
   }
 
-  const { user } = session;
+
+
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-800">
-      <Card className="mx-auto max-w-md p-6 rounded-lg shadow-xl bg-white dark:bg-zinc-900">
+    <div className="flex items-center justify-center  bg-gray-100 dark:bg-gray-800">
+      <Card className="w-full mx-auto p-6 rounded-lg shadow-xl bg-white dark:bg-zinc-900">
         <div className="flex flex-col items-center space-y-4">
-          <Avatar className="h-24 w-24">
+        <Avatar className="h-64 w-64">
             <AvatarImage
               alt="User Avatar"
-              src={user.image || "/placeholder-avatar.jpg"}
+              src={`http://localhost:8080/${userData.foto}`}
+              className="h-full w-full rounded-full object-cover"
             />
+            {/* <img
+              alt="AcademicScopeLogo"
+              height="30"
+              src="/monkey.jpg"
+              style={{
+                aspectRatio: "30/30",
+                objectFit: "cover",
+              }}
+              width="30"
+            /> */}
             <AvatarFallback>
-              {user.username && user.username.charAt(0)}
+              {userData.nama && userData.nama.charAt(0)}
             </AvatarFallback>
           </Avatar>
           <div className="text-center">
-            <h2 className="text-2xl font-bold">{user.nama || "John Doe"}</h2>
+            <h2 className="text-2xl font-bold">{userData.nama || "Not Set"}</h2>
             <p className="text-sm text-zinc-500 dark:text-zinc-400">
-              {user.role || "Full Stack Developer at Acme Inc."}
+            {role ? role.charAt(0).toUpperCase() + role.slice(1) : "Full Stack Developer at Acme Inc."}
             </p>
           </div>
         </div>
@@ -51,7 +99,25 @@ const UserProfile: FC<UserProfileProps> = () => {
           <div className="flex justify-between">
             <span className="font-medium text-sm">Email:</span>
             <span className="text-sm text-zinc-500 dark:text-zinc-400">
-              {user.email || "john.doe@example.com"}
+              {userData.email || "Not Set"}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span className="font-medium text-sm">Nama Lengkap:</span>
+            <span className="text-sm text-zinc-500 dark:text-zinc-400">
+              {userData.nama || "Not Set"}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span className="font-medium text-sm">NIP:</span>
+            <span className="text-sm text-zinc-500 dark:text-zinc-400">
+              {userData.nip || "Not Set"}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span className="font-medium text-sm">No. Telpon:</span>
+            <span className="text-sm text-zinc-500 dark:text-zinc-400">
+              {userData.phone || "Not Set"}
             </span>
           </div>
         </div>
@@ -61,6 +127,6 @@ const UserProfile: FC<UserProfileProps> = () => {
       </Card>
     </div>
   );
-}
+};
 
 export default UserProfile;

@@ -4,8 +4,8 @@ import { Inter } from "next/font/google";
 
 import { cn } from "@/lib/utils";
 
-import Sidebar from "@/components/layouts/Sidebar";
-import Header from "@/components/layouts/Header";
+import Sidebar from "@/components/layouts/sidebar";
+import Header from "@/components/layouts/header";
 
 const inter = Inter({ subsets: ["latin"] });
 

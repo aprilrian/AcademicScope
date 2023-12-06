@@ -1,4 +1,5 @@
 "use client";
+
 import { useForm } from "react-hook-form";
 import { Form, FormDescription } from "@/components/ui/form";
 import * as z from "zod";
@@ -15,6 +16,7 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useSession } from "next-auth/react";
+import { toast } from "@/components/ui/use-toast";
 
 const batchFormSchema = z.object({
   file: z.unknown(),
@@ -31,8 +33,6 @@ const BatchForm = () => {
     },
   });
 
-  // ... (previous imports)
-
   const onSubmit = async (values: z.infer<typeof batchFormSchema>) => {
     try {
       const formData = new FormData();
@@ -46,7 +46,7 @@ const BatchForm = () => {
 
       // Make an API call using axios with Authorization header
       const response = await axios.post(
-        "http://localhost:8080/user/generateBatch",
+        "http://localhost:8080/operator/generateBatch",
         formData,
         {
           headers: {
@@ -56,12 +56,25 @@ const BatchForm = () => {
         }
       );
       console.log("API response:", response.data);
+      form.reset();
+      toast({
+        title: "Generate Akun Batch",
+        description: "Akun berhasil digenerate.",
+        duration: 5000,
+      });
 
       // Handle the response based on your application logic
       // For example, you might want to redirect the user or show a success message
     } catch (error) {
       // Handle errors, for example, log the error or show an error message
       console.error("Error submitting the form:", error);
+      toast({
+        title: "Error",
+        description:
+          // error?.response?.data?.message ||
+          "There was an error generating the account.",
+        duration: 5000,
+      });
     }
   };
 
@@ -73,6 +86,36 @@ const BatchForm = () => {
       form.setValue("file", file);
     }
   };
+
+  const handleDownloadTemplate = async () => {
+    try {
+      // Make sure accessToken is available
+      if (!accessToken) {
+        console.error("Access token not available");
+        return;
+      }
+
+      // Make an API call using axios to get the template file URL
+      const response = await axios.get(
+        "http://localhost:8080/operator/getBatchTemplate",
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      // Get the template file URL from the API response
+      const templateFileUrl = response.data.templateUrl;
+
+      // Trigger download by setting window location to the template URL
+      window.location.href = templateFileUrl;
+    } catch (error) {
+      // Handle errors, for example, log the error or show an error message
+      console.error("Error downloading the template:", error);
+    }
+  };
+
   return (
     <div className="mt-5 flex-grow mb-5">
       <Card className="max-w-2xl mx-auto">
@@ -97,9 +140,7 @@ const BatchForm = () => {
                   <FormDescription className="col-span-2">
                     Upload file dengan format .csv atau .xsl
                   </FormDescription>
-                  <Button
-                    onClick={() => (window.location.href = "mahasiswa.csv")}
-                  >
+                  <Button onClick={handleDownloadTemplate}>
                     Download Template
                   </Button>
                 </div>

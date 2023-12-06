@@ -26,6 +26,8 @@ import {
   Card,
 } from "@/components/ui/card";
 import { useSession } from "next-auth/react";
+import { toast } from "@/components/ui/use-toast";
+import axios from "axios";
 
 const irsSchema = z.object({
   semester_aktif: z.string(),
@@ -44,38 +46,56 @@ export function irsForm() {
       file: "",
     },
   });
-  const onSubmit = async (value: z.infer<typeof irsSchema>) => {
+
+  const onSubmit = async (values: z.infer<typeof irsSchema>) => {
     try {
       if (!accessToken) {
         console.error("Access token not available");
         return;
       }
-      // Di sini Anda dapat melakukan pengiriman data ke server atau melakukan tindakan lain sesuai kebutuhan aplikasi Anda.
-      // Contoh pengiriman data menggunakan fetch API:
-      const response = await fetch(
+      const formData = new FormData();
+      formData.append("semester_aktif", values.semester_aktif);
+      formData.append("sks", values.sks);
+      formData.append("file", values.file as File);
+
+      formData.set("Content-Type", "multipart/form-data");
+
+      const response = await axios.post(
         "http://localhost:8080/mahasiswa/irs/submit",
+        formData,
         {
-          method: "POST",
           headers: {
             Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "multipart/form-data",
+            // "Content-Type": "multipart/form-data",
           },
-          body: JSON.stringify(value),
         }
       );
+      form.reset();
 
-      if (response.ok) {
-
-        alert("IRS berhasil disubmit!");
-      } else {
-        
-        alert("Gagal submit irs. Silakan coba lagi.");
-      }
+      console.log("API response:", response.data);
+      toast({
+        title: "Submit IRS",
+        description: "IRS berhasil di submit.",
+        duration: 5000,
+      });
     } catch (error) {
       console.error("Error submitting the form:", error);
+
+      toast({
+        title: "Error",
+        description:
+          // error?.response?.data?.message ||
+          "There was an error submitting IRS.",
+        duration: 5000,
+      });
     }
   };
-
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      form.setValue("file", file);
+    }
+  };
   return (
     <>
       <div className="hidden space-y-6 p-10 pb-16 md:block  bg-gray-100">
@@ -124,7 +144,7 @@ export function irsForm() {
                             <Input placeholder="Contoh: 24" {...field} />
                           </FormControl>
                           <FormDescription>
-                            Masukkan jumlah sks anda
+                            Masukkan jumlah SKS anda
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
@@ -132,8 +152,12 @@ export function irsForm() {
                     />
 
                     <div className="grid w-full max-w-sm items-center gap-1.5">
-                      <Label htmlFor="scan">Upload Scan</Label>
-                      <Input id="scan" type="file" />
+                      <Label htmlFor="file">Upload Scan</Label>
+                      <Input
+                        id="file"
+                        type="file"
+                        onChange={handleFileChange}
+                      />
                       <FormDescription>Masukkan file PDF</FormDescription>
                     </div>
 

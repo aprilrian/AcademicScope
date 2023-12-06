@@ -11,26 +11,30 @@ import {
 } from "recharts";
 
 interface DataPoint {
-  nilai: string;
-  jumlah: number;
+  semester: number;
+  Semester: number;
 }
 
 const data: DataPoint[] = [
   {
-    nilai: "1",
-    jumlah: 100,
+    semester: 1,
+    Semester: 1,
   },
   {
-    nilai: "2",
-    jumlah: 200,
+    semester: 2,
+    Semester: 2,
   },
   {
-    nilai: "3",
-    jumlah: 300,
+    semester: 3,
+    Semester: 3,
   },
   {
-    nilai: "4",
-    jumlah: 400,
+    semester: 4,
+    Semester: 4,
+  },
+  {
+    semester: 5,
+    Semester: 3.86,
   },
 ];
 
@@ -55,18 +59,18 @@ export default class CustomBarChart extends PureComponent {
             barSize={20}
           >
             <XAxis
-              dataKey="nilai"
+              dataKey="semester"
               scale="point"
               padding={{ left: 10, right: 10 }}
             />
                         <YAxis
               // Menetapkan ticks pada sumbu Y
-              ticks={[100, 200, 300, 400]}
+              ticks={[1, 2, 3, 4]}
             />
             <Tooltip />
             <Legend />
             <CartesianGrid strokeDasharray="3 3" />
-            <Bar dataKey="jumlah" fill="#" background={{ fill: "#eee" }} />
+            <Bar dataKey="Semester" fill="#" background={{ fill: "#eee" }}/>
           </BarChart>
         </ResponsiveContainer>
       </div>

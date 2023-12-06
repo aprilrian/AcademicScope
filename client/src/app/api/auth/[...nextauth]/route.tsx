@@ -95,6 +95,7 @@ export const authOptions: AuthOptions = {
                 access_token: data.access_token,
                 nama : data.nama,
                 isFirstLogin : data.isFirstLogin,
+                image : data.foto,
 
                 // image : data.foto,
                 // refreshToken: data.refreshToken,
@@ -106,6 +107,7 @@ export const authOptions: AuthOptions = {
                     access_token: user?.access_token,
                     nama : user?.nama,
                     isFirstLogin : user?.isFirstLogin,
+                    image : user?.image,
                     // image : user?.image,
 
                     // refreshToken: user?.refreshToken,

@@ -10,41 +10,25 @@ export function Header({
 }: React.HTMLAttributes<HTMLElement>) {
   return (
     <nav
-      className={cn("flex items-center space-x-4 lg:space-x-6", className)}
+      className={cn("flex items-center justify-between px-4 py-5 border-b border-gray-300", className)}
       {...props}
     >
-      <div className="hidden flex-col md:flex">
-        <div className="border-b border-gray-300 py-2 px-4">
-          <div className="flex h-16 items-center">
-            <Link
-              href="/mahasiswa/dashboard"
-              className="text-sm font-medium transition-colors hover:text-primary"
-            >
-              <div className="flex items-center space-x-1">
-                <img
-                  alt="AcademicScopeLogo"
-                  height="30"
-                  src="/logo.png"
-                  style={{
-                    aspectRatio: "30/30",
-                    objectFit: "cover",
-                  }}
-                  width="30"
-                />
-                <h1 className="text-lg font-medium">AcademicScope</h1>
-              </div>
-            </Link>
+      <div className="flex items-center">
+        <img
+          alt="AcademicScopeLogo"
+          height="30"
+          src="/logo.png"
+          style={{
+            aspectRatio: "30/30",
+            objectFit: "cover",
+          }}
+          width="30"
+        />
+        <h1 className="text-lg font-medium">AcademicScope</h1>
+      </div>
 
-            <div className="flex">
-              <main className="flex-grow p-6 w-screen">
-                <div className="flex justify-between items-center mb-4"></div>
-                <div className="absolute top-0 right-0 p-4 w-50 h-50">
-                  <UserNav />
-                </div>
-              </main>
-            </div>
-          </div>
-        </div>
+      <div className="flex items-center space-x-4">
+        <UserNav />
       </div>
     </nav>
   );

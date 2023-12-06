@@ -1,10 +1,6 @@
 "use client";
 
-import React, { PureComponent } from "react";
-
-import CustomPieChart from "@/components/charts/PieChart";
-import CustomBarChart from "@/components/charts/BarChart";
-
+import React from "react";
 import Image from "next/image";
 
 import { Button } from "@/components/ui/button";

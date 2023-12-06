@@ -27,23 +27,30 @@ import {
 } from "@/components/ui/card";
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { toast } from "@/components/ui/use-toast";
 
 const khsSchema = z.object({
   semester_aktif: z.string(),
-  sks: z.string().min(2, {
-    message: "Jumlah SKS must be at least 2 characters.",
-  }),
-  sks_kumulatif: z.string().min(2, {
-    message: "Jumlah SKS must be at least 2 characters.",
-  }),
+  // sks: z.string().min(2, {
+  //   message: "Jumlah SKS must be at least 2 characters.",
+  // }),
+  // sks_kumulatif: z.string().min(2, {
+  //   message: "Jumlah SKS must be at least 2 characters.",
+  // }),
   ip: z.string().min(2, {
     message: "Indeks Prestasi must be at least 2 characters.",
   }),
-  ip_kumulatif: z.string().min(2, {
-    message: "Indeks Prestasi must be at least 2 characters.",
-  }),
-  status_verifikasi: z.string(),
+  // ip_kumulatif: z.string().min(2, {
+  //   message: "Indeks Prestasi must be at least 2 characters.",
+  // }),
+  // status_verifikasi: z.string(),
   file: z.unknown(),
 });
 
@@ -56,33 +63,54 @@ const KHSForm = () => {
       file: "",
     },
   });
-  const onSubmit = async (value: z.infer<typeof khsSchema>) => {
+
+  const onSubmit = async (values: z.infer<typeof khsSchema>) => {
     try {
       if (!accessToken) {
         console.error("Access token not available");
         return;
       }
-      // Di sini Anda dapat melakukan pengiriman data ke server atau melakukan tindakan lain sesuai kebutuhan aplikasi Anda.
-      // Contoh pengiriman data menggunakan fetch API:
-      const response = await fetch(
+      const formData = new FormData();
+      formData.append("semester_aktif", values.semester_aktif);
+      formData.append("ip", values.ip);
+      formData.append("file", values.file as File);
+
+      formData.set("Content-Type", "multipart/form-data");
+
+      const response = await axios.post(
         "http://localhost:8080/mahasiswa/khs/submit",
+        formData,
         {
-          method: "POST",
           headers: {
             Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "multipart/form-data",
+            // "Content-Type": "multipart/form-data",
           },
-          body: JSON.stringify(value),
         }
       );
+      form.reset();
 
-      if (response.ok) {
-        alert("KHS berhasil disubmit!");
-      } else {
-        alert("Gagal submit khs. Silakan coba lagi.");
-      }
+      console.log("API response:", response.data);
+      toast({
+        title: "Submit KHS",
+        description: "KHS berhasil di submit.",
+        duration: 5000,
+      });
     } catch (error) {
       console.error("Error submitting the form:", error);
+
+      toast({
+        title: "Error",
+        description:
+          // error?.response?.data?.message ||
+          "Error submit KHS.",
+        duration: 5000,
+      });
+    }
+  };
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      form.setValue("file", file);
     }
   };
 
@@ -90,8 +118,8 @@ const KHSForm = () => {
     <>
       <div className="hidden space-y-6 p-10 pb-16 md:block  bg-gray-100">
         <div className="space-y-0.5">
-          <h2 className="text-2xl font-bold tracking-tight">IRS</h2>
-          <p className="text-muted-foreground">Isi IRS anda</p>
+          <h2 className="text-2xl font-bold tracking-tight">KHS</h2>
+          <p className="text-muted-foreground">Isi KHS anda</p>
         </div>
         <Separator className="my-6" />
         <div className="mt-10 flex-grow mb-10">
@@ -124,7 +152,7 @@ const KHSForm = () => {
                       )}
                     />
 
-                    <FormField
+                    {/* <FormField
                       control={form.control}
                       name="sks"
                       render={({ field }) => (
@@ -139,9 +167,9 @@ const KHSForm = () => {
                           <FormMessage />
                         </FormItem>
                       )}
-                    />
+                    /> */}
 
-                    <FormField
+                    {/* <FormField
                       control={form.control}
                       name="sks_kumulatif"
                       render={({ field }) => (
@@ -156,7 +184,7 @@ const KHSForm = () => {
                           <FormMessage />
                         </FormItem>
                       )}
-                    />
+                    /> */}
 
                     <FormField
                       control={form.control}
@@ -175,7 +203,7 @@ const KHSForm = () => {
                       )}
                     />
 
-                    <FormField
+                    {/* <FormField
                       control={form.control}
                       name="ip_kumulatif"
                       render={({ field }) => (
@@ -190,9 +218,9 @@ const KHSForm = () => {
                           <FormMessage />
                         </FormItem>
                       )}
-                    />
+                    /> */}
 
-                    <FormField
+                    {/* <FormField
                       control={form.control}
                       name="status_verifikasi"
                       render={({ field }) => (
@@ -225,11 +253,15 @@ const KHSForm = () => {
                           <FormMessage />
                         </FormItem>
                       )}
-                    />
+                    /> */}
 
                     <div className="grid w-full max-w-sm items-center gap-1.5">
                       <Label htmlFor="scan">Upload Scan</Label>
-                      <Input id="scan" type="file" />
+                      <Input
+                        id="scan"
+                        type="file"
+                        onChange={handleFileChange}
+                      />
                       <FormDescription>Masukkan file PDF</FormDescription>
                     </div>
 

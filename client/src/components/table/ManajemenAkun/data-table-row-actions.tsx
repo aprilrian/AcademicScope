@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 // import { labels } from "../data/data"
-import { mahasiswaSchema } from "../../data/tabelDataMahasiswa/schema";
+import { manajemenSchema } from "../../data/tabel/tabelManajemenAkun/schema";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -28,7 +28,7 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
-  const task = mahasiswaSchema.parse(row.original);
+  const task = manajemenSchema.parse(row.original);
 
   return (
     <DropdownMenu>
@@ -43,9 +43,9 @@ export function DataTableRowActions<TData>({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
         <DropdownMenuItem>Edit</DropdownMenuItem>
-        <DropdownMenuItem>Make a copy</DropdownMenuItem>
-        <DropdownMenuItem>Favorite</DropdownMenuItem>
-        <DropdownMenuSeparator />
+        {/* <DropdownMenuItem>Make a copy</DropdownMenuItem>
+        <DropdownMenuItem>Favorite</DropdownMenuItem> */}
+        {/* <DropdownMenuSeparator /> */}
         {/* <DropdownMenuSub>
           <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
@@ -58,11 +58,11 @@ export function DataTableRowActions<TData>({
             </DropdownMenuRadioGroup>
           </DropdownMenuSubContent>
         </DropdownMenuSub> */}
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        {/* <DropdownMenuSeparator /> */}
+        {/* <DropdownMenuItem>
           Delete
           <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
-        </DropdownMenuItem>
+        </DropdownMenuItem> */}
       </DropdownMenuContent>
     </DropdownMenu>
   );

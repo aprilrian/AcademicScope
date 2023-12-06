@@ -5,9 +5,9 @@ import { Table } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { DataTableViewOptions } from "@/components/table/DataMahasiswa/data-table-view-options";
+import { DataTableViewOptions } from "@/components/table/ManajemenAkun/data-table-view-options";
 
-import { Status, Angkatan } from "../../data/tabelDataMahasiswa/data";
+import { Role } from "../../data/tabel/tabelManajemenAkun/data";
 import { DataTableFacetedFilter } from "./data-table-faceted-filter";
 
 interface DataTableToolbarProps<TData> {
@@ -30,20 +30,20 @@ export function DataTableToolbar<TData>({
           }
           className="h-8 w-[150px] lg:w-[250px]"
         />
-        {table.getColumn("status") && (
+        {table.getColumn("role") && (
           <DataTableFacetedFilter
-            column={table.getColumn("status")}
-            title="Status"
-            options={Status}
+            column={table.getColumn("role")}
+            title="role"
+            options={Role}
           />
         )}
-        {table.getColumn("angkatan") && (
+        {/* {table.getColumn("angkatan") && (
           <DataTableFacetedFilter
             column={table.getColumn("angkatan")}
             title="Angkatan"
             options={Angkatan}
           />
-        )}
+        )} */}
         {isFiltered && (
           <Button
             variant="ghost"

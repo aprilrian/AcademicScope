@@ -1,20 +1,64 @@
-// UserProfile.tsx
-'use client';
+"use client";
 
-import { FC } from 'react';
+import { FC, useEffect, useState } from "react";
 import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar";
-
 import { Card } from "@/components/ui/card";
 import { useSession } from "next-auth/react";
-
-
 import EditProfile from "./updProfil";
-import { Loader } from 'lucide-react';
+import { Loader } from "lucide-react";
+import axios from "axios";
 
 interface UserProfileProps {}
 
 const UserProfile: FC<UserProfileProps> = () => {
   const { data: session } = useSession();
+  const role = session?.user?.role;
+  const accessToken = session?.user?.access_token;
+
+  const [userData, setUserData] = useState({
+    nim: "",
+    nama: "",
+    angkatan: "",
+    alamat: "",
+    kabupatenKota: 0,
+    provinsi: 0,
+    jalur_masuk: "",
+    email: "",
+    phone: "",
+    foto: "",
+    nama_dosen: "",
+  });
+
+  const fetchUserProfile = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8080/profileDetail",
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            // "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+  
+      if (response.status === 200) {
+        const userProfile = response.data;
+        setUserData(userProfile);
+      } else {
+        // Handle error
+        console.error("Failed to fetch user profile");
+      }
+    } catch (error) {
+      // Handle error
+      console.error("Error fetching user profile:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (session) {
+      fetchUserProfile();
+    }
+  }, [session]);
 
   if (!session) {
     // Render loading state or redirect to login
@@ -25,27 +69,26 @@ const UserProfile: FC<UserProfileProps> = () => {
     );
   }
 
-  const { user } = session;
-
-
-  
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-800">
-      <Card className="mx-auto max-w-md p-6 rounded-lg shadow-xl bg-white dark:bg-zinc-900">
+    <div className="flex items-center justify-center  bg-gray-100 dark:bg-gray-800">
+<Card className="w-full mx-auto p-6 rounded-lg shadow-xl bg-white dark:bg-zinc-900">
         <div className="flex flex-col items-center space-y-4">
-          <Avatar className="h-24 w-24">
+        <Avatar className="h-64 w-64">
             <AvatarImage
               alt="User Avatar"
-              src={user.image || "/placeholder-avatar.jpg"}
+              src={`http://localhost:8080/${userData.foto}`}
+              className="h-full w-full rounded-full object-cover"
             />
             <AvatarFallback>
-              {user.username && user.username.charAt(0)}
+              {userData.nama && userData.nama.charAt(0)}
             </AvatarFallback>
           </Avatar>
           <div className="text-center">
-            <h2 className="text-2xl font-bold">{user.nama || "John Doe"}</h2>
+            <h2 className="text-2xl font-bold">
+              {userData.nama || "John Doe"}
+            </h2>
             <p className="text-sm text-zinc-500 dark:text-zinc-400">
-              {user.role || "Full Stack Developer at Acme Inc."}
+            {role ? role.charAt(0).toUpperCase() + role.slice(1) : "Full Stack Developer at Acme Inc."}
             </p>
           </div>
         </div>
@@ -53,7 +96,63 @@ const UserProfile: FC<UserProfileProps> = () => {
           <div className="flex justify-between">
             <span className="font-medium text-sm">Email:</span>
             <span className="text-sm text-zinc-500 dark:text-zinc-400">
-              {user.email || "john.doe@example.com"}
+              {userData.email || "john.doe@example.com"}
+            </span>
+          </div>
+          {/* Add more fields based on your JSON structure */}
+          {/* Example: */}
+          <div className="flex justify-between">
+            <span className="font-medium text-sm">Nama Lengkap:</span>
+            <span className="text-sm text-zinc-500 dark:text-zinc-400">
+              {userData.nama || "24060121140120"}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span className="font-medium text-sm">NIM:</span>
+            <span className="text-sm text-zinc-500 dark:text-zinc-400">
+              {userData.nim || "24060121140120"}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span className="font-medium text-sm">Angkatan:</span>
+            <span className="text-sm text-zinc-500 dark:text-zinc-400">
+              {userData.angkatan || "24060121140120"}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span className="font-medium text-sm">Alamat:</span>
+            <span className="text-sm text-zinc-500 dark:text-zinc-400">
+              {userData.alamat || "24060121140120"}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span className="font-medium text-sm">Kabupaten:</span>
+            <span className="text-sm text-zinc-500 dark:text-zinc-400">
+              {userData.kabupatenKota || "24060121140120"}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span className="font-medium text-sm">Provinsi:</span>
+            <span className="text-sm text-zinc-500 dark:text-zinc-400">
+              {userData.provinsi || "24060121140120"}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span className="font-medium text-sm">Jalur Masuk:</span>
+            <span className="text-sm text-zinc-500 dark:text-zinc-400">
+              {userData.jalur_masuk || "24060121140120"}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span className="font-medium text-sm">No. Telpon:</span>
+            <span className="text-sm text-zinc-500 dark:text-zinc-400">
+              {userData.phone || "24060121140120"}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span className="font-medium text-sm">Dosen Wali:</span>
+            <span className="text-sm text-zinc-500 dark:text-zinc-400">
+              {userData.nama_dosen || "24060121140120"}
             </span>
           </div>
         </div>
@@ -63,6 +162,6 @@ const UserProfile: FC<UserProfileProps> = () => {
       </Card>
     </div>
   );
-}
+};
 
 export default UserProfile;

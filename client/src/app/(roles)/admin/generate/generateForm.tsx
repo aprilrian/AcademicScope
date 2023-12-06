@@ -39,6 +39,8 @@ import {
 
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
+import React from "react";
 
 const generateFormSchema = z.object({
   nim: z
@@ -60,11 +62,20 @@ const generateFormSchema = z.object({
   angkatan: z.string({
     required_error: "Please select.",
   }),
+  nip_dosen: z.string({
+    required_error: "Please select.",
+  }),
 });
 
 const GenerateForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [open, setOpen] = React.useState(false);
+  const [dosen, setDosen] = React.useState([]);
+
+  const { toast } = useToast();
+
+
   const form = useForm<z.infer<typeof generateFormSchema>>({
     resolver: zodResolver(generateFormSchema),
     defaultValues: {
@@ -73,8 +84,11 @@ const GenerateForm = () => {
     },
   });
 
+  const { data: session } = useSession();
+  const accessToken = session?.user?.access_token;
+
   const {
-    handleSubmit, // tambahkan handleSubmit
+    handleSubmit,
     formState: { isValid },
   } = form;
 
@@ -82,10 +96,18 @@ const GenerateForm = () => {
     try {
       setLoading(true);
 
-      // Make an API call using axios
+      if (!accessToken) {
+        console.error("Access token not available");
+        return;
+      }
+
       const response = await axios.post(
-        "http://localhost:8080/user/generate",
-        values
+        "http://localhost:8080/operator/generate",values,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
       );
       console.log("API response:", response.data);
 
@@ -96,11 +118,6 @@ const GenerateForm = () => {
       });
     } catch (error) {
       console.error("Error submitting the form:", error);
-
-      // setError(
-      //   error?.response?.data?.message ||
-      //     "There was an error generating the account."
-      // );
 
       toast({
         title: "Error",
@@ -125,7 +142,25 @@ const GenerateForm = () => {
     { label: "2023", value: "2023" },
   ] as const;
 
-  const { toast } = useToast();
+  React.useEffect(() => {
+    const fetchDosen = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/master/getAllDosen",
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        setDosen(response.data);
+      } catch (error) {
+        console.error("Error fetching data dosen:", error);
+      }
+    };
+
+    fetchDosen();
+  }, []);
 
   return (
     <Card className="max-w-2xl mx-auto">
@@ -159,6 +194,66 @@ const GenerateForm = () => {
                     <FormControl>
                       <Input type="text" placeholder="John Doe..." {...field} />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="nip_dosen"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Dosen Wali</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            className={cn(
+                              "w-[200px] justify-between",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            {field.value
+                              ? dosen.find(
+                                  (dosen) => dosen.value === field.value
+                                )?.label
+                              : "Pilih dosen"}
+                            <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[200px] p-0">
+                        <Command>
+                          <CommandInput placeholder="Pilih dosen..." />
+                          <CommandEmpty>No dosen found.</CommandEmpty>
+                          <CommandGroup>
+                            {dosen.map((dosenItem) => (
+                              <CommandItem
+                                value={dosenItem.label}
+                                key={dosenItem.value}
+                                onSelect={() => {
+                                  form.setValue("nip_dosen", dosenItem.value);
+                                }}
+                              >
+                                <CheckIcon
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    dosenItem.value === field.value
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  )}
+                                />
+                                {dosenItem.label}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                    <FormDescription>Pilih Dosen Wali anda</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -224,7 +319,6 @@ const GenerateForm = () => {
                 )}
               />
             </div>
-
 
 
             <Button className="w-full mt-6" type="submit">

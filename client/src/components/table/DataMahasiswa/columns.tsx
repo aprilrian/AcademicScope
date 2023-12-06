@@ -2,8 +2,8 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 
-import { Angkatan, Status } from "../../data/tabelDataMahasiswa/data";
-import { dataMahasiswa } from "../../data/tabelDataMahasiswa/schema";
+import { Angkatan, Status } from "../../data/tabel/tabelDataMahasiswa/data";
+import { dataMahasiswa } from "../../data/tabel/tabelDataMahasiswa/schema";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import { DataTableRowActions } from "./data-table-row-actions";
 

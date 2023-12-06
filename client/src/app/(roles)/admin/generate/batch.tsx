@@ -15,7 +15,9 @@ const Batch= () => {
 
       const res = await fetch('http://localhost:8080/user/generateBatch', {
         method: 'POST',
-        body: data
+        body: data,
+        headers: {
+          'Authorization': `Bearer ${token}`
       })
       // handle the error
       if (!res.ok) throw new Error(await res.text())

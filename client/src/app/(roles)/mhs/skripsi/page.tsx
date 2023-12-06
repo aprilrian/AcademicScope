@@ -44,6 +44,8 @@ import {
   Card,
 } from "@/components/ui/card";
 import { useSession } from "next-auth/react";
+import axios from "axios";
+import { toast } from "@/components/ui/use-toast";
 
 const skripsiSchema = z.object({
   status: z.string(),
@@ -55,7 +57,6 @@ const skripsiSchema = z.object({
   tanggal_sidang: z.date({
     required_error: "tanggal sidang is required.",
   }),
-  lama_studi: z.string(),
   file: z.unknown(),
 });
 
@@ -68,36 +69,59 @@ const SKRIPSIForm = () => {
       file: "",
     },
   });
-  const onSubmit = async (value: z.infer<typeof skripsiSchema>) => {
+
+  const onSubmit = async (values: z.infer<typeof skripsiSchema>) => {
     try {
       if (!accessToken) {
         console.error("Access token not available");
         return;
       }
-      // Di sini Anda dapat melakukan pengiriman data ke server atau melakukan tindakan lain sesuai kebutuhan aplikasi Anda.
-      // Contoh pengiriman data menggunakan fetch API:
-      const response = await fetch(
+      const formData = new FormData();
+      formData.append("semester", values.semester);
+      formData.append("file", values.file as File);
+      formData.append("status", values.status);
+      formData.append("nilai", values.nilai);
+      formData.append("tanggal_lulus", values.tanggal_lulus.toISOString());
+      formData.append("tanggal_sidang", values.tanggal_sidang.toISOString());
+
+      formData.set("Content-Type", "multipart/form-data");
+
+      const response = await axios.post(
         "http://localhost:8080/mahasiswa/skripsi/submit",
+        formData,
         {
-          method: "POST",
           headers: {
             Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "multipart/form-data",
+            // "Content-Type": "multipart/form-data",
           },
-          body: JSON.stringify(value),
         }
       );
+      form.reset();
 
-      if (response.ok) {
-        alert("KHS berhasil disubmit!");
-      } else {
-        alert("Gagal submit khs. Silakan coba lagi.");
-      }
+      console.log("API response:", response.data);
+      toast({
+        title: "Submit Skripsi",
+        description: "Skripsi berhasil di submit.",
+        duration: 5000,
+      });
     } catch (error) {
       console.error("Error submitting the form:", error);
+
+      toast({
+        title: "Error",
+        description:
+          // error?.response?.data?.message ||
+          "There was an error submitting Skripsi.",
+        duration: 5000,
+      });
     }
   };
-
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      form.setValue("file", file);
+    }
+  };
   return (
     <>
       <div className="hidden space-y-6 p-10 pb-16 md:block  bg-gray-100">
@@ -138,9 +162,8 @@ const SKRIPSIForm = () => {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="belum">Belum ambil</SelectItem>
-                              <SelectItem value="sudah">
-                                Sedang ambil
+                              <SelectItem value="belum ambil">
+                                Belum ambil
                               </SelectItem>
                               <SelectItem value="lulus">Lulus</SelectItem>
                             </SelectContent>
@@ -275,26 +298,14 @@ const SKRIPSIForm = () => {
                       )}
                     />
 
-                    <FormField
-                      control={form.control}
-                      name="lama_studi"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Lama Studi</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Masukkan Lama Studi"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
                     <div className="grid w-full max-w-sm items-center gap-1.5">
                       <Label htmlFor="scan">Upload Scan</Label>
-                      <Input id="scan" type="file" />
+                      <Input
+                        id="scan"
+                        type="file"
+                        onChange={handleFileChange}
+                      />
+                      <FormDescription>Masukkan file PDF</FormDescription>
                     </div>
 
                     <CardFooter>

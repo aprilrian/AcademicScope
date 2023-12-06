@@ -45,6 +45,8 @@ const Login = () => {
   const searchParams = useSearchParams();
   // const callbackUrl = searchParams.get("callbackUrl") ?? "/dashboard";
   const { data: session } = useSession();
+  const userRole = session?.user?.role as string | undefined;
+  console.log("UserRole:", userRole);
 
   const form = useForm({ resolver: yupResolver(loginSchema) });
   const {
@@ -62,8 +64,6 @@ const Login = () => {
       });
 
       if (!res?.error) {
-        const userRole = session?.user?.role as string | undefined;
-        console.log("UserRole:", userRole);
         switch (userRole) {
           case "operator":
             router.push("/admin/dashboard");
@@ -71,14 +71,14 @@ const Login = () => {
           case "mahasiswa":
             router.push("/mhs/dashboard");
             break;
-          case "dosenwali":
+          case "dosen":
             router.push("/doswal/dashboard");
             break;
           case "departemen":
             router.push("/dept/dashboard");
             break;
           default:
-            router.push("/mhs/dashboard");
+            router.push("/admin/dashboard");
             break;
         }
       } else {

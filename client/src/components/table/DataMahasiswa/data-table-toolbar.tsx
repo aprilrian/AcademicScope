@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTableViewOptions } from "@/components/table/DataMahasiswa/data-table-view-options";
 
-import { Status, Angkatan } from "../../data/tabelDataMahasiswa/data";
+import { Status, Angkatan } from "../../data/tabel/tabelDataMahasiswa/data";
 import { DataTableFacetedFilter } from "./data-table-faceted-filter";
 
 interface DataTableToolbarProps<TData> {

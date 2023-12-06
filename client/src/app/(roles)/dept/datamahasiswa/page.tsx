@@ -1,33 +1,51 @@
-import { promises as fs } from "fs";
-import path from "path";
-import { Metadata } from "next";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import Image from "next/image";
 import { z } from "zod";
-
+import axios from "axios";
 import { columns } from "@/components/table/DataMahasiswa/columns";
 import { DataTable } from "@/components/table/DataMahasiswa/data-table";
-import { mahasiswaSchema } from "@/components/data/tabelDataMahasiswa/schema";
+import { mahasiswaSchema } from "@/components/data/tabel/tabelDataMahasiswa/schema";
+import { Metadata } from "next";
+import { Button } from "@/components/ui/button";
+import { useReactToPrint } from "react-to-print";
+import jsPDF from "jspdf";
 
 export const metadata: Metadata = {
-  title: "Tasks",
-  description: "A task and issue tracker build using Tanstack Table.",
+  title: "Data Mahasiswa",
+  description: "List Data Mahasiswa",
 };
 
-async function getTasks() {
-  const data = await fs.readFile(
-    path.join(
-      process.cwd(),
-      "src/components/data/tabelDataMahasiswa/dataMahasiswa.json"
-    )
-  );
+export async function getDataMahasiswa() {
+  try {
+    const session = await getServerSession(authOptions);
+    console.log(session);
 
-  const dataMahasiswa = JSON.parse(data.toString());
+    const accessToken = session?.user?.access_token;
 
-  return z.array(mahasiswaSchema).parse(dataMahasiswa);
+    console.log(accessToken);
+
+    const response = await axios.get(
+      "http://localhost:8080/master/getAllMahasiswa",
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    const dataMahasiswa = response.data;
+
+    return z.array(mahasiswaSchema).parse(dataMahasiswa);
+  } catch (error) {
+    console.error("Error fetching or parsing data:", error);
+    return [];
+  }
 }
 
-export default async function TaskPage() {
-  const dataMahasiswa = await getTasks();
+
+export default async function DataMahasiswaPage() {
+  const dataMahasiswa = await getDataMahasiswa();
 
   return (
     <>
@@ -57,7 +75,7 @@ export default async function TaskPage() {
           </div>
           <div className="flex items-center space-x-2"></div>
         </div>
-        <DataTable data={dataMahasiswa} columns={columns} />
+          <DataTable data={dataMahasiswa} columns={columns} />
       </div>
     </>
   );

@@ -2,12 +2,12 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 
-import { Angkatan, Status } from "../../data/tabelDataMahasiswa/data";
-import { dataMahasiswa } from "../../data/tabelDataMahasiswa/schema";
+import { Angkatan } from "../../data/tabel/tabelPKL/data";
+import { dataPKL } from "../../data/tabel/tabelPKL/schema";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import { DataTableRowActions } from "./data-table-row-actions";
 
-export const columns: ColumnDef<dataMahasiswa>[] = [
+export const columns: ColumnDef<dataPKL>[] = [
   {
     accessorKey: "nim",
     header: ({ column }) => (
@@ -33,29 +33,33 @@ export const columns: ColumnDef<dataMahasiswa>[] = [
     },
   },
   {
-    accessorKey: "status",
+    accessorKey: "nilai",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Status" />
+      <DataTableColumnHeader column={column} title="Nilai" />
     ),
-    cell: ({ row }) => {
-      const status = Status.find(
-        (status) => status.value === row.getValue("status")
-      );
-
-      if (!status) {
-        return null;
-      }
-
-      return (
-        <div className="flex w-[100px] items-center">
-          <span>{status.label}</span>
-        </div>
-      );
-    },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
-    },
+    cell: ({ row }) => <div className="w-[80px]">{row.getValue("nilai")}</div>,
+    enableSorting: false,
+    enableHiding: false,
   },
+    // cell: ({ row }) => {
+    //   const nilai = nilai.find(
+    //     (nilai) => nilai.value === row.getValue("nilai")
+    //   );
+
+      // if (!nilai) {
+      //   return null;
+      // }
+
+  //     return (
+  //       <div className="flex w-[100px] items-center">
+  //         {/* <span>{nilai.label}</span> */}
+  //       </div>
+  //     );
+  //   },
+  //   filterFn: (row, id, value) => {
+  //     return value.includes(row.getValue(id));
+  //   },
+  // },
   {
     accessorKey: "angkatan",
     header: ({ column }) => (

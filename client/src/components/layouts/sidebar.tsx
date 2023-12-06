@@ -62,7 +62,6 @@ export function Sidebar({ children }: NavBarProps) {
   // };
 
   const navigationLinks: NavLink[] = roles[userRole] || [];
-  console.log("UserRole sidebar:", userRole);
 
   return (
     <>

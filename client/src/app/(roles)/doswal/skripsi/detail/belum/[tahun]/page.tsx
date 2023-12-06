@@ -4,31 +4,30 @@ import { Metadata } from "next";
 import Image from "next/image";
 import { z } from "zod";
 
-import { columns } from "@/components/table/DataMahasiswa/columns";
-import { DataTable } from "@/components/table/DataMahasiswa/data-table";
-import { mahasiswaSchema } from "@/components/data/tabelDataMahasiswa/schema";
+import { columns } from "@/components/table/PKL/columns";
+import { DataTable } from "@/components/table/PKL/data-table";
+import { PKLSchema } from "@/components/data/tabel/tabelPKL/schema";
 
 export const metadata: Metadata = {
-  title: "Tasks",
-  description: "A task and issue tracker build using Tanstack Table.",
+  title: "Detail PKL",
+  description: "List detail PKL",
 };
 
-async function getTasks() {
-  const data = await fs.readFile(
-    path.join(
-      process.cwd(),
-      "src/components/data/tabelDataMahasiswa/dataMahasiswa.json"
-    )
-  );
+export default async function skripsiPage({ params }) {
+  const dataSkripsi = await getDataSkripsi();
+  
+  async function getDataSkripsi() {
+    const data = await fs.readFile(
+      path.join(
+        process.cwd(),
+        "src/components/data/tabel/tabelPKL/dataPKL.json"
+      )
+    );
 
-  const dataMahasiswa = JSON.parse(data.toString());
+    const dataPKL = JSON.parse(data.toString());
 
-  return z.array(mahasiswaSchema).parse(dataMahasiswa);
-}
-
-export default async function TaskPage() {
-  const dataMahasiswa = await getTasks();
-
+    return z.array(PKLSchema).parse(dataPKL);
+  }
   return (
     <>
       <div className="md:hidden">
@@ -50,12 +49,12 @@ export default async function TaskPage() {
       <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
         <div className="flex items-center justify-between space-y-2">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Data PKL</h2>
-            <p className="text-muted-foreground">Data PKL</p>
+            <h2 className="text-2xl font-bold tracking-tight">Data Skripsi</h2>
+            <p className="text-muted-foreground">Data Skripsi</p>
           </div>
           <div className="flex items-center space-x-2"></div>
         </div>
-        <DataTable data={dataMahasiswa} columns={columns} />
+        <DataTable data={dataSkripsi} columns={columns} />
       </div>
     </>
   );

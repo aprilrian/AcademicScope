@@ -8,7 +8,6 @@ import { Label } from "@/components/ui/label";
 
 import { Separator } from "@/components/ui/separator";
 
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -37,12 +36,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from "@/components/ui/use-toast";
 
 const pklSchema = z.object({
   status: z.string(),
   nilai: z.string(),
   semester: z.string(),
-  status_verifikasi: z.string(),
   file: z.unknown(),
 });
 
@@ -55,36 +54,57 @@ const PKLForm = () => {
       file: "",
     },
   });
-  const onSubmit = async (value: z.infer<typeof pklSchema>) => {
+
+  const onSubmit = async (values: z.infer<typeof pklSchema>) => {
     try {
       if (!accessToken) {
         console.error("Access token not available");
         return;
       }
-      // Di sini Anda dapat melakukan pengiriman data ke server atau melakukan tindakan lain sesuai kebutuhan aplikasi Anda.
-      // Contoh pengiriman data menggunakan fetch API:
-      const response = await fetch(
+      const formData = new FormData();
+      formData.append("status", values.status);
+      formData.append("semester", values.semester);
+      formData.append("nilai", values.nilai);
+      formData.append("file", values.file as File);
+
+      formData.set("Content-Type", "multipart/form-data");
+
+      const response = await axios.post(
         "http://localhost:8080/mahasiswa/pkl/submit",
+        formData,
         {
-          method: "POST",
           headers: {
             Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "multipart/form-data",
+            // "Content-Type": "multipart/form-data",
           },
-          body: JSON.stringify(value),
         }
       );
+      form.reset();
 
-      if (response.ok) {
-        alert("KHS berhasil disubmit!");
-      } else {
-        alert("Gagal submit khs. Silakan coba lagi.");
-      }
+      console.log("API response:", response.data);
+      toast({
+        title: "Submit PKL",
+        description: "pkl berhasil di submit.",
+        duration: 5000,
+      });
     } catch (error) {
       console.error("Error submitting the form:", error);
+
+      toast({
+        title: "Error",
+        description:
+          // error?.response?.data?.message ||
+          "Error submit PKL",
+        duration: 5000,
+      });
     }
   };
-
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      form.setValue("file", file);
+    }
+  };
   return (
     <>
       <div className="hidden space-y-6 p-10 pb-16 md:block  bg-gray-100">
@@ -120,14 +140,13 @@ const PKLForm = () => {
                               <SelectTrigger>
                                 <SelectValue
                                   className="text-muted-foreground"
-                                  placeholder="Status skripsi"
+                                  placeholder="Status PKL"
                                 />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="belum">Belum ambil</SelectItem>
-                              <SelectItem value="sudah">
-                                Sedang ambil
+                              <SelectItem value="belum ambil">
+                                Belum ambil
                               </SelectItem>
                               <SelectItem value="lulus">Lulus</SelectItem>
                             </SelectContent>
@@ -147,9 +166,7 @@ const PKLForm = () => {
                           <FormControl>
                             <Input placeholder="Contoh: 1" {...field} />
                           </FormControl>
-                          <FormDescription>
-                            Masukkan nilai PKL
-                          </FormDescription>
+                          <FormDescription>Masukkan nilai PKL</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -172,42 +189,15 @@ const PKLForm = () => {
                       )}
                     />
 
-
-                    <FormField
-                      control={form.control}
-                      name="status_verifikasi"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Status</FormLabel>
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                          >
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Pilih status anda" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="belum">belum</SelectItem>
-                              <SelectItem value="sedang diverifikasi">
-                                sedang diverifikasi
-                              </SelectItem>
-                              <SelectItem value="sudah">sudah</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormDescription>Pilih status anda</FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
                     <div className="grid w-full max-w-sm items-center gap-1.5">
-                      <Label htmlFor="scan">Upload Scan</Label>
-                      <Input id="scan" type="file" />
+                      <Label htmlFor="file">Upload Scan</Label>
+                      <Input
+                        id="file"
+                        type="file"
+                        onChange={handleFileChange}
+                      />
                       <FormDescription>Masukkan file PDF</FormDescription>
                     </div>
-
                     <CardFooter>
                       <Button type="submit" className="w-full">
                         Submit
