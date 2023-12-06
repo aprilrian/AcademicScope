@@ -58,5 +58,11 @@ const Skripsi = sequelize.define('Skripsi', {
   },
 });
 
+Skripsi.beforeSave(async (skripsi, options) => {
+  nilai = skripsi.nilai.toString();
+  semester = skripsi.semester.toString();
+  lama_studi = skripsi.lama_studi.toString();
+});
+
 module.exports = Skripsi;
 

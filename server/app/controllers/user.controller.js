@@ -1,4 +1,4 @@
-const { User, Mahasiswa, Dosen, KabupatenKota, Provinsi } = require("../models");
+const { User, Mahasiswa, Dosen, KabupatenKota, Provinsi, Operator } = require("../models");
 const csv = require('csvtojson');
 const fs = require('fs');
 const bcrypt = require('bcryptjs');
@@ -36,11 +36,15 @@ exports.changePassword = async (req, res) => {
 exports.viewProfile = async (req, res) => {
   try {
     const user = await User.findOne({ where: { id: req.user_id } });
+
     if (user.role === 'mahasiswa') {
-      const mahasiswa = await Mahasiswa.findOne(
-        { where: { user_id: req.user_id } });
-      const dosen = await Dosen.findOne(
-        { where: { nip: mahasiswa.nip_dosen } });
+      const mahasiswa = await Mahasiswa.findOne({ where: { user_id: req.user_id } });
+
+      if (!mahasiswa) {
+        return res.status(404).send({ message: "Mahasiswa data not found!" });
+      }
+
+      const dosen = await Dosen.findOne({ where: { nip: mahasiswa.nip_dosen } });
       const kabupatenKota = await KabupatenKota.findByPk(mahasiswa.kode_kabupatenKota);
       const provinsi = await Provinsi.findByPk(mahasiswa.kode_provinsi);
 
@@ -50,28 +54,74 @@ exports.viewProfile = async (req, res) => {
         nama: mahasiswa.nama,
         angkatan: mahasiswa.angkatan,
         alamat: mahasiswa.alamat,
-        kabupatenKota: (kabupatenKota.kabupaten_kota),
-        provinsi: provinsi.provinsi,
+        kabupatenKota: kabupatenKota ? kabupatenKota.kabupaten_kota : null,
+        provinsi: provinsi ? provinsi.provinsi : null,
         jalur_masuk: mahasiswa.jalur_masuk,
         email: mahasiswa.email,
         phone: mahasiswa.phone,
         foto: mahasiswa.foto,
-        nama_dosen: dosen.nama,
+        nama_dosen: dosen ? dosen.nama : null,
       });
+
     } else if (user.role === 'dosen') {
       const dosen = await Dosen.findOne({ where: { user_id: req.user_id } });
-      res.status(200).send(dosen, user.role);
+
+      if (!dosen) {
+        return res.status(404).send({ message: "Dosen data not found!" });
+      }
+
+      res.status(200).send({
+        role: user.role,
+        nip: dosen.nip,
+        nama: dosen.nama,
+        email: dosen.email,
+        alamat: dosen.alamat ? dosen.alamat : null,
+        phone: dosen.phone ? dosen.phone : null,
+        foto: dosen.foto,
+      });
+
     } else if (user.role === 'operator') {
       const operator = await Operator.findOne({ where: { user_id: req.user_id } });
-      res.status(200).send(operator, user.role);
-    } else {
+
+      if (!operator) {
+        return res.status(404).send({ message: "Operator data not found!" });
+      }
+
+      res.status(200).send({
+        role: user.role,
+        nip: operator.nip,
+        nama: operator.nama,
+        email: operator.email,
+        alamat: operator.alamat ? operator.alamat : null,
+        phone: operator.phone ? operator.phone : null,
+        foto: operator.foto,
+      });
+
+    } else if (user.role === 'departemen') {
       const departemen = await Departemen.findOne({ where: { user_id: req.user_id } });
-      res.status(200).send(departemen, user.role);
+
+      if (!departemen) {
+        return res.status(404).send({ message: "Departemen data not found!" });
+      }
+
+      res.status(200).send({
+        role: user.role,
+        nama: departemen.nama, 
+        email: departemen.email,
+        alamat: departemen.alamat ? departemen.alamat : null,
+        phone: departemen.phone ? departemen.phone : null,
+        foto: departemen.foto,
+      });
+
+    } else {
+      res.status(400).send({ message: "Invalid role!" });
     }
+
   } catch (error) {
     res.status(500).send({ message: error.message });
   }
-}
+};
+
 
 // OPERATOR
 exports.generate = async (req, res) => {
