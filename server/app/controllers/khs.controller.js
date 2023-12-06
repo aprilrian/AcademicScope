@@ -1,81 +1,76 @@
 const { IRS, KHS, Mahasiswa } = require("../models");
-const fs = require("fs");
+const sequelize = require("sequelize");
+const fs = require('fs').promises;
 
 exports.submitKHS = async (req, res) => {
   try {
     const mahasiswa = req.mahasiswa;
+    const { semester_aktif } = req.body;
 
     const lastSubmittedKHS = await KHS.findOne({
-      where: {
-        mahasiswa_nim: mahasiswa.nim,
-      },
+      where: { mahasiswa_nim: mahasiswa.nim },
       order: sequelize.literal('"semester_aktif"::int DESC'),
     });
 
-    const lastSubmittedIRS = await IRS.findOne({
-      where: {
-        mahasiswa_nim: mahasiswa.nim,
-        semester_aktif: req.body.semester_aktif,
-      },
+    const submittedIRS = await IRS.findOne({
+      where: { mahasiswa_nim: mahasiswa.nim, semester_aktif: semester_aktif },
     });
-    console.log(lastSubmittedIRS);
 
-    if (!lastSubmittedIRS) {
+    if (!submittedIRS) {
       return res.status(400).json({ message: "IRS must be submitted first." });
-    } else {
-      if (req.body.semester_aktif != lastSubmittedIRS.semester_aktif) {
-        return res.status(400).json({ message: "IRS and KHS must be submitted in the same semester." });
-      }
-
-      if (req.body.sks != lastSubmittedIRS.sks) {
-        return res.status(400).json({ message: "IRS and KHS must have the same SKS." });
-      }
-  
-      let existingKHS = await KHS.findOne({
-        where: {
-          mahasiswa_nim: mahasiswa.nim,
-          semester_aktif: req.body.semester_aktif,
-        },
-      });
-  
-      if (existingKHS) {
-        if (req.file) {
-          if (existingKHS.file) {
-            await fs.unlink(existingKHS.file);
-          }
-          existingKHS.file = req.file.path;
-        }
-        existingKHS.sks = lastSubmittedIRS.sks;
-        existingKHS.sks_kumulatif = (lastSubmittedKHS ? lastSubmittedKHS.sks_kumulatif : 0) + lastSubmittedIRS.sks;
-        existingKHS.ip = req.body.ip;
-        existingKHS.ip_kumulatif = ((lastSubmittedKHS ? lastSubmittedKHS.ip_kumulatif : 0) + req.body.ip) / req.body.semester_aktif;
-        await existingKHS.save();
-  
-        return res.send({ message: "KHS was updated successfully." });
-      }
-  
-      const newKHS = {
-        mahasiswa_nim: mahasiswa.nim,
-        semester_aktif: req.body.semester_aktif,
-        sks: lastSubmittedIRS.sks,
-        sks_kumulatif: (lastSubmittedKHS ? lastSubmittedKHS.sks_kumulatif : 0) + lastSubmittedIRS.sks,
-        ip: req.body.ip,
-        ip_kumulatif: ((lastSubmittedKHS ? lastSubmittedKHS.ip_kumulatif : 0) + req.body.ip) / req.body.semester_aktif,
-        file: req.file.path,
-      };
-      await KHS.create(newKHS);
-  
-      res.status(201).send({ message: "KHS was created successfully." });
     }
 
+    if (semester_aktif != submittedIRS.semester_aktif) {
+      return res.status(400).json({ message: "IRS and KHS must match in semester" });
+    }
+
+    const ip = parseFloat(req.body.ip);
+    const ipk = lastSubmittedKHS ? parseFloat(lastSubmittedKHS.ip_kumulatif) : 0;
+    const sks = parseInt(submittedIRS.sks, 10);
+    const sksk = lastSubmittedKHS ? parseInt(lastSubmittedKHS.sks_kumulatif, 10) : 0;
+
+
+    let existingKHS = await KHS.findOne({
+      where: { mahasiswa_nim: mahasiswa.nim, semester_aktif: semester_aktif },
+    });
+
+    if (existingKHS) {
+      if (req.file && existingKHS.file) {
+        await fs.unlink(existingKHS.file);
+      }
+      existingKHS.file = req.file?.path || existingKHS.file;
+      existingKHS.sks = sks;
+      existingKHS.sks_kumulatif = sksk + sks;
+      existingKHS.ip = ip;
+      existingKHS.ip_kumulatif = parseFloat(ipk + ip / semester_aktif);
+      await existingKHS.save();
+
+      return res.send({ message: "KHS was updated successfully." });
+    }
+
+    const newKHS = {
+      mahasiswa_nim: mahasiswa.nim,
+      semester_aktif: semester_aktif,
+      sks: parseInt(submittedIRS.sks, 10),
+      sks_kumulatif: lastSubmittedKHS ? parseInt(lastSubmittedKHS.sks_kumulatif, 10) + parseInt(submittedIRS.sks, 10) : parseInt(submittedIRS.sks, 10),
+      ip: parseFloat(ip),
+      ip_kumulatif: lastSubmittedKHS ? parseFloat(parseFloat(lastSubmittedKHS.ip_kumulatif) + parseFloat(ip) / semester_aktif) : parseFloat(parseFloat(ip) / semester_aktif),
+      file: req.file?.path || null,
+    };
+
+    await KHS.create(newKHS);
+    console.log(newKHS)
+    res.status(201).send({ message: "KHS was created successfully." });
+
   } catch (err) {
-    // if (req.file) {
-    //   await fs.unlink(req.file.path);
-    // }
+    if (req.file) {
+      await fs.unlink(req.file.path);
+    }
     console.error(err);
     res.status(500).send({ message: "Internal Server Error" });
   }
 };
+
 
 exports.getKHSByMahasiswa = async (req, res) => {
   try {

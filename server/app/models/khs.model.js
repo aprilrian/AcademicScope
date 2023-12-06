@@ -63,6 +63,11 @@ const KHS = sequelize.define('KHS', {
   tableName: 'KHSs'
 });
 
-
+KHS.beforeSave(async (khs, options) => {
+  khs.sks = khs.sks.toString();
+  khs.sks_kumulatif = khs.sks_kumulatif.toString();
+  khs.ip = khs.ip.toString();
+  khs.ip_kumulatif = khs.ip_kumulatif.toString();
+});
 
 module.exports = KHS;
