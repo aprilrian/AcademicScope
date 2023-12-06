@@ -7,8 +7,8 @@ router.post(
     [upload],
     controller.submitPKL);
 
-// router.post('/getPKLByDosen', 
-//     [authMiddleware.verifyToken, authMiddleware.isDosen],
-//     controller.getPKLByDosen);
+router.get(
+    '/rekap/:status/:angkatan',
+    controller.getPKLByDosen);
 
 module.exports = router;
