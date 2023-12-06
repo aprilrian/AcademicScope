@@ -61,9 +61,15 @@ router.post("/dosen/updateProfile",
 router.get('/dosen/getAllMahasiswaByDosen', 
   [authMiddleware.verifyToken, authMiddleware.isDosen, userMiddleware.getDosenByID],
   controller.getAllMahasiswaByDosen);
-  router.use("/dosen/irs", 
+router.use("/dosen/irs", 
   [authMiddleware.verifyToken, authMiddleware.isDosen, userMiddleware.getDosenByID],
   require("./irs.routes"));
+router.use("/dosen/khs",
+  [authMiddleware.verifyToken, authMiddleware.isDosen, userMiddleware.getDosenByID],
+  require("./khs.routes"));
+router.use("/dosen/pkl",
+  [authMiddleware.verifyToken, authMiddleware.isDosen, userMiddleware.getDosenByID],
+  require("./pkl.routes"));
 
 // DEPARTEMEN
 router.get('/departemen/irs',

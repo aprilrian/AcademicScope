@@ -9,7 +9,7 @@ const PKL = sequelize.define('PKL', {
     },
   },
   status: {
-    type: DataTypes.ENUM('belum ambil', 'lulus'),
+    type: DataTypes.ENUM('belum_ambil', 'lulus'),
     allowNull: {
       args: false,
       msg: 'Status wajib diisi',

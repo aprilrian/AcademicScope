@@ -70,6 +70,7 @@ exports.signin = async (req, res) => {
         role: user.role,
         nip: operator ? operator.nip : null,
         nama: operator ? operator.nama : null,
+        foto: operator ? operator.foto : null,
       };
     } else {
       const departemen = await Departemen.findOne({ where: { user_id: user.id } });

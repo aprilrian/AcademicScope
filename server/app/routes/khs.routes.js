@@ -7,4 +7,8 @@ router.post(
     [upload],
     controller.submitKHS);
 
+router.get('/', (req, res) => {
+    res.send('Hello from the basic route!');
+});
+
 module.exports = router;

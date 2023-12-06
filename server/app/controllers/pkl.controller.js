@@ -43,6 +43,40 @@ exports.submitPKL = async (req, res) => {
   }
 };
 
+exports.getPKLByDosen = async (req, res) => {
+  try {
+    const dosen = req.dosen;
+    const { status, angkatan } = req.params;
+    const mahasiswas = await Mahasiswa.findAll({
+      where: {
+        nip_dosen: dosen.nip,
+        angkatan: angkatan,
+      },
+    });
+
+    const pkls = await Promise.all(mahasiswas.map(async (mahasiswa) => {
+      const pkl = await PKL.findOne({
+        where: {
+          mahasiswa_nim: mahasiswa.nim,
+          status: status,
+          status_verifikasi: 'sudah',
+        },
+      });
+
+      pkl.dataValues.mahasiswa = {
+        nim: mahasiswa.nim,
+        nama: mahasiswa.nama,
+      };
+
+      return pkl;
+    }));
+
+    res.status(200).send(pkls);
+  } catch (error) {
+    res.status(500).send({ message: error.message || 'Error retrieving PKL.' });
+  }
+}
+
 exports.getRekapPKL = async (req, res) => {
   try {
     const resultMhs = await MahasiswaModel.findAll();
@@ -84,33 +118,6 @@ exports.getRekapPKL = async (req, res) => {
   }
 };
 
-exports.getPKLByDosen = async (req, res) => {
-  try {
-    const dosen = req.dosen;
-    const mahasiswa = await Dosen.findOne({
-      where: { nip: dosen.nip },
-      include: { 
-        model: Mahasiswa,
-        attributes: ['nim', 'nama', 'angkatan'],
-        where: { angkatan: req.params.angkatan },
-        include: {
-          model: PKL,
-          attributes: ['nilai'],
-          where: { statusKonfirmasi: req.params.status },
-        },
-       }
-    })
-
-    if (!mahasiswa) {
-      res.status(404).send({ message: 'Mahasiswa not found' });
-      return;
-    }
-
-    res.status(200).send(mahasiswa);
-  } catch (error) {
-    res.status(500).send({ message: error.message || 'Error retrieving PKL.' });
-  }
-}
 
 exports.downloadPKL = async (req, res) => {
   try {
