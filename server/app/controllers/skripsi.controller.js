@@ -1,6 +1,7 @@
 const { IRS, Skripsi, Mahasiswa, Dosen } = require("../models");
 const fs = require("fs").promises;
 const sequelize = require("sequelize");
+const getRekapByDosen = require("../controllers/user.controller");
 
 exports.submitSkripsi = async (req, res) => {
   try {
@@ -97,53 +98,7 @@ exports.getSkripsiByDosen = async (req, res) => {
 }
 
 exports.getRekapSkripsiByDosen = async (req, res) => {
-  try {
-    const dosen = req.dosen;
-
-    const mahasiswas = await Mahasiswa.findAll({
-      where: {
-        nip_dosen: dosen.nip,
-      },
-    });
-
-    const skripsis = await Promise.all(mahasiswas.map(async (mahasiswa) => {
-      const skripsi = await Skripsi.findOne({
-        where: {
-          mahasiswa_nim: mahasiswa.nim,
-          status_verifikasi: 'sudah',
-        },
-      });
-
-      return skripsi;
-    }));
-
-    const rekapProgress = {};
-
-    for (let tahun = 2016; tahun <= 2023; tahun++) {
-      const angkatan = tahun.toString();
-
-      rekapProgress[angkatan] = { sudah: 0, belum: 0 };
-
-      mahasiswas.forEach((mahasiswa) => {
-        if (mahasiswa.angkatan === angkatan) {
-          const skripsi = skripsis.find((skripsi) => skripsi && skripsi.mahasiswa_nim === mahasiswa.nim);
-
-          if (skripsi) {
-            rekapProgress[angkatan].sudah += 1;
-          } else {
-            rekapProgress[angkatan].belum += 1;
-          }
-        }
-      });
-
-      rekapProgress[angkatan].sudah = Number(rekapProgress[angkatan].sudah);
-      rekapProgress[angkatan].belum = Number(rekapProgress[angkatan].belum);
-    }
-
-    res.status(200).send({ tahun: rekapProgress });
-  } catch (error) {
-    res.status(500).send({ message: error.message || 'Error retrieving Skripsi.' });
-  }
+  await getRekapByDosen(req, res, Skripsi, 'status_verifikasi', 'Error retrieving Skripsi.');
 };
 
 exports.verifySkripsi = async (req, res) => {

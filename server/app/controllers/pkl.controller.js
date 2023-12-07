@@ -1,5 +1,6 @@
 const { PKL, Mahasiswa, Dosen } = require('../models');
 const fs = require('fs').promises;
+const { getRekapByDosen } = require('../controllers/user.controller');
 
 exports.submitPKL = async (req, res) => {
   try {
@@ -78,53 +79,7 @@ exports.getPKLByDosen = async (req, res) => {
 }
 
 exports.getRekapPKLByDosen = async (req, res) => {
-  try {
-    const dosen = req.dosen;
-
-    const mahasiswas = await Mahasiswa.findAll({
-      where: {
-        nip_dosen: dosen.nip,
-      },
-    });
-
-    const pkls = await Promise.all(mahasiswas.map(async (mahasiswa) => {
-      const pkl = await PKL.findOne({
-        where: {
-          mahasiswa_nim: mahasiswa.nim,
-          status_verifikasi: 'sudah',
-        },
-      });
-
-      return pkl;
-    }));
-
-    const rekapProgress = {};
-
-    for (let tahun = 2016; tahun <= 2023; tahun++) {
-      const angkatan = tahun.toString();
-
-      rekapProgress[angkatan] = { sudah: 0, belum: 0 };
-
-      mahasiswas.forEach((mahasiswa) => {
-        if (mahasiswa.angkatan === angkatan) {
-          const pkl = pkls.find((pkl) => pkl && pkl.mahasiswa_nim === mahasiswa.nim);
-
-          if (pkl) {
-            rekapProgress[angkatan].sudah += 1;
-          } else {
-            rekapProgress[angkatan].belum += 1;
-          }
-        }
-      });
-
-      rekapProgress[angkatan].sudah = Number(rekapProgress[angkatan].sudah);
-      rekapProgress[angkatan].belum = Number(rekapProgress[angkatan].belum);
-    }
-
-    res.status(200).send({ tahun: rekapProgress });
-  } catch (error) {
-    res.status(500).send({ message: error.message || 'Error retrieving PKL.' });
-  }
+  await getRekapByDosen(req, res, PKL, 'status_verifikasi', 'Error retrieving PKL.');
 };
 
 exports.verifyPKL = async (req, res) => {

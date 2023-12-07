@@ -301,6 +301,60 @@ exports.getAllDosen = async (req, res) => {
   }
 }
 
+exports.getRekapByDosen = async (req, res, Model, statusField, responseMessage) => {
+  try {
+    const dosen = req.dosen;
+
+    const mahasiswas = await Mahasiswa.findAll({
+      where: {
+        nip_dosen: dosen.nip,
+      },
+    });
+
+    const records = await Promise.all(mahasiswas.map(async (mahasiswa) => {
+      const record = await Model.findOne({
+        where: {
+          mahasiswa_nim: mahasiswa.nim,
+          [statusField]: 'sudah',
+        },
+      });
+
+      return record;
+    }));
+
+    const rekapProgress = {};
+
+    for (let tahun = 2016; tahun <= 2023; tahun++) {
+      const angkatan = tahun.toString();
+
+      rekapProgress[angkatan] = { sudah: 0, belum: 0 };
+
+      mahasiswas.forEach((mahasiswa) => {
+        if (mahasiswa.angkatan === angkatan) {
+          const record = records.find((r) => r && r.mahasiswa_nim === mahasiswa.nim);
+
+          if (record) {
+            rekapProgress[angkatan].sudah += 1;
+          } else {
+            rekapProgress[angkatan].belum += 1;
+          }
+        }
+      });
+
+      rekapProgress[angkatan].sudah = Number(rekapProgress[angkatan].sudah);
+      rekapProgress[angkatan].belum = Number(rekapProgress[angkatan].belum);
+    }
+
+    res.status(200).send({ tahun: rekapProgress });
+  } catch (error) {
+    res.status(500).send({ message: error.message || responseMessage });
+  }
+};
+
+
+
+
+
 // MAHASISWA
 exports.updateMahasiswa = async (req, res) => {
   try {
