@@ -10,5 +10,9 @@ router.post(
 router.get(
     '/rekap/:status/:angkatan',
     controller.getPKLByDosen);
+
+router.get(
+    '/rekap',
+    controller.getRekapPKLByDosen);
     
 module.exports = router;

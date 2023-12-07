@@ -77,46 +77,56 @@ exports.getPKLByDosen = async (req, res) => {
   }
 }
 
-exports.getRekapPKL = async (req, res) => {
+exports.getRekapPKLByDosen = async (req, res) => {
   try {
-    const resultMhs = await MahasiswaModel.findAll();
-    const resultPKL = await PKLModel.findAll();
+    const dosen = req.dosen;
 
-    let result = [];
+    const mahasiswas = await Mahasiswa.findAll({
+      where: {
+        nip_dosen: dosen.nip,
+      },
+    });
 
-    for (let i = 0; i < resultMhs.length; i++) {
-      let ck = false;
-      for (let j = 0; j < resultPKL.length; j++) {
-        if (resultMhs[i].id === resultPKL[j].mahasiswaId) {
-          result.push({
-            id: resultPKL[j].id,
-            name: resultMhs[i].name,
-            nim: resultMhs[i].nim,
-            angkatan: resultMhs[i].angkatan,
-            nilai: resultPKL[j].nilai,
-            semester: resultPKL[j].semester,
-            status_konfirmasi: resultPKL[j].statusKonfirmasi,
-            file: resultPKL[j].file,
-          });
-          ck = true;
-          break;
-        }
+    const pkls = await Promise.all(mahasiswas.map(async (mahasiswa) => {
+      const pkl = await PKL.findOne({
+        where: {
+          mahasiswa_nim: mahasiswa.nim,
+          status_verifikasi: 'sudah',
+        },
+      });
+
+      return pkl;
+    }));
+
+    const rekapProgress = {};
+    // pkls.forEach((pkl) => {
+    //   if (pkl) {
+    //     const angkatan = mahasiswas.find((mahasiswa) => mahasiswa.nim === pkl.mahasiswa_nim).angkatan;
+    //     if (!rekapProgress[angkatan]) {
+    //       rekapProgress[angkatan] = { sudah: 0, belum: 0 };
+    //     }
+    //     rekapProgress[angkatan].sudah += 1;
+    //   }
+    // });
+
+    mahasiswas.forEach((mahasiswa) => {
+      const angkatan = mahasiswa.angkatan;
+      if (!rekapProgress[angkatan]) {
+        rekapProgress[angkatan] = { sudah: 0, belum: 0 };
       }
-      if (!ck) {
-        result.push({
-          name: resultMhs[i].name,
-          nim: resultMhs[i].nim,
-          angkatan: resultMhs[i].angkatan,
-          status_konfirmasi: 'belum',
-        });
+      if (pkls.find((pkl) => pkl && pkl.mahasiswa_nim === mahasiswa.nim)) {
+        rekapProgress[angkatan].sudah += 1;
+      } else {
+        rekapProgress[angkatan].belum += 1;
       }
-    }
+    });
 
-    res.status(200).send(result);
+    res.status(200).send({ tahun: rekapProgress});
   } catch (error) {
     res.status(500).send({ message: error.message || 'Error retrieving PKL.' });
   }
 };
+
 
 
 exports.downloadPKL = async (req, res) => {
