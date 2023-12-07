@@ -3,7 +3,7 @@ const { Provinsi } = require('../models')
 exports.getAll = async (req, res) => {
     try {
         const data = await Provinsi.findAll({
-            attributes: [['kode', 'value'],
+            attributes: [[sequelize.literal("kode::text"), 'value'],
                         ['provinsi', 'label']]
         });
         res.status(200).send(data);
