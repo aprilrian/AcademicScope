@@ -217,21 +217,7 @@ async function initializeData() {
       if (mahasiswaCount === 0) {
         try {
           await User.sequelize.transaction(async (t) => {
-            const mahasiswaData = [
-            { nim: '24060121140120', nama: "Christian Joshua Nathanael Nadeak", angkatan: "2021", status: "aktif", nip_dosen: "196511071992031003" },
-            { nim: "24060121140100", nama: "Zhafira Amanda", angkatan: "2021", status: "aktif", nip_dosen: "196511071992031003" },
-            { nim: '24060121140101', nama: "Achmad Fauzan", angkatan: "2021", status: "aktif", nip_dosen: "196511071992031003" },
-            { nim: '24060121140102', nama: "Aditya Pratama", angkatan: "2021", status: "aktif", nip_dosen: "196511071992031003" },
-            { nim: '24060121140103', nama: "Aditya Putra Pratama", angkatan: "2021", status: "aktif", nip_dosen: "196511071992031003" },
-            { nim: '24060121140104', nama: "Aditya Putra Wijaya", angkatan: "2021", status: "aktif", nip_dosen: "196511071992031003" },
-            { nim: '24060121140105', nama: "Aditya Rizky Pratama", angkatan: "2021", status: "aktif", nip_dosen: "196511071992031003" },
-            { nim: '24060121140106', nama: "Aditya Surya Pratama", angkatan: "2021", status: "aktif", nip_dosen: "196511071992031003" },
-            { nim: '24060121140107', nama: "Aditya Yudha Pratama", angkatan: "2021", status: "aktif", nip_dosen: "196511071992031003" },
-            { nim: '24060121140108', nama: "Aditya Yudha Pratama Putra", angkatan: "2021", status: "aktif", nip_dosen: "196511071992031003" },
-            { nim: '24060121140109', nama: "Aditya Yudha Putra Pratama", angkatan: "2021", status: "aktif", nip_dosen: "196511071992031003" },
-            { nim: '24060121140110', nama: "Aditya Yudha Putra Pratama Putra", angkatan: "2021", status: "aktif", nip_dosen: "196511071992031003" },
-            ]
-
+            const mahasiswaData = { nim: '24060121140120', nama: "Christian Joshua Nathanael Nadeak", angkatan: "2021", status: "aktif", nip_dosen: "196511071992031003" };
 
             const user = await User.create(
               {

@@ -92,7 +92,7 @@ isDepartemen = async (req, res, next) => {
           return res.status(404).send({ message: 'User not found.' });
         }
     
-        if (user.role === 'operator') {
+        if (user.role === 'departemen') {
             next();
         } else { 
             return res.status(403).send({ message: 'Require Departemen Role!' });

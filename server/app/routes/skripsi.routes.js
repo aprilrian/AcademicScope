@@ -23,8 +23,8 @@ router.put(
     '/edit/:nim', 
     controller.editSkripsi);
 
-// router.get(
-//     '/getAll', 
-//     controller.getAllSkripsi);
+router.get(
+    '/getAll', 
+    controller.getAllSkripsi);
 
 module.exports = router;
