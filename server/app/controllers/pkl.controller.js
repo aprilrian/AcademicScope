@@ -99,15 +99,6 @@ exports.getRekapPKLByDosen = async (req, res) => {
     }));
 
     const rekapProgress = {};
-    // pkls.forEach((pkl) => {
-    //   if (pkl) {
-    //     const angkatan = mahasiswas.find((mahasiswa) => mahasiswa.nim === pkl.mahasiswa_nim).angkatan;
-    //     if (!rekapProgress[angkatan]) {
-    //       rekapProgress[angkatan] = { sudah: 0, belum: 0 };
-    //     }
-    //     rekapProgress[angkatan].sudah += 1;
-    //   }
-    // });
 
     mahasiswas.forEach((mahasiswa) => {
       const angkatan = mahasiswa.angkatan;
