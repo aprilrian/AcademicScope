@@ -193,7 +193,7 @@ exports.verifyIRS = async (req, res) => {
       }
     );
 
-    res.status(200).send({ message: "OK" });
+    res.status(200).send({ message: "IRS was verified successfully." });
   } catch (err) {
     res.status(500).send({ message: err.message || "Some error occurred while updating IRS." });
   }

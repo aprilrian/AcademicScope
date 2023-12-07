@@ -7,8 +7,8 @@ router.post(
     [upload],
     controller.submitKHS);
 
-router.get('/', (req, res) => {
-    res.send('Hello from the basic route!');
-});
+router.put(
+    '/verify/:nim/:semester_aktif',
+    controller.verifyKHS);
 
 module.exports = router;

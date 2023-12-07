@@ -127,8 +127,41 @@ exports.getRekapPKLByDosen = async (req, res) => {
   }
 };
 
+exports.verifyPKL = async (req, res) => {
+  try {
+    const dosen = req.dosen;
+    const { nim } = req.params;
 
+    const mahasiswa = await Mahasiswa.findOne({
+      where: { nim: nim },
+    });
 
+    if (!mahasiswa) {
+      res.status(404).send({ message: 'Mahasiswa not found' });
+      return;
+    }
+
+    if (mahasiswa.nip_dosen !== dosen.nip) {
+      res.status(401).send({ message: 'Unauthorized!' });
+      return;
+    }
+
+    const pkl = await PKL.findOne({
+      where: { mahasiswa_nim: nim },
+    });
+
+    if (!pkl) {
+      res.status(404).send({ message: 'PKL not found' });
+      return;
+    }
+
+    await pkl.update({ status_verifikasi: 'sudah' });
+
+    res.status(200).send({ message: 'PKL verification successful!' });
+  } catch (error) {
+    res.status(500).send({ message: error.message || 'Error verifying PKL.' });
+  }
+}
 
 exports.downloadPKL = async (req, res) => {
   try {
@@ -157,34 +190,5 @@ exports.deleteAllPKL = async (req, res) => {
     res.status(200).send({ message: 'All PKL records deleted successfully!' });
   } catch (error) {
     res.status(500).send({ message: error.message || 'Error deleting PKL records.' });
-  }
-};
-
-exports.VerifPKL = async (req, res) => {
-  try {
-    const dosen = await DosenModel.findOne({ user: req.userId });
-    const mahasiswa = await MahasiswaModel.findOne({
-      where: { kodeWali: dosen.id, nim: req.params.nim },
-    });
-
-    if (!mahasiswa) {
-      res.status(404).send({ message: 'Mahasiswa not found' });
-      return;
-    }
-
-    const pkl = await PKLModel.findOne({
-      where: { mahasiswaId: mahasiswa.id },
-    });
-
-    if (!pkl) {
-      res.status(404).send({ message: 'PKL not found' });
-      return;
-    }
-
-    await pkl.update({ statusKonfirmasi: 'sudah' });
-
-    res.status(200).send({ message: 'PKL verification successful!' });
-  } catch (error) {
-    res.status(500).send({ message: error.message || 'Error verifying PKL.' });
   }
 };

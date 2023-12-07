@@ -198,8 +198,7 @@ exports.verifyKHS = async (req, res) => {
         },
       }
     );
-
-    res.status(200).send({ message: "OK" });
+    res.status(200).send({ message: "KHS has verified succesfully! Hoorayyyy!" })
   } catch (err) {
     res.status(500).send({ message: err.message || "Some error occurred while updating KHS." });
   }

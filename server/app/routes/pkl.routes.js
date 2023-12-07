@@ -14,5 +14,9 @@ router.get(
 router.get(
     '/rekap',
     controller.getRekapPKLByDosen);
+
+router.put(
+    '/verify/:nim',
+    controller.verifyPKL);
     
 module.exports = router;
