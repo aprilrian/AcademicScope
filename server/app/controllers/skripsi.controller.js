@@ -96,6 +96,47 @@ exports.getSkripsiByDosen = async (req, res) => {
   }
 }
 
+exports.getRekapSkripsiByDosen = async (req, res) => {
+  try {
+    const dosen = req.dosen;
+
+    const mahasiswas = await Mahasiswa.findAll({
+      where: {
+        nip_dosen: dosen.nip,
+      },
+    });
+
+    const skripsis = await Promise.all(mahasiswas.map(async (mahasiswa) => {
+      const skripsi = await Skripsi.findOne({
+        where: {
+          mahasiswa_nim: mahasiswa.nim,
+          status_verifikasi: 'sudah',
+        },
+      });
+
+      return skripsi;
+    }));
+
+    const rekapProgress = {};
+
+    mahasiswas.forEach((mahasiswa) => {
+      const angkatan = mahasiswa.angkatan;
+      if (!rekapProgress[angkatan]) {
+        rekapProgress[angkatan] = { sudah: 0, belum: 0 };
+      }
+      if (skripsis.find((skripsi) => skripsi && skripsi.mahasiswa_nim === mahasiswa.nim)) {
+        rekapProgress[angkatan].sudah += 1;
+      } else {
+        rekapProgress[angkatan].belum += 1;
+      }
+    });
+
+    res.status(200).send({ tahun: rekapProgress});
+  } catch (error) {
+    res.status(500).send({ message: error.message || 'Error retrieving Skripsi.' });
+  }
+};
+
 exports.getSkripsi = async (req, res) => {
   try {
     const skripsi = await Skripsi.findOne({

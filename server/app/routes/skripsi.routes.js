@@ -11,4 +11,8 @@ router.get(
     '/rekap/:status/:angkatan', 
     controller.getSkripsiByDosen);
 
+router.get(
+    '/rekap', 
+    controller.getRekapSkripsiByDosen);
+
 module.exports = router;
