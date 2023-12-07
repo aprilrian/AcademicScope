@@ -171,6 +171,16 @@ exports.editSkripsi = async (req, res) => {
   }
 };
 
+exports.getAllSkripsi = async (req, res) => {
+  try {
+    const skripsi = await Skripsi.findAll();
+
+    res.status(200).send(skripsi);
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+};
+
 exports.getSkripsi = async (req, res) => {
   try {
     const skripsi = await Skripsi.findOne({

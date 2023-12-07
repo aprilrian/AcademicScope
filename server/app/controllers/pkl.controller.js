@@ -149,6 +149,16 @@ exports.editPKL = async (req, res) => {
   }
 }
 
+exports.getAllPKL = async (req, res) => {
+  try {
+    const pkls = await PKL.findAll();
+
+    res.status(200).send(pkls);
+  } catch (error) {
+    res.status(500).send({ message: error.message || 'Error retrieving PKL.' });
+  }
+};
+
 exports.downloadPKL = async (req, res) => {
   try {
     const pkl = await PKLModel.findOne({

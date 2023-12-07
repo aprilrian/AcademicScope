@@ -62,6 +62,7 @@ hasUpdateProfile = async (req, res, next) => {
 const userMiddleware = {
     getDosenByID,
     getMahasiswaByID,
+    getMasterByID,
     hasUpdateProfile,
 }
 

@@ -78,9 +78,18 @@ router.use("/dosen/skripsi",
   require("./skripsi.routes"));
 
 // DEPARTEMEN
-router.get('/departemen/irs',
+router.use('/departemen/irs',
   [authMiddleware.verifyToken, authMiddleware.isDepartemen],
   require("./irs.routes"));
+router.use('/departemen/khs',
+  [authMiddleware.verifyToken, authMiddleware.isDepartemen],
+  require("./khs.routes"));
+router.use('/departemen/pkl',
+  [authMiddleware.verifyToken, authMiddleware.isDepartemen],
+  require("./pkl.routes"));
+router.use("/departemen/skripsi",
+  [authMiddleware.verifyToken, authMiddleware.isDepartemen, userMiddleware.getMasterByID],
+  require("./skripsi.routes"))
 router.get('/departemen/mahasiswaCount',
   [authMiddleware.verifyToken, authMiddleware.isDepartemen],
   controller.getAllMahasiswaCount);

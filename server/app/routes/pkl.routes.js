@@ -22,5 +22,9 @@ router.put(
 router.put(
     '/edit/:nim',
     controller.editPKL);
+
+router.get(
+    '/getAll',
+    controller.getAllPKL);
     
 module.exports = router;
