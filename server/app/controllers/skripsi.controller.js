@@ -1,7 +1,7 @@
 const { IRS, Skripsi, Mahasiswa, Dosen } = require("../models");
 const fs = require("fs").promises;
 const sequelize = require("sequelize");
-const getRekapByDosen = require("../controllers/user.controller");
+const { getRekapByDosen } = require("../controllers/user.controller");
 
 exports.submitSkripsi = async (req, res) => {
   try {
