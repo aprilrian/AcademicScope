@@ -18,5 +18,9 @@ router.get(
 router.put(
     '/verify/:nim',
     controller.verifyPKL);
+
+router.put(
+    '/edit/:nim',
+    controller.editPKL);
     
 module.exports = router;

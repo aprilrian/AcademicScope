@@ -66,8 +66,8 @@ const KHS = sequelize.define('KHS', {
 KHS.beforeSave(async (khs, options) => {
   khs.sks = khs.sks.toString();
   khs.sks_kumulatif = khs.sks_kumulatif.toString();
-  khs.ip = khs.ip.toString();
-  khs.ip_kumulatif = khs.ip_kumulatif.toString();
+  khs.ip = parseFloat(khs.ip).toFixed(2).toString();
+  khs.ip_kumulatif = parseFloat(khs.ip_kumulatif).toFixed(2).toString();
 });
 
 module.exports = KHS;

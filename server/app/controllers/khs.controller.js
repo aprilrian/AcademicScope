@@ -168,18 +168,33 @@ exports.editKHS = async (req, res) => {
       },
     });
 
+    const lastKHS = await KHS.findOne({
+      where: {
+        mahasiswa_nim: req.params.nim,
+      },
+      order: sequelize.literal('"semester_aktif"::int DESC'),
+      offset: 1,
+    })
+
+    if (khs.status_verifikasi == "sudah") {
+      return res.status(400).send({ message: "KHS has already verified!" });
+    }
+
     if (!khs) {
       return res.status(404).send({ message: "KHS not found!" });
     }
 
-    khs.sks = req.body.sks;
-    await khs.save(); // Simpan perubahan ke dalam database
+    await khs.update({
+      ip: req.body.ip,
+      ip_kumulatif: lastKHS ? parseFloat((parseFloat(lastKHS.ip_kumulatif) + parseFloat(req.body.ip)) / 2).toFixed(2) : parseFloat(req.body.ip),
+    });
 
-    res.status(200).send({ message: "KHS was updated successfully." });
+    res.status(200).send({ message: "KHS was edited successfully!" });
   } catch (err) {
+    console.error(err);
     res.status(500).send({ message: err.message || "Some error occurred while editing KHS." });
   }
-};
+}
 
 exports.verifyKHS = async (req, res) => {
   try {

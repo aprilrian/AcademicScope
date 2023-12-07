@@ -18,7 +18,7 @@ exports.submitPKL = async (req, res) => {
     }
 
     if (pkl) {
-      return res.status(400).send({ message: "PKL already exists!" });
+      return res.status(400).send({ message: "Your PKL already exists!" });
     }
 
     await PKL.create({
@@ -160,6 +160,37 @@ exports.verifyPKL = async (req, res) => {
     res.status(200).send({ message: 'PKL verification successful!' });
   } catch (error) {
     res.status(500).send({ message: error.message || 'Error verifying PKL.' });
+  }
+}
+
+exports.editPKL = async (req, res) => {
+  try {
+    const mahasiswa = req.mahasiswa;
+    const { nilai, semester } = req.body;
+
+    let pkl = await PKL.findOne({
+      where: {
+        mahasiswa_nim: req.params.nim,
+      },
+    });
+
+    if (!pkl) {
+      return res.status(400).send({ message: "PKL not found!" });
+    }
+
+    if (pkl.status_verifikasi == "sudah") {
+      return res.status(400).send({ message: "PKL has already verified!" });
+    }
+
+    await pkl.update({
+      nilai: nilai,
+      semester: semester,
+    });
+
+    res.status(200).send({ message: "PKL was updated successfully." });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: err.message || "Some error occurred while updating the PKL." });
   }
 }
 

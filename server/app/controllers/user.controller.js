@@ -35,7 +35,7 @@ exports.changePassword = async (req, res) => {
 
 exports.viewProfile = async (req, res) => {
   try {
-    const user = await User.findOne({ where: { id: req.user_id } });
+    const user = await User.findOne({ where: { id: req.params.id ? req.params.id : user_id } });
 
     if (user.role === 'mahasiswa') {
       const mahasiswa = await Mahasiswa.findOne({ where: { user_id: req.user_id } });

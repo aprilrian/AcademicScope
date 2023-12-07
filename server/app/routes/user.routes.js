@@ -22,6 +22,9 @@ router.get("/departemen",
 router.get("/profileDetail",
   [authMiddleware.verifyToken],
   controller.viewProfile)
+router.get("/detail/:id",
+  [authMiddleware.verifyToken],
+  controller.viewProfile)
 
 // OPERATOR
 router.post("/operator/generate", 

@@ -15,4 +15,12 @@ router.get(
     '/rekap', 
     controller.getRekapSkripsiByDosen);
 
+router.put(
+    '/verify/:nim', 
+    controller.verifySkripsi);
+
+router.put(
+    '/edit/:nim', 
+    controller.editSkripsi);
+
 module.exports = router;

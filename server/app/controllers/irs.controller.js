@@ -162,12 +162,16 @@ exports.editIRS = async (req, res) => {
       },
     });
 
+    if (irs.status_verifikasi == "sudah") {
+      return res.status(400).send({ message: "IRS has been verified" });
+    }
+
     if (!irs) {
       return res.status(404).send({ message: "IRS not found!" });
     }
 
     irs.sks = req.body.sks;
-    await irs.save(); // Simpan perubahan ke dalam database
+    await irs.save();
 
     res.status(200).send({ message: "IRS was updated successfully." });
   } catch (err) {

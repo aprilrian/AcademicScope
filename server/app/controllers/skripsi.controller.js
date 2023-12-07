@@ -146,6 +146,76 @@ exports.getRekapSkripsiByDosen = async (req, res) => {
   }
 };
 
+exports.verifySkripsi = async (req, res) => {
+  try {
+    const dosen = req.dosen;
+    const { nim } = req.params;
+
+    const mahasiswa = await Mahasiswa.findOne({
+      where: {
+        nim: nim,
+      },
+    });
+
+    if (!mahasiswa) {
+      return res.status(404).send({ message: 'Mahasiswa not found!' });
+    }
+
+    if (mahasiswa.nip_dosen !== dosen.nip) {
+      return res.status(401).send({ message: 'Unauthorized!' });
+    }
+
+    const skripsi = await Skripsi.findOne({
+      where: {
+        mahasiswa_nim: nim,
+      },
+    });
+
+    if (!skripsi) {
+      return res.status(404).send({ message: 'Skripsi not found!' });
+    }
+
+    skripsi.status_verifikasi = 'sudah';
+    await skripsi.save();
+
+    res.status(200).send({ message: 'Skripsi was verified successfully.' });
+  } catch (error) {
+    res.status(500).send({ message: error.message || 'Error verifying Skripsi.' });
+  }
+};
+
+exports.editSkripsi = async (req, res) => {
+  try {
+    const mahasiswa = req.mahasiswa;
+    const { nilai, semester, tanggal_lulus, tanggal_sidang } = req.body;
+
+    const skripsi = await Skripsi.findOne({
+      where: {
+        mahasiswa_nim: req.params.nim,
+      },
+    });
+
+    if (!skripsi) {
+      return res.status(400).send({ message: "Skripsi not found!" });
+    }
+
+    if (skripsi.status_verifikasi == "sudah") {
+      return res.status(400).send({ message: "Skripsi has already verified!" });
+    }
+
+    await skripsi.update({
+      nilai: nilai,
+      semester: semester,
+      tanggal_lulus: tanggal_lulus,
+      tanggal_sidang: tanggal_sidang,
+    });
+
+    res.status(200).send({ message: "Skripsi was updated successfully." });
+  } catch (error) {
+    res.status(500).send({ message: error.message || "Error updating Skripsi." });
+  }
+};
+
 exports.getSkripsi = async (req, res) => {
   try {
     const skripsi = await Skripsi.findOne({

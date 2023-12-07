@@ -11,4 +11,8 @@ router.put(
     '/verify/:nim/:semester_aktif',
     controller.verifyKHS);
 
+router.put(
+    '/edit/:nim/:semester_aktif',
+    controller.editKHS);
+
 module.exports = router;
