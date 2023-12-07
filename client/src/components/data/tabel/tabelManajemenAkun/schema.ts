@@ -5,7 +5,7 @@ import { z } from "zod"
 export const manajemenSchema = z.object({
   username: z.string(),
   nama: z.string(),
-  email: z.string(),
+  email: z.string().nullable(), // Allow null for the email property
   role: z.string(),
 })
 

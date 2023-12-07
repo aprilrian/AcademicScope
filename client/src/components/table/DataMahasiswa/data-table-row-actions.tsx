@@ -20,6 +20,8 @@ import {
 
 // import { labels } from "../data/data"
 import { mahasiswaSchema } from "../../data/tabel/tabelDataMahasiswa/schema";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -28,7 +30,30 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
-  const task = mahasiswaSchema.parse(row.original);
+  const mahasiswa = mahasiswaSchema.parse(row.original);
+  const router = useRouter(); // Initialize the useRouter hook
+  const { data: session } = useSession();
+  const role: string | undefined = session?.user?.role;
+
+  const getRouteForRole = (role: string | undefined): string => {
+    switch (role) {
+      case "dosen":
+        return "doswal";
+      case "operator":
+        return "admin";
+      case "departemen":
+        return "dept";
+      // Add more cases as needed
+      default:
+        return ""; // Handle other cases or provide a default route
+    }
+  };
+
+  const handleDetailClick = () => {
+    const { nim } = mahasiswa;
+    const route = getRouteForRole(role);
+    router.push(`/${route}/datamahasiswa/${nim}`);
+  };
 
   return (
     <DropdownMenu>
@@ -42,27 +67,8 @@ export function DataTableRowActions<TData>({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
-        <DropdownMenuItem>Detail</DropdownMenuItem>
-        {/* <DropdownMenuItem>Make a copy</DropdownMenuItem>
-        <DropdownMenuItem>Favorite</DropdownMenuItem>
-        <DropdownMenuSeparator /> */}
-        {/* <DropdownMenuSub>
-          <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
-          <DropdownMenuSubContent>
-            <DropdownMenuRadioGroup value={task.label}>
-              {labels.map((label) => (
-                <DropdownMenuRadioItem key={label.value} value={label.value}>
-                  {label.label}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuSubContent>
-        </DropdownMenuSub> */}
-        {/* <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          Delete
-          <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
-        </DropdownMenuItem> */}
+        <DropdownMenuItem onClick={handleDetailClick}>Detail</DropdownMenuItem>
+        {/* Other menu items */}
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -144,7 +144,7 @@ const PKLForm = () => {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="belum ambil">
+                              <SelectItem value="belum_ambil">
                                 Belum ambil
                               </SelectItem>
                               <SelectItem value="lulus">Lulus</SelectItem>

@@ -1,33 +1,50 @@
-import { promises as fs } from "fs";
-import path from "path";
 import { Metadata } from "next";
 import Image from "next/image";
 import { z } from "zod";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 import { columns } from "@/components/table/ManajemenAkun/columns";
 import { DataTable } from "@/components/table/ManajemenAkun/data-table";
 import { manajemenSchema } from "@/components/data/tabel/tabelManajemenAkun/schema";
+import { getServerSession } from "next-auth";
+import axios from "axios";
 
 export const metadata: Metadata = {
   title: "Manajemen Akun",
   description: "Manajemen Akun",
 };
 
-export default async function manajemenPage( ) {
-  const dataManajemen = await getDataManajemen();
-  
-  async function getDataManajemen() {
-    const data = await fs.readFile(
-      path.join(
-        process.cwd(),
-        "src/components/data/tabel/tabelManajemenAkun/dataManajemen.json"
-      )
+export async function getDataManajemen() {
+  try {
+    const session = await getServerSession(authOptions);
+    console.log(session);
+
+    const accessToken = session?.user?.access_token;
+
+    console.log(accessToken);
+
+    const response = await axios.get(
+      "http://localhost:8080/operator/getAllAccount",
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
     );
+    console.log(response.data);
 
-    const dataManajemen = JSON.parse(data.toString());
+    const dataManajamen = response.data;
 
-    return z.array(manajemenSchema).parse(dataManajemen);
+    return z.array(manajemenSchema).parse(dataManajamen);
+  } catch (error) {
+    console.error("Error fetching or parsing data:", error);
+    return [];
   }
+}
+
+export default async function ManajemenPage() {
+  const dataManajemen = await getDataManajemen();
+
   return (
     <>
       <div className="md:hidden">
@@ -49,8 +66,8 @@ export default async function manajemenPage( ) {
       <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
         <div className="flex items-center justify-between space-y-2">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Data Skripsi</h2>
-            <p className="text-muted-foreground">Data Skripsi</p>
+            <h2 className="text-2xl font-bold tracking-tight">Manajemen Akun</h2>
+            <p className="text-muted-foreground">Manajemen Akun</p>
           </div>
           <div className="flex items-center space-x-2"></div>
         </div>

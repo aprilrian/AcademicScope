@@ -1,52 +1,56 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
-
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useRouter } from "next/navigation";
+import CustomBarChart from "@/components/charts/BarChart";
+import axios from "axios";
+import { useSession } from "next-auth/react";
+
+// Define the type for your state
+interface RekapProgress {
+  tahun: Record<string, { sudah: number; belum: number }>;
+}
 
 export default function DashboardPage() {
-  const dummyRekapProgress = {
-    angkatan: "2020",
-    tahun: {
-      "2016": {
-        sudah: 15,
-        belum: 5,
-      },
-      "2017": {
-        sudah: 20,
-        belum: 10,
-      },
-      "2018": {
-        sudah: 25,
-        belum: 15,
-      },
-      "2019": {
-        sudah: 30,
-        belum: 20,
-      },
-      "2020": {
-        sudah: 35,
-        belum: 25,
-      },
-      "2021": {
-        sudah: 40,
-        belum: 30,
-      },
-      "2022": {
-        sudah: 45,
-        belum: 35,
-      },
-    },
-  };
+  const router = useRouter();
+  const { data: session } = useSession();
+  const accessToken = session?.user?.access_token;
+  const [rekapProgress, setRekapProgress] = useState<RekapProgress | null>(
+    null
+  );
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/dosen/pkl/rekap",
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        const data = response.data;
+        setRekapProgress({
+          tahun: data.tahun,
+        });
+
+        console.log(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [accessToken]);
+
+  if (rekapProgress === null) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
@@ -89,44 +93,49 @@ export default function DashboardPage() {
               <TabsTrigger value="2020">2020</TabsTrigger>
               <TabsTrigger value="2021">2021</TabsTrigger>
               <TabsTrigger value="2022">2022</TabsTrigger>
+              <TabsTrigger value="2023">2023</TabsTrigger>
             </TabsList>
             <TabsContent value="angkatan" className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Angkatan</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">
-                      {dummyRekapProgress.angkatan}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+              <CustomBarChart></CustomBarChart>
             </TabsContent>
-            {Object.keys(dummyRekapProgress.tahun).map((tahun) => (
+
+            {Object.keys(rekapProgress.tahun).map((tahun) => (
               <TabsContent key={tahun} value={tahun} className="space-y-4">
                 <div className="grid gap-4 md:grid-cols-2">
-                  <Card className=" bg-green-600">
-                    <CardHeader>
-                      <CardTitle>Sudah</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">
-                        {dummyRekapProgress.tahun[tahun].sudah}
-                      </div>
-                    </CardContent>
-                  </Card>
-                  <Card className=" bg-red-600">
-                    <CardHeader>
-                      <CardTitle>Belum</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">
-                        {dummyRekapProgress.tahun[tahun].belum}
-                      </div>
-                    </CardContent>
-                  </Card>
+                  {/* Add onClick to the wrapping div or directly to the Card */}
+                  <div
+                    onClick={() =>
+                      router.push(`/doswal/pkl/detail/sudah/${tahun}`)
+                    }
+                  >
+                    <Card className="bg-green-600">
+                      <CardHeader>
+                        <CardTitle>Sudah</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold">
+                          {rekapProgress.tahun[tahun].sudah}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                  {/* Similarly, add onClick to the wrapping div or directly to the Card */}
+                  <div
+                    onClick={() =>
+                      router.push(`/doswal/pkl/detail/belum/${tahun}`)
+                    }
+                  >
+                    <Card className="bg-red-600">
+                      <CardHeader>
+                        <CardTitle>Belum</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold">
+                          {rekapProgress.tahun[tahun].belum}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
                 </div>
               </TabsContent>
             ))}

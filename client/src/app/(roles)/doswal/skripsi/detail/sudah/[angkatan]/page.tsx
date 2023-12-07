@@ -3,28 +3,49 @@ import path from "path";
 import { Metadata } from "next";
 import Image from "next/image";
 import { z } from "zod";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 import { columns } from "@/components/table/PKL/columns";
 import { DataTable } from "@/components/table/PKL/data-table";
 import { PKLSchema } from "@/components/data/tabel/tabelPKL/schema";
+import { getServerSession } from "next-auth";
+import axios from "axios";
+import { useRouter } from "next/router"; // Fix import
 
 export const metadata: Metadata = {
   title: "Detail PKL",
   description: "List detail PKL",
 };
 
-async function getDataPKL() {
-  const data = await fs.readFile(
-    path.join(process.cwd(), "src/components/data/tabel/tabelPKL/dataPKL.json")
-  );
 
-  const dataPKL = JSON.parse(data.toString());
+async function getDataPKL(angkatan) {
+  try {
+    const session = await getServerSession(authOptions);
+    const accessToken = session?.user?.access_token;
 
-  return z.array(PKLSchema).parse(dataPKL);
+    const response = await axios.get(
+      `http://localhost:8080/dosen/skripsi/rekap/belum_ambil/${angkatan}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    const dataPkl = response.data;
+
+    console.log(dataPkl);
+
+    return z.array(PKLSchema).parse(dataPkl);
+  } catch (error) {
+    console.error("Error fetching or parsing data:", error);
+    return [];
+  }
 }
 
-export default async function pklPage() {
-  const dataPKL = await getDataPKL();
+export default async function pklPage({ params }) {
+  const angkatan = params?.angkatan;
+  const dataPKL = await getDataPKL(angkatan);
 
   return (
     <>

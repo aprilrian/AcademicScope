@@ -105,11 +105,25 @@ const BatchForm = () => {
         }
       );
 
-      // Get the template file URL from the API response
-      const templateFileUrl = response.data.templateUrl;
+      // Log the template API response
+      console.log("Template API response:", response.data);
 
-      // Trigger download by setting window location to the template URL
-      window.location.href = templateFileUrl;
+      // Create a Blob from the CSV data
+      const blob = new Blob([response.data], { type: "text/csv" });
+
+      // Create a link element to trigger the download
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+
+      // Set the filename for the download
+      link.download = "template.csv";
+
+      // Append the link to the document and trigger the click event
+      document.body.appendChild(link);
+      link.click();
+
+      // Remove the link from the document
+      document.body.removeChild(link);
     } catch (error) {
       // Handle errors, for example, log the error or show an error message
       console.error("Error downloading the template:", error);
@@ -124,6 +138,12 @@ const BatchForm = () => {
           <CardDescription>Isi menggunakan batch</CardDescription>
         </CardHeader>
         <CardContent>
+          <Button
+          className="mb-6 bg-blue-500 text-white hover:bg-blue-700"
+          onClick={handleDownloadTemplate}
+          >
+            Download Template
+          </Button>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
               <div className="space-y-2">
@@ -140,9 +160,6 @@ const BatchForm = () => {
                   <FormDescription className="col-span-2">
                     Upload file dengan format .csv atau .xsl
                   </FormDescription>
-                  <Button onClick={handleDownloadTemplate}>
-                    Download Template
-                  </Button>
                 </div>
               </div>
               <Button className="w-full mt-6" type="submit">
@@ -157,3 +174,4 @@ const BatchForm = () => {
 };
 
 export default BatchForm;
+
