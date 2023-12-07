@@ -1,9 +1,10 @@
 const { KabupatenKota } = require('../models')
+const sequelize = require("sequelize");
 
 exports.getAll = async (req, res) => {
     try {
         const data = await KabupatenKota.findAll({
-            attributes: [['kode', 'value'],
+            attributes: [[sequelize.literal("CAST(kode AS CHAR)"), 'value'],
                         ['kode_provinsi', 'kode_provinsi'],
                         ['kabupaten_kota', 'label']]
         });
