@@ -119,19 +119,28 @@ exports.getRekapSkripsiByDosen = async (req, res) => {
 
     const rekapProgress = {};
 
-    mahasiswas.forEach((mahasiswa) => {
-      const angkatan = mahasiswa.angkatan;
-      if (!rekapProgress[angkatan]) {
-        rekapProgress[angkatan] = { sudah: 0, belum: 0 };
-      }
-      if (skripsis.find((skripsi) => skripsi && skripsi.mahasiswa_nim === mahasiswa.nim)) {
-        rekapProgress[angkatan].sudah += 1;
-      } else {
-        rekapProgress[angkatan].belum += 1;
-      }
-    });
+    for (let tahun = 2016; tahun <= 2023; tahun++) {
+      const angkatan = tahun.toString();
 
-    res.status(200).send({ tahun: rekapProgress});
+      rekapProgress[angkatan] = { sudah: 0, belum: 0 };
+
+      mahasiswas.forEach((mahasiswa) => {
+        if (mahasiswa.angkatan === angkatan) {
+          const skripsi = skripsis.find((skripsi) => skripsi && skripsi.mahasiswa_nim === mahasiswa.nim);
+
+          if (skripsi) {
+            rekapProgress[angkatan].sudah += 1;
+          } else {
+            rekapProgress[angkatan].belum += 1;
+          }
+        }
+      });
+
+      rekapProgress[angkatan].sudah = Number(rekapProgress[angkatan].sudah);
+      rekapProgress[angkatan].belum = Number(rekapProgress[angkatan].belum);
+    }
+
+    res.status(200).send({ tahun: rekapProgress });
   } catch (error) {
     res.status(500).send({ message: error.message || 'Error retrieving Skripsi.' });
   }
