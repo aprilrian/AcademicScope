@@ -1,4 +1,5 @@
 const { Provinsi } = require('../models') 
+const sequelize = require("sequelize")
 
 exports.getAll = async (req, res) => {
     try {
