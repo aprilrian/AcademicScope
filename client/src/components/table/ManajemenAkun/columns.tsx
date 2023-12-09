@@ -18,21 +18,6 @@ export const columns: ColumnDef<dataManajemen>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "nama",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Mahasiswa" />
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className="flex space-x-2">
-          <span className="max-w-[500px] truncate font-medium">
-            {row.getValue("nama")}
-          </span>
-        </div>
-      );
-    },
-  },
-  {
     accessorKey: "email",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Email" />
@@ -41,6 +26,22 @@ export const columns: ColumnDef<dataManajemen>[] = [
     enableSorting: false,
     enableHiding: false,
   },
+  // {
+  //   accessorKey: "nama",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="Mahasiswa" />
+  //   ),
+  //   cell: ({ row }) => {
+  //     return (
+  //       <div className="flex space-x-2">
+  //         <span className="max-w-[500px] truncate font-medium">
+  //           {row.getValue("nama")}
+  //         </span>
+  //       </div>
+  //     );
+  //   },
+  // },
+
   {
     accessorKey: "role",
     header: ({ column }) => (

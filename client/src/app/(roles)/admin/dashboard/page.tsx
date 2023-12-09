@@ -34,7 +34,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import router from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const darkTheme = createTheme({
   palette: {
@@ -109,6 +109,8 @@ export default function DashboardPage() {
   const [opens, setOpens] = React.useState(false);
   const [value, setValue] = React.useState("");
   const [values, setValues] = React.useState("");
+  const router = useRouter();
+
   const handleButtonClick = () => {
     // Navigate to "/admin/generate" when the button is clicked
     router.push("/admin/generate");

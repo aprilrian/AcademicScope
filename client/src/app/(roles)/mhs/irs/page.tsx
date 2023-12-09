@@ -37,7 +37,7 @@ const irsSchema = z.object({
   file: z.unknown(),
 });
 
-export function irsForm() {
+const IrsForm = () => {
   const { data: session } = useSession();
   const accessToken = session?.user?.access_token;
   const form = useForm<z.infer<typeof irsSchema>>({
@@ -176,4 +176,4 @@ export function irsForm() {
   );
 }
 
-export default irsForm;
+export default IrsForm;

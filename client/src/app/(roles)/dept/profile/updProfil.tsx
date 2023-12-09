@@ -68,6 +68,7 @@ const editProfileSchema = z.object({
   phone: z.string({
     required_error: "Please select.",
   }),
+  file: z.unknown(),
 });
 
 interface provinsi {
@@ -93,6 +94,7 @@ const EditProfile = () => {
       jalur_masuk: "",
       email: "",
       phone: "",
+      file: "",
     },
   });
 
@@ -133,10 +135,10 @@ const EditProfile = () => {
   };
 
   // State to store the fetched provinsi data
-  const [provinsi, setProvinsi] = React.useState([]);
+  const [provinsi, setProvinsi] = React.useState<any>([]);
 
   // State to store the fetched kabupatenKota data
-  const [kabupatenKota, setKabupatenKota] = React.useState([]);
+  const [kabupatenKota, setKabupatenKota] = React.useState<any>([]);
 
   // Fetch provinsi data
   React.useEffect(() => {
@@ -196,7 +198,7 @@ const EditProfile = () => {
             <SheetHeader>
               <SheetTitle>Edit profile</SheetTitle>
               <SheetDescription>
-                Make changes to your profile here. Click save when you're done.
+                Make changes to your profile here. Click save when you&apos;re done.
               </SheetDescription>
             </SheetHeader>
 
@@ -244,7 +246,7 @@ const EditProfile = () => {
                         >
                           {field.value
                             ? provinsi.find(
-                                (provinsi) => provinsi.value === field.value
+                                (provinsi : any) => provinsi.value === field.value
                               )?.label
                             : "Select Kode Provinsi"}
                           <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -256,7 +258,7 @@ const EditProfile = () => {
                         <CommandInput placeholder="Search kode provinsi..." />
                         <CommandEmpty>No Kode Provinsi found.</CommandEmpty>
                         <CommandGroup>
-                          {provinsi.map((kodeProvinsi) => (
+                          {provinsi.map((kodeProvinsi: any) => (
                             <CommandItem
                               value={kodeProvinsi.label}
                               key={kodeProvinsi.value}
@@ -307,7 +309,7 @@ const EditProfile = () => {
                         >
                           {field.value
                             ? kabupatenKota.find(
-                                (kabupatenKota) =>
+                                (kabupatenKota : any) =>
                                   kabupatenKota.value === field.value
                               )?.label
                             : "Select jalur Masuk"}
@@ -320,7 +322,7 @@ const EditProfile = () => {
                         <CommandInput placeholder="Search kabupaten/Kota..." />
                         <CommandEmpty>No jalur Masuk found.</CommandEmpty>
                         <CommandGroup>
-                          {kabupatenKota.map((kodeKabupatenKota) => (
+                          {kabupatenKota.map((kodeKabupatenKota : any) => (
                             <CommandItem
                               value={kodeKabupatenKota.label}
                               key={kodeKabupatenKota.value}

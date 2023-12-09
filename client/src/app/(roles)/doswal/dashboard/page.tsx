@@ -136,20 +136,11 @@ export default function DashboardPage() {
           </div>
 
           <div>
-            <div className="flex items-start mt-5 mb-2">
-              <h2 className="text-xl font-bold">Summary Akun</h2>
-              <div className="ml-auto">
-                <Button>
-                  <Plus className="mr-2 h-4 w-4" /> Generate Akun
-                </Button>
-              </div>
-            </div>
-
             <div>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-l font-semibold">
-                    Diagram Akun
+                    Diagram PKL
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="pl-2">

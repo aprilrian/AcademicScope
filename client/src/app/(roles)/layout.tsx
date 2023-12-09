@@ -46,7 +46,7 @@ export default function RootLayout({
                 <div className="basis-1/6">
                   <Sidebar />
                 </div>
-                <div className="basis-5/6">{children}</div>
+                <div className="basis-5/6 bg-gray-100">{children}</div>
               </div>
             )}
           </div>

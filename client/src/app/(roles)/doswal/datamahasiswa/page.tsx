@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/api/auth/[...nextauth]/authOptionConfig";
 import Image from "next/image";
 import { z } from "zod";
 import axios from "axios";
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   description: "List Data Mahasiswa",
 };
 
-export async function getDataMahasiswa() {
+async function getDataMahasiswa() {
   try {
     const session = await getServerSession(authOptions);
     console.log(session);
@@ -40,7 +40,6 @@ export async function getDataMahasiswa() {
     return [];
   }
 }
-
 
 export default async function DataMahasiswaPage() {
   const dataMahasiswa = await getDataMahasiswa();
@@ -73,7 +72,7 @@ export default async function DataMahasiswaPage() {
           </div>
           <div className="flex items-center space-x-2"></div>
         </div>
-          <DataTable data={dataMahasiswa} columns={columns} />
+        <DataTable data={dataMahasiswa} columns={columns} />
       </div>
     </>
   );

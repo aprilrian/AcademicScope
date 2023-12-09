@@ -70,7 +70,6 @@ const UserProfile: FC<UserProfileProps> = () => {
               src={`http://localhost:8080/${userData.foto}`}
               className="h-full w-full rounded-full object-cover"
             />
-            //dahi
             {/* <AvatarImage
   alt="User Avatar"
   src={`http://localhost:8080/${userData.foto}`}
@@ -85,7 +84,9 @@ const UserProfile: FC<UserProfileProps> = () => {
               {userData.nama || "John Doe"}
             </h2>
             <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            {role ? role.charAt(0).toUpperCase() + role.slice(1) : "Full Stack Developer at Acme Inc."}
+              {role
+                ? role.charAt(0).toUpperCase() + role.slice(1)
+                : "Full Stack Developer at Acme Inc."}
             </p>
           </div>
         </div>

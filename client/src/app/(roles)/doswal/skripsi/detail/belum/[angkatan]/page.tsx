@@ -3,7 +3,7 @@ import path from "path";
 import { Metadata } from "next";
 import Image from "next/image";
 import { z } from "zod";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/api/auth/[...nextauth]/authOptionConfig";
 
 import { columns } from "@/components/table/PKL/columns";
 import { DataTable } from "@/components/table/PKL/data-table";
@@ -16,7 +16,6 @@ export const metadata: Metadata = {
   title: "Detail PKL",
   description: "List detail PKL",
 };
-
 
 async function getDataPKL(angkatan) {
   try {

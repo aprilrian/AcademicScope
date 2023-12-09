@@ -51,6 +51,7 @@ import {
   CommandItem,
 } from "@/components/ui/command";
 import React from "react";
+import { useSession } from "next-auth/react";
 
 const editProfileSchema = z.object({
   nama: z.string().min(2, {
@@ -87,11 +88,12 @@ const editProfileSchema = z.object({
   file: z.unknown(),
 });
 
-
-
 type EditProfileFormValues = z.infer<typeof editProfileSchema>;
 
 export default function EditProfileForm() {
+  const { data: session } = useSession();
+  const accessToken = session?.user?.access_token;
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -118,12 +120,35 @@ export default function EditProfileForm() {
     try {
       setLoading(true);
 
-      // Make an API call using axios
+      if (!accessToken) {
+        console.error("Access token not available");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("nama", values.nama);
+      formData.append("alamat", values.alamat);
+      formData.append("kode_kabupatenKota", values.kode_kabupatenKota);
+      formData.append("kode_provinsi", values.kode_provinsi);
+      formData.append("jalur_masuk", values.jalur_masuk);
+      formData.append("email", values.email);
+      formData.append("password", values.password);
+      formData.append("phone", values.phone);
+      formData.append("file", values.file as File);
+
+      formData.set("Content-Type", "multipart/form-data");
+
       const response = await axios.post(
-        "http://localhost:8080/mahasiswa/updateProfil",
-        values
+        "http://localhost:8080/mahasiswa/updateProfile",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            // "Content-Type": "multipart/form-data",
+          },
+        }
       );
-      console.log("API response:", response.data);
+      form.reset();
 
       toast({
         title: "Edit akun",

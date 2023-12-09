@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/api/auth/[...nextauth]/authOptionConfig";
 import Image from "next/image";
 import { z } from "zod";
 import axios from "axios";
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   description: "List Data Mahasiswa",
 };
 
-export async function getDataMahasiswa() {
+ async function getDataMahasiswa() {
   try {
     const session = await getServerSession(authOptions);
     console.log(session);

@@ -40,7 +40,7 @@ const loginSchema = yup
 const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  
+
   const router = useRouter();
   const searchParams = useSearchParams();
   // const callbackUrl = searchParams.get("callbackUrl") ?? "/dashboard";
@@ -94,14 +94,16 @@ const Login = () => {
   }
 
   return (
-    <div className="flex justify-center items-center flex-col min-h-screen">
+    <div
+      className="flex justify-center items-center min-h-screen bg-cover bg-center bg-no-repeat w-screen"
+      style={{ backgroundImage: 'url("/NASA.jpg")' }}
+    >
       <Card className="w-full max-w-xs shadow-none">
-      <CardHeader className="pb-3 flex flex-col items-center">
-          <img src="/logo.png" alt="AcademicScope" className="w-16 h-16"/>
+        <CardHeader className="pb-3 flex flex-col items-center">
+          <img src="/logo.png" alt="AcademicScope" className="w-16 h-16" />
           <CardTitle className="flex item-center">AcademicScope</CardTitle>
           <CardDescription>Log In</CardDescription>
         </CardHeader>
-        
         <CardContent className="space-y-3">
           {error && (
             <div>
@@ -111,7 +113,6 @@ const Login = () => {
               </Alert>
             </div>
           )}
-
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
@@ -119,12 +120,12 @@ const Login = () => {
                 name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="email">Username</FormLabel>
+                    <FormLabel htmlFor="email">NIM / NIP</FormLabel>
                     <FormControl>
                       <Input
                         id="username"
                         type="input"
-                        placeholder="Your Username..."
+                        placeholder="Your NIM / NIP..."
                         {...field}
                       />
                     </FormControl>
@@ -132,7 +133,6 @@ const Login = () => {
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="password"
@@ -143,7 +143,7 @@ const Login = () => {
                       <Input
                         id="password"
                         type="password"
-                        placeholder="Your password"
+                        placeholder="Your password..."
                         {...field}
                       />
                     </FormControl>
@@ -151,7 +151,6 @@ const Login = () => {
                   </FormItem>
                 )}
               />
-
               <Button type="submit" className="w-full" disabled={!isValid}>
                 Log In
               </Button>
@@ -159,8 +158,6 @@ const Login = () => {
           </Form>
         </CardContent>
       </Card>
-
-      <div className="mt-4" />
     </div>
   );
 };

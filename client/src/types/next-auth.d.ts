@@ -13,6 +13,7 @@ declare module "next-auth" {
       refreshToken: string;
       nama: string;
       isFirstLogin?: boolean;
+
     };
   }
 };

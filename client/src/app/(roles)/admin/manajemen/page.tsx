@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import Image from "next/image";
 import { z } from "zod";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/api/auth/[...nextauth]/authOptionConfig";
 
 import { columns } from "@/components/table/ManajemenAkun/columns";
 import { DataTable } from "@/components/table/ManajemenAkun/data-table";
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   description: "Manajemen Akun",
 };
 
-export async function getDataManajemen() {
+async function getDataManajemen() {
   try {
     const session = await getServerSession(authOptions);
     console.log(session);
@@ -66,7 +66,9 @@ export default async function ManajemenPage() {
       <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
         <div className="flex items-center justify-between space-y-2">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Manajemen Akun</h2>
+            <h2 className="text-2xl font-bold tracking-tight">
+              Manajemen Akun
+            </h2>
             <p className="text-muted-foreground">Manajemen Akun</p>
           </div>
           <div className="flex items-center space-x-2"></div>

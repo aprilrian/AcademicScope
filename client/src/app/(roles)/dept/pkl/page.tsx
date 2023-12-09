@@ -18,7 +18,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function DashboardPage() {
-  const dummyRekapProgress = {
+  const dummyRekapProgress : any = {
     angkatan: "2020",
     tahun: {
       "2016": {

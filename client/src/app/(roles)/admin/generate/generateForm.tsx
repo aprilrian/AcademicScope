@@ -71,7 +71,7 @@ const GenerateForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [open, setOpen] = React.useState(false);
-  const [dosen, setDosen] = React.useState([]);
+  const [dosen, setDosen] = React.useState<any>([]);
 
   const { toast } = useToast();
 
@@ -218,7 +218,7 @@ const GenerateForm = () => {
                           >
                             {field.value
                               ? dosen.find(
-                                  (dosen) => dosen.value === field.value
+                                  (dosen:any) => dosen.value === field.value
                                 )?.label
                               : "Pilih dosen"}
                             <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -230,7 +230,7 @@ const GenerateForm = () => {
                           <CommandInput placeholder="Pilih dosen..." />
                           <CommandEmpty>No dosen found.</CommandEmpty>
                           <CommandGroup>
-                            {dosen.map((dosenItem) => (
+                            {dosen.map((dosenItem : any) => (
                               <CommandItem
                                 value={dosenItem.label}
                                 key={dosenItem.value}

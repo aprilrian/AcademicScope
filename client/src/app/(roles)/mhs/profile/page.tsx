@@ -82,7 +82,7 @@ const UserProfile: FC<UserProfileProps> = () => {
           </Avatar>
           <div className="text-center">
             <h2 className="text-2xl font-bold">
-              {userData.nama || "John Doe"}
+              {userData.nama || "Not Set"}
             </h2>
             <p className="text-sm text-zinc-500 dark:text-zinc-400">
               {role
@@ -95,7 +95,7 @@ const UserProfile: FC<UserProfileProps> = () => {
           <div className="flex justify-between">
             <span className="font-medium text-sm">Email:</span>
             <span className="text-sm text-zinc-500 dark:text-zinc-400">
-              {userData.email || "john.doe@example.com"}
+              {userData.email || "Not Set"}
             </span>
           </div>
           {/* Add more fields based on your JSON structure */}
@@ -103,55 +103,55 @@ const UserProfile: FC<UserProfileProps> = () => {
           <div className="flex justify-between">
             <span className="font-medium text-sm">Nama Lengkap:</span>
             <span className="text-sm text-zinc-500 dark:text-zinc-400">
-              {userData.nama || "24060121140120"}
+              {userData.nama || "Not Set"}
             </span>
           </div>
           <div className="flex justify-between">
             <span className="font-medium text-sm">NIM:</span>
             <span className="text-sm text-zinc-500 dark:text-zinc-400">
-              {userData.nim || "24060121140120"}
+              {userData.nim || "Not Set"}
             </span>
           </div>
           <div className="flex justify-between">
             <span className="font-medium text-sm">Angkatan:</span>
             <span className="text-sm text-zinc-500 dark:text-zinc-400">
-              {userData.angkatan || "24060121140120"}
+              {userData.angkatan || "Not Set"}
             </span>
           </div>
           <div className="flex justify-between">
             <span className="font-medium text-sm">Alamat:</span>
             <span className="text-sm text-zinc-500 dark:text-zinc-400">
-              {userData.alamat || "24060121140120"}
+              {userData.alamat || "Not Set"}
             </span>
           </div>
           <div className="flex justify-between">
             <span className="font-medium text-sm">Kabupaten:</span>
             <span className="text-sm text-zinc-500 dark:text-zinc-400">
-              {userData.kabupatenKota || "24060121140120"}
+              {userData.kabupatenKota || "Not Set"}
             </span>
           </div>
           <div className="flex justify-between">
             <span className="font-medium text-sm">Provinsi:</span>
             <span className="text-sm text-zinc-500 dark:text-zinc-400">
-              {userData.provinsi || "24060121140120"}
+              {userData.provinsi || "Not Set"}
             </span>
           </div>
           <div className="flex justify-between">
             <span className="font-medium text-sm">Jalur Masuk:</span>
             <span className="text-sm text-zinc-500 dark:text-zinc-400">
-              {userData.jalur_masuk || "24060121140120"}
+              {userData.jalur_masuk || "Not Set"}
             </span>
           </div>
           <div className="flex justify-between">
             <span className="font-medium text-sm">No. Telpon:</span>
             <span className="text-sm text-zinc-500 dark:text-zinc-400">
-              {userData.phone || "24060121140120"}
+              {userData.phone || "Not Set"}
             </span>
           </div>
           <div className="flex justify-between">
             <span className="font-medium text-sm">Dosen Wali:</span>
             <span className="text-sm text-zinc-500 dark:text-zinc-400">
-              {userData.nama_dosen || "24060121140120"}
+              {userData.nama_dosen || "Not Set"}
             </span>
           </div>
         </div>
