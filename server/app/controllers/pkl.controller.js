@@ -44,6 +44,34 @@ exports.submitPKL = async (req, res) => {
   }
 };
 
+exports.getPKLBelumByDosen = async (req, res) => {
+  try {
+    const dosen = req.dosen;
+    const list_pkl = await PKL.findAll({
+      where: { status_verifikasi: "belum" },
+    });
+
+    const pkls = await Promise.all(list_pkl.map(async (pkl) => {
+      const mahasiswa = await Mahasiswa.findOne({
+        where: {
+          nim: pkl.mahasiswa_nim,
+          nip_dosen: dosen.nip,
+        },
+      });
+
+      if (mahasiswa) {
+        pkl.dataValues.nama = mahasiswa.nama
+      };
+
+      return pkl;
+    }));
+
+    res.status(200).send(pkls.filter((pkl) => pkl !== null));
+  } catch (error) {
+    res.status(500).send({ message: error.message || 'Error retrieving PKL.' });
+  }
+}
+
 exports.getPKLByDosen = async (req, res) => {
   try {
     const dosen = req.dosen;

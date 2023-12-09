@@ -139,6 +139,38 @@ exports.verifySkripsi = async (req, res) => {
   }
 };
 
+exports.getSkripsiBelumByDosen = async (req, res) => {
+  try {
+    const dosen = req.dosen;
+
+    const mahasiswas = await Mahasiswa.findAll({
+      where: {
+        nip_dosen: dosen.nip,
+      },
+    });
+
+    const skripsis = await Promise.all(mahasiswas.map(async (mahasiswa) => {
+      const skripsi = await Skripsi.findOne({
+        where: {
+          mahasiswa_nim: mahasiswa.nim,
+          status_verifikasi: 'belum',
+        },
+      });
+
+      if (skripsi) {
+        skripsi.dataValues.nama = mahasiswa.nama
+      }
+
+      return skripsi;
+    }));
+
+    res.status(200).send(skripsis.filter((skripsi) => skripsi !== null));
+  } catch (error) {
+    res.status(500).send({ message: error.message || 'Error retrieving Skripsi.' });
+  }
+}
+
+
 exports.editSkripsi = async (req, res) => {
   try {
     const mahasiswa = req.mahasiswa;

@@ -123,6 +123,25 @@ exports.getAllIRS = async (req, res) => {
   }
 };
 
+exports.getIRSBySemesterAndMahasiswa = async (req, res) => { 
+  try {
+    const irs = await IRS.findOne({
+      where: {
+        mahasiswa_nim: req.params.nim,
+        semester_aktif: req.params.semester_aktif,
+      },
+    });
+
+    if (!irs) {
+      return res.status(404).send({ message: "IRS not found!" });
+    }
+
+    res.status(200).send(irs);
+  } catch (err) {
+    res.status(500).send({ message: err.message || "Some error occurred while retrieving IRS." });
+  }
+};
+
 exports.showIRS = async (req, res) => {
   try {
     const irs = await IRS.findOne({

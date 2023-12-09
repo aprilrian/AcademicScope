@@ -76,7 +76,6 @@ router.use("/dosen/pkl",
 router.use("/dosen/skripsi",
   [authMiddleware.verifyToken, authMiddleware.isDosen, userMiddleware.getDosenByID],
   require("./skripsi.routes"));
-
 // DEPARTEMEN
 router.use('/departemen/irs',
   [authMiddleware.verifyToken, authMiddleware.isDepartemen],
