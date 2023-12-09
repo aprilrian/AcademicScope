@@ -393,7 +393,7 @@ exports.getAllBelumVerifiedFilesByDosen = async (req, res) => {
       });
 
       for (const pklFile of pkl) {
-        unverifiedFiles.push({ id: pklFile.id, nim: mahasiswa.nim, nama: mahasiswa.nama, angkatan: mahasiswa.angkatan, semester_aktif: pklFile.semester, sks: pklFile.nilai, file: pklFile.file, jenis: 'pkl' });
+        unverifiedFiles.push({ id: pklFile.id, nim: mahasiswa.nim, nama: mahasiswa.nama, angkatan: mahasiswa.angkatan, semester_aktif: pklFile.semester, nilai: pklFile.nilai, file: pklFile.file, jenis: 'pkl' });
       }
 
       const skripsi = await Skripsi.findAll({
@@ -404,7 +404,7 @@ exports.getAllBelumVerifiedFilesByDosen = async (req, res) => {
       });
 
       for (const skripsiFile of skripsi) {
-        unverifiedFiles.push({ id: skripsiFile.id, nim: mahasiswa.nim, nama: mahasiswa.nama, angkatan: mahasiswa.angkatan, semester_aktif: skripsiFile.semester, sks: skripsiFile.nilai, file: skripsiFile.file, jenis: 'skripsi' });
+        unverifiedFiles.push({ id: skripsiFile.id, nim: mahasiswa.nim, nama: mahasiswa.nama, angkatan: mahasiswa.angkatan, semester_aktif: skripsiFile.semester, nilai: skripsiFile.nilai, file: skripsiFile.file, jenis: 'skripsi' });
       }
     }
 

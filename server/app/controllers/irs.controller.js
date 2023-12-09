@@ -14,9 +14,12 @@ exports.submitIRS = async (req, res) => {
     });
 
     if (lastSubmittedIRS) {
-      if (req.body.semester_aktif <= lastSubmittedIRS.semester_aktif + 1) {
-        console.log(lastSubmittedIRS)
+      if (req.body.semester_aktif <= lastSubmittedIRS.semester_aktif + 1 && req.body.semester_aktif != lastSubmittedIRS.semester_aktif) {
         return res.status(400).json({ message: "IRS semester must be sequential." });
+      }
+
+      if (req.body.semester_aktif == lastSubmittedIRS.semester_aktif) {
+        return res.status(400).json({ message: "IRS semester already exists." });
       }
     }
 
