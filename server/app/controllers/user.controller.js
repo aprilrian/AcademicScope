@@ -370,8 +370,8 @@ exports.getAllBelumVerifiedFilesByDosen = async (req, res) => {
         },
       });
 
-      if (irs) {
-        unverifiedFiles.push({ nim: mahasiswa.nim, nama: mahasiswa.nama, angkatan: mahasiswa.angkatan, jenis: 'irs' });
+      for (const irsFile of irs) {
+        unverifiedFiles.push({ id: irsFile.id, nim: mahasiswa.nim, nama: mahasiswa.nama, angkatan: mahasiswa.angkatan, semester_aktif: irsFile.semester_aktif, sks: irsFile.sks, file: irsFile.file, jenis: 'irs' });
       }
 
       const khs = await KHS.findAll({
@@ -381,8 +381,8 @@ exports.getAllBelumVerifiedFilesByDosen = async (req, res) => {
         },
       });
 
-      if (khs) {
-        unverifiedFiles.push({ nim: mahasiswa.nim, nama: mahasiswa.nama, angkatan: mahasiswa.angkatan, jenis: 'khs' });
+      for (const khsFile of khs) {
+        unverifiedFiles.push({ id: khsFile.id, nim: mahasiswa.nim, nama: mahasiswa.nama, angkatan: mahasiswa.angkatan, semester_aktif: khsFile.semester_aktif, sks: khsFile.sks, file: khsFile.file, jenis: 'khs' });
       }
 
       const pkl = await PKL.findAll({
@@ -392,8 +392,8 @@ exports.getAllBelumVerifiedFilesByDosen = async (req, res) => {
         },
       });
 
-      if (pkl) {
-        unverifiedFiles.push({ nim: mahasiswa.nim, nama: mahasiswa.nama, angkatan: mahasiswa.angkatan, jenis: 'pkl' });
+      for (const pklFile of pkl) {
+        unverifiedFiles.push({ id: pklFile.id, nim: mahasiswa.nim, nama: mahasiswa.nama, angkatan: mahasiswa.angkatan, semester_aktif: pklFile.semester, sks: pklFile.nilai, file: pklFile.file, jenis: 'pkl' });
       }
 
       const skripsi = await Skripsi.findAll({
@@ -403,8 +403,8 @@ exports.getAllBelumVerifiedFilesByDosen = async (req, res) => {
         },
       });
 
-      if (skripsi) {
-        unverifiedFiles.push({ nim: mahasiswa.nim, nama: mahasiswa.nama, angkatan: mahasiswa.angkatan, jenis: 'skripsi' });
+      for (const skripsiFile of skripsi) {
+        unverifiedFiles.push({ id: skripsiFile.id, nim: mahasiswa.nim, nama: mahasiswa.nama, angkatan: mahasiswa.angkatan, semester_aktif: skripsiFile.semester, sks: skripsiFile.nilai, file: skripsiFile.file, jenis: 'skripsi' });
       }
     }
 
@@ -413,6 +413,7 @@ exports.getAllBelumVerifiedFilesByDosen = async (req, res) => {
     res.status(500).send({ message: error.message });
   }
 }
+
 
 
 
