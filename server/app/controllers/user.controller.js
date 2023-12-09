@@ -1,4 +1,4 @@
-const { User, Mahasiswa, Dosen, KabupatenKota, Provinsi, Operator, Departemen } = require("../models");
+const { User, Mahasiswa, Dosen, KabupatenKota, Provinsi, Operator, Departemen, IRS, KHS, PKL, Skripsi } = require("../models");
 const csv = require('csvtojson');
 const fs = require('fs');
 const bcrypt = require('bcryptjs');
@@ -351,7 +351,68 @@ exports.getRekapByDosen = async (req, res, Model, statusField, responseMessage) 
   }
 };
 
+exports.getAllBelumVerifiedFilesByDosen = async (req, res) => {
+  try {
+    const dosen = req.dosen;
+    const mahasiswas = await Mahasiswa.findAll({
+      where: {
+        nip_dosen: dosen.nip,
+      },
+    });
 
+    const unverifiedFiles = [];
+
+    for (const mahasiswa of mahasiswas) {
+      const irs = await IRS.findAll({
+        where: {
+          mahasiswa_nim: mahasiswa.nim,
+          status_verifikasi: 'belum',
+        },
+      });
+
+      if (irs) {
+        unverifiedFiles.push({ nim: mahasiswa.nim, nama: mahasiswa.nama, angkatan: mahasiswa.angkatan, jenis: 'irs' });
+      }
+
+      const khs = await KHS.findAll({
+        where: {
+          mahasiswa_nim: mahasiswa.nim,
+          status_verifikasi: 'belum',
+        },
+      });
+
+      if (khs) {
+        unverifiedFiles.push({ nim: mahasiswa.nim, nama: mahasiswa.nama, angkatan: mahasiswa.angkatan, jenis: 'khs' });
+      }
+
+      const pkl = await PKL.findAll({
+        where: {
+          mahasiswa_nim: mahasiswa.nim,
+          status_verifikasi: 'belum',
+        },
+      });
+
+      if (pkl) {
+        unverifiedFiles.push({ nim: mahasiswa.nim, nama: mahasiswa.nama, angkatan: mahasiswa.angkatan, jenis: 'pkl' });
+      }
+
+      const skripsi = await Skripsi.findAll({
+        where: {
+          mahasiswa_nim: mahasiswa.nim,
+          status_verifikasi: 'belum',
+        },
+      });
+
+      if (skripsi) {
+        unverifiedFiles.push({ nim: mahasiswa.nim, nama: mahasiswa.nama, angkatan: mahasiswa.angkatan, jenis: 'skripsi' });
+      }
+    }
+
+    res.status(200).send(unverifiedFiles);
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+}
 
 
 
