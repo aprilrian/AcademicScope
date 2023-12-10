@@ -235,6 +235,10 @@ exports.deleteKHS = async (req, res) => {
       return res.status(404).send({ message: "KHS not found!" });
     }
 
+    if (khs.status_verifikasi == "sudah") {
+      return res.status(400).send({ message: "KHS has already verified!" });
+    }
+
     await fs.unlink(khs.file);
     await KHS.destroy({
       where: {

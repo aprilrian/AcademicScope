@@ -161,8 +161,6 @@ exports.getRekapPKLByDosen = async (req, res) => {
   }
 };
 
-
-
 exports.verifyPKL = async (req, res) => {
   try {
     const dosen = req.dosen;
@@ -230,6 +228,36 @@ exports.editPKL = async (req, res) => {
   }
 }
 
+exports.showPKL = async (req, res) => {
+  try {
+    const pkl = await PKL.findOne({
+      where: {
+        mahasiswa_nim: req.params.nim,
+      },
+    });
+
+    if (!pkl) {
+      return res.status(404).send({ message: "PKL not found!" });
+    }
+
+    const mhs = await Mahasiswa.findOne({
+      where: {
+        nim: req.params.nim,
+      },
+    });
+
+    const fileStream = fs.createReadStream(irs.file);
+    const contentType = "application/pdf"; 
+    res.setHeader("Content-type", contentType);
+    res.setHeader("Content-disposition", `inline; filename=PKL_${mhs.nama}_${mhs.nim}.pdf`);
+
+    fileStream.pipe(res);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: err.message || "Some error occurred while showing the PKL." });
+  }
+}
+
 exports.getAllPKL = async (req, res) => {
   try {
     const pkls = await PKL.findAll();
@@ -259,6 +287,27 @@ exports.downloadPKL = async (req, res) => {
     res.status(500).send({ message: error.message || 'Error retrieving PKL.' });
   }
 };
+
+exports.deletePKL = async (req, res) => {
+  try {
+    const pkl = await PKL.findOne({
+      where: {
+        mahasiswa_nim: req.params.nim,
+      },
+    });
+
+    if (!pkl) {
+      res.status(404).send({ message: 'PKL not found!' });
+      return;
+    }
+
+    await pkl.destroy();
+
+    res.status(200).send({ message: 'PKL deleted successfully!' });
+  } catch (error) {
+    res.status(500).send({ message: error.message || 'Error deleting PKL.' });
+  }
+}
 
 exports.deleteAllPKL = async (req, res) => {
   try {

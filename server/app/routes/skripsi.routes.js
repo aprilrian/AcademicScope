@@ -23,6 +23,14 @@ router.put(
     '/edit/:nim', 
     controller.editSkripsi);
 
+router.delete(
+    '/delete/:nim', 
+    controller.deleteSkripsi);
+
+router.get(
+    '/showSkripsi/:nim', 
+    controller.showSkripsi);
+
 router.get(
     '/getAll', 
     controller.getAllSkripsi);

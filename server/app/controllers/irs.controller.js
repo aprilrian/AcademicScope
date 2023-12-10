@@ -154,15 +154,10 @@ exports.showIRS = async (req, res) => {
     const mhs = await Mahasiswa.findOne({ where: { nim: req.params.nim } });
 
     const fileStream = fs.createReadStream(irs.file);
-
-    // Set the appropriate content type based on the file type
-    const contentType = "application/pdf"; // Sesuaikan berdasarkan jenis file Anda
+    const contentType = "application/pdf"; 
     res.setHeader("Content-type", contentType);
-
-    // Set Content-Disposition to inline for displaying in a new tab
     res.setHeader("Content-disposition", `inline; filename=IRS_${mhs.nama}_${mhs.nim}_${irs.semester_aktif}.pdf`);
 
-    // Pipe the file stream to the response
     fileStream.pipe(res);
   } catch (err) {
     console.log({ message: err.message || "Error occurred while retrieving IRS." });
@@ -237,6 +232,10 @@ exports.deleteIRS = async (req, res) => {
 
     if (!irs) {
       return res.status(404).send({ message: "IRS not found!" });
+    }
+
+    if (irs.status_verifikasi == "sudah") {
+      return res.status(400).send({ message: "IRS has been verified" });
     }
 
     await fs.unlink(irs.file);

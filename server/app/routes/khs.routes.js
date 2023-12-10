@@ -7,16 +7,24 @@ router.post(
     [upload],
     controller.submitKHS);
 
+router.get(
+    '/getKHSBelumByDosen',
+    controller.getKHSBelumByDosen);
+
 router.put(
     '/verify/:nim/:semester_aktif',
     controller.verifyKHS);
+
+router.get(
+    '/showKHS/:nim/:semester_aktif',
+    controller.showKHS);
 
 router.put(
     '/edit/:nim/:semester_aktif',
     controller.editKHS);
 
-router.get(
-    '/getKHSBelumByDosen',
-    controller.getKHSBelumByDosen);
+router.delete(
+    '/delete/:nim/:semester_aktif',
+    controller.deleteKHS);
 
 module.exports = router;

@@ -218,6 +218,54 @@ exports.getSkripsiBelumByDosen = async (req, res) => {
   }
 };
 
+exports.showSkripsi = async (req, res) => {
+  try {
+    const skripsi = await Skripsi.findOne({
+      where: {
+        mahasiswa_nim: req.params.nim,
+      }
+    });
+
+    if (!skripsi) {
+      return res.status(404).send({ message: "Skripsi not found!" });
+    }
+
+    const mhs = await Mahasiswa.findOne({ where: { nim: req.params.nim } });
+
+    const fileStream = fs.createReadStream(skripsi.file);
+    const contentType = "application/pdf"; 
+    res.setHeader("Content-type", contentType);
+    res.setHeader("Content-disposition", `inline; filename=Skripsi_${mhs.nama}_${mhs.nim}.pdf`);
+
+    fileStream.pipe(res);
+    } catch (err) {
+      console.log({ message: err.message || "Error occurred while retrieving Skripsi." });
+    }
+  };
+
+exports.deleteSkripsi = async (req, res) => {
+  try {
+    const skripsi = await Skripsi.findOne({
+      where: {
+        mahasiswa_nim: req.params.nim,
+      },
+    });
+
+    if (!skripsi) {
+      return res.status(404).send({ message: "Skripsi not found!" });
+    }
+
+    if (skripsi.status_verifikasi == "sudah") {
+      return res.status(400).send({ message: "Skripsi has already verified!" });
+    }
+
+    await skripsi.destroy();
+
+    res.status(200).send({ message: "Skripsi was deleted successfully." });
+  } catch (error) {
+    res.status(500).send({ message: error.message || "Error deleting Skripsi." });
+  }
+};
 
 exports.editSkripsi = async (req, res) => {
   try {
