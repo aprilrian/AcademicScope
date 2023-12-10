@@ -371,7 +371,7 @@ exports.getAllBelumVerifiedFilesByDosen = async (req, res) => {
       });
 
       for (const irsFile of irs) {
-        unverifiedFiles.push({ id: irsFile.id, nim: mahasiswa.nim, nama: mahasiswa.nama, angkatan: mahasiswa.angkatan, semester_aktif: irsFile.semester_aktif, sks: irsFile.sks, file: irsFile.file, jenis: 'irs' });
+        unverifiedFiles.push({ id: irsFile.id, nim: mahasiswa.nim, nama: mahasiswa.nama, angkatan: mahasiswa.angkatan, semester: irsFile.semester, sks: irsFile.sks, file: irsFile.file, jenis: 'irs' });
       }
 
       const khs = await KHS.findAll({
@@ -382,7 +382,7 @@ exports.getAllBelumVerifiedFilesByDosen = async (req, res) => {
       });
 
       for (const khsFile of khs) {
-        unverifiedFiles.push({ id: khsFile.id, nim: mahasiswa.nim, nama: mahasiswa.nama, angkatan: mahasiswa.angkatan, semester_aktif: khsFile.semester_aktif, sks: khsFile.sks, file: khsFile.file, jenis: 'khs' });
+        unverifiedFiles.push({ id: khsFile.id, nim: mahasiswa.nim, nama: mahasiswa.nama, angkatan: mahasiswa.angkatan, semester: khsFile.semester, sks: khsFile.sks, file: khsFile.file, jenis: 'khs' });
       }
 
       const pkl = await PKL.findAll({
@@ -393,7 +393,7 @@ exports.getAllBelumVerifiedFilesByDosen = async (req, res) => {
       });
 
       for (const pklFile of pkl) {
-        unverifiedFiles.push({ id: pklFile.id, nim: mahasiswa.nim, nama: mahasiswa.nama, angkatan: mahasiswa.angkatan, semester_aktif: pklFile.semester, nilai: pklFile.nilai, file: pklFile.file, jenis: 'pkl' });
+        unverifiedFiles.push({ id: pklFile.id, nim: mahasiswa.nim, nama: mahasiswa.nama, angkatan: mahasiswa.angkatan, semester: pklFile.semester, nilai: pklFile.nilai, file: pklFile.file, jenis: 'pkl' });
       }
 
       const skripsi = await Skripsi.findAll({
@@ -404,7 +404,7 @@ exports.getAllBelumVerifiedFilesByDosen = async (req, res) => {
       });
 
       for (const skripsiFile of skripsi) {
-        unverifiedFiles.push({ id: skripsiFile.id, nim: mahasiswa.nim, nama: mahasiswa.nama, angkatan: mahasiswa.angkatan, semester_aktif: skripsiFile.semester, nilai: skripsiFile.nilai, file: skripsiFile.file, jenis: 'skripsi' });
+        unverifiedFiles.push({ id: skripsiFile.id, nim: mahasiswa.nim, nama: mahasiswa.nama, angkatan: mahasiswa.angkatan, semester: skripsiFile.semester, nilai: skripsiFile.nilai, file: skripsiFile.file, jenis: 'skripsi' });
       }
     }
 
