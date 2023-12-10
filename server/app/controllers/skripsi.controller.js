@@ -77,6 +77,7 @@ exports.getSkripsiByDosen = async (req, res) => {
 
     const skripsis = await Promise.all(mahasiswas.map(async (mahasiswa) => {
       const skripsi = await Skripsi.findOne({
+        attributes: [['mahasiswa_nim', 'nim'], 'status', 'status_verifikasi'],
         where: {
           mahasiswa_nim: mahasiswa.nim,
           status: status,
@@ -98,7 +99,51 @@ exports.getSkripsiByDosen = async (req, res) => {
 }
 
 exports.getRekapSkripsiByDosen = async (req, res) => {
-  await getRekapByDosen(req, res, Skripsi, 'status_verifikasi', 'Error retrieving Skripsi.');
+  try {
+    const dosen = req.dosen;
+    const rekapList = {};
+
+    for (let angkat = 2016; angkat <= 2023; angkat++) {
+      const angkatan = angkat.toString();
+      const mahasiswas = await Mahasiswa.findAll({
+        where: {
+          nip_dosen: dosen.nip,
+          angkatan: angkatan,
+        },
+      });
+
+      let sudah = 0;
+      let belum = 0;
+
+      await Promise.all(mahasiswas.map(async (mahasiswa) => {
+        const skripsi = await Skripsi.findOne({
+          where: {
+            mahasiswa_nim: mahasiswa.nim,
+            status_verifikasi: 'sudah',
+          },
+        });
+
+        if (skripsi) {
+          if (skripsi.status === "belum ambil") {
+            belum++;
+          } else {
+            sudah++;
+          }
+        }
+      }));
+
+      const rekap = {
+        sudah: sudah,
+        belum: belum,
+      };
+
+      rekapList[angkatan] = rekap;
+    }
+
+    res.status(200).send(rekapList);
+  } catch (error) {
+    res.status(500).send({ message: error.message || 'Error retrieving Rekap Skripsi.' });
+  }
 };
 
 exports.verifySkripsi = async (req, res) => {
