@@ -24,7 +24,7 @@ router.put(
     controller.editPKL);
 
 router.get(
-    '/showPKL/:nim',
+    '/show/:nim',
     controller.showPKL);
 
 router.delete(

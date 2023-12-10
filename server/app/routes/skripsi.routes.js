@@ -28,7 +28,7 @@ router.delete(
     controller.deleteSkripsi);
 
 router.get(
-    '/showSkripsi/:nim', 
+    '/show/:nim', 
     controller.showSkripsi);
 
 router.get(

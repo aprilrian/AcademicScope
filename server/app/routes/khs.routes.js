@@ -16,7 +16,7 @@ router.put(
     controller.verifyKHS);
 
 router.get(
-    '/showKHS/:nim/:semester_aktif',
+    '/show/:nim/:semester_aktif',
     controller.showKHS);
 
 router.put(

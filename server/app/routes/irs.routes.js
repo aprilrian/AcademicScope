@@ -22,7 +22,7 @@ router.put(
     controller.verifyIRS);
 
 router.get(
-    '/showIRS/:nim/:semester_aktif',
+    '/show/:nim/:semester_aktif',
     controller.showIRS);
 
 router.delete(
