@@ -85,40 +85,36 @@ exports.getKHSByMahasiswa = async (req, res) => {
 exports.getKHSBelumByDosen = async (req, res) => {
   try {
     const dosen = req.dosen;
-    const list_khs = await KHS.findAll({
-      where: { status_verifikasi: "belum" },
-      include: [
-        {
-          model: Mahasiswa,
-          attributes: ["nama", "angkatan"],
-          where: { nip_dosen: dosen.nip },
-          as: "Mahasiswa",
+    const mahasiswas = await Mahasiswa.findAll({ where: { nip_dosen: dosen.nip } });
+
+    const unverifiedKHS = [];
+
+    for (const mahasiswa of mahasiswas) {
+      const khss = await KHS.findAll({
+        where: {
+          mahasiswa_nim: mahasiswa.nim,
+          status_verifikasi: "belum",
         },
-      ],
-    });
+      });
 
-    const transformedListKHS = list_khs.map(khs => ({
-      id: khs.id,
-      nama: khs.Mahasiswa?.nama || null,
-      mahasiswa_nim: khs.mahasiswa_nim,
-      angkatan: khs.Mahasiswa?.angkatan || null,
-      semester_aktif: khs.semester_aktif,
-      sks: khs.sks,
-      sks_kumulatif: khs.sks_kumulatif,
-      ip: khs.ip,
-      ip_kumulatif: khs.ip_kumulatif,
-      file: khs.file,
-      status_verifikasi: khs.status_verifikasi,
-      createdAt: khs.createdAt,
-      updatedAt: khs.updatedAt,
-    }));
+      for (const khs of khss) {
+        unverifiedKHS.push({
+          id: khs.id,
+          nim: mahasiswa.nim,
+          nama: mahasiswa.nama,
+          angkatan: mahasiswa.angkatan,
+          semester: khs.semester_aktif,
+          ip: khs.ip,
+        });
+      }
+    }
 
-    res.status(200).json(transformedListKHS);
+    res.status(200).send(unverifiedKHS);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: err.message || "Some error occurred while retrieving KHS." });
+    res.status(500).json({ message: err.message || "Terjadi kesalahan saat mengambil data KHS." });
   }
-}
+};
 
 exports.getAllKHS = async (req, res) => {
   try {

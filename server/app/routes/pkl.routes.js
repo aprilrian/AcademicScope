@@ -26,5 +26,9 @@ router.put(
 router.get(
     '/getAll',
     controller.getAllPKL);
+
+router.get(
+    '/getPKLBelumByDosen',
+    controller.getPKLBelumByDosen);
     
 module.exports = router;

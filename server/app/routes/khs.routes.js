@@ -15,4 +15,8 @@ router.put(
     '/edit/:nim/:semester_aktif',
     controller.editKHS);
 
+router.get(
+    '/getKHSBelumByDosen',
+    controller.getKHSBelumByDosen);
+
 module.exports = router;

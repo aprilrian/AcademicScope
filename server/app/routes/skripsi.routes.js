@@ -27,4 +27,8 @@ router.get(
     '/getAll', 
     controller.getAllSkripsi);
 
+router.get(
+    '/getSkripsiBelumByDosen', 
+    controller.getSkripsiBelumByDosen);
+
 module.exports = router;

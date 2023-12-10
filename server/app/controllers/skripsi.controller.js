@@ -142,33 +142,36 @@ exports.verifySkripsi = async (req, res) => {
 exports.getSkripsiBelumByDosen = async (req, res) => {
   try {
     const dosen = req.dosen;
+    const mahasiswas = await Mahasiswa.findAll({ where: { nip_dosen: dosen.nip } });
 
-    const mahasiswas = await Mahasiswa.findAll({
-      where: {
-        nip_dosen: dosen.nip,
-      },
-    });
+    const unverifiedSkripsi = [];
 
-    const skripsis = await Promise.all(mahasiswas.map(async (mahasiswa) => {
-      const skripsi = await Skripsi.findOne({
+    for (const mahasiswa of mahasiswas) {
+      const skripsis = await Skripsi.findAll({
         where: {
           mahasiswa_nim: mahasiswa.nim,
-          status_verifikasi: 'belum',
+          status_verifikasi: "belum",
         },
       });
 
-      if (skripsi) {
-        skripsi.dataValues.nama = mahasiswa.nama
+      for (const skripsi of skripsis) {
+        unverifiedSkripsi.push({
+          id: skripsi.id,
+          nim: mahasiswa.nim,
+          nama: mahasiswa.nama,
+          angkatan: mahasiswa.angkatan,
+          semester: skripsi.semester,
+          nilai: skripsi.nilai,
+        });
       }
+    }
 
-      return skripsi;
-    }));
-
-    res.status(200).send(skripsis.filter((skripsi) => skripsi !== null));
-  } catch (error) {
-    res.status(500).send({ message: error.message || 'Error retrieving Skripsi.' });
+    res.status(200).send(unverifiedSkripsi);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message || "Terjadi kesalahan saat mengambil data Skripsi." });
   }
-}
+};
 
 
 exports.editSkripsi = async (req, res) => {

@@ -6,29 +6,6 @@ exports.submitIRS = async (req, res) => {
   try {
     const mahasiswa = req.mahasiswa;
 
-    const lastSubmittedIRS = await IRS.findOne({
-      where: {
-        mahasiswa_nim: mahasiswa.nim,
-      },
-      order: sequelize.literal('"semester_aktif"::int DESC'),
-    });
-
-    if (lastSubmittedIRS) {
-      if (req.body.semester_aktif <= lastSubmittedIRS.semester_aktif + 1 && req.body.semester_aktif != lastSubmittedIRS.semester_aktif) {
-        return res.status(400).json({ message: "IRS semester must be sequential." });
-      }
-
-      if (req.body.semester_aktif == lastSubmittedIRS.semester_aktif) {
-        return res.status(400).json({ message: "IRS semester already exists." });
-      }
-    }
-
-    if (!lastSubmittedIRS) {
-      if (req.body.semester_aktif != 1) {
-        return res.status(400).json({ message: "IRS semester must be started from 1." });
-      }
-    }
-
     let existingIRS = await IRS.findOne({
       where: {
         mahasiswa_nim: mahasiswa.nim,
@@ -37,15 +14,32 @@ exports.submitIRS = async (req, res) => {
     });
 
     if (existingIRS) {
-      if (req.file) {
-        try {
-          await fs.unlink(req.file.path);
-        } catch (err) {
-          console.log(err);
-        }
-      }
       return res.status(400).send({ message: "IRS already exists!"})
     }
+
+    const lastSubmittedIRS = await IRS.findOne({
+      where: {
+        mahasiswa_nim: mahasiswa.nim,
+      },
+      order: sequelize.literal('"semester_aktif"::int DESC'),
+    });
+
+    if (lastSubmittedIRS) {
+      if (req.body.semester_aktif != parseInt(lastSubmittedIRS.semester_aktif, 10) + 1) {
+        if (req.file) {
+          await fs.unlink(req.file.path);
+        }
+        return res.status(400).json({ message: "IRS semester must be sequential." });
+      }
+    } else {
+      if (req.file) {
+        await fs.unlink(req.file.path);
+      }
+      if (req.body.semester_aktif != 1) {
+        return res.status(400).json({ message: "IRS semester must start from 1." });
+      }
+    }
+
 
     const newIRS = {
       mahasiswa_nim: mahasiswa.nim,
@@ -85,37 +79,37 @@ exports.getIRSByMahasiswa = async (req, res) => {
 exports.getIRSBelumByDosen = async (req, res) => {
   try {
     const dosen = req.dosen;
-    const list_irs = await IRS.findAll({
-      where: { status_verifikasi: "belum" },
-      include: [
-        {
-          model: Mahasiswa,
-          attributes: ["nama", "angkatan"],
-          where: { nip_dosen: dosen.nip },
-          as: "Mahasiswa",
+    const mahasiswas = await Mahasiswa.findAll({ where: { nip_dosen: dosen.nip } });
+
+    const unverifiedIRS = [];
+
+    for (const mahasiswa of mahasiswas) {
+      const irss = await IRS.findAll({
+        where: {
+          mahasiswa_nim: mahasiswa.nim,
+          status_verifikasi: "belum",
         },
-      ],
-    });
+      });
 
-    const transformedListIRS = list_irs.map(irs => ({
-      id: irs.id,
-      nama: irs.Mahasiswa?.nama || null,
-      angkatan: irs.Mahasiswa?.angkatan || null,
-      mahasiswa_nim: irs.mahasiswa_nim,
-      semester_aktif: irs.semester_aktif,
-      sks: irs.sks,
-      file: irs.file,
-      status_verifikasi: irs.status_verifikasi,
-      createdAt: irs.createdAt,
-      updatedAt: irs.updatedAt,
-    }));
+      for (const irs of irss) {
+        unverifiedIRS.push({
+          id: irs.id,
+          nim: mahasiswa.nim,
+          nama: mahasiswa.nama,
+          angkatan: mahasiswa.angkatan,
+          semester: irs.semester_aktif,
+          sks: irs.sks,
+        });
+      }
+    }
 
-    res.status(200).json(transformedListIRS);
+    res.status(200).send(unverifiedIRS);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: err.message || "Some error occurred while retrieving IRS." });
+    res.status(500).json({ message: err.message || "Terjadi kesalahan saat mengambil data IRS." });
   }
-}
+};
+
 
 exports.getAllIRS = async (req, res) => {
   try {
