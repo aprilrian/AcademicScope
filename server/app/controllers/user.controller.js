@@ -2,6 +2,7 @@ const { User, Mahasiswa, Dosen, KabupatenKota, Provinsi, Operator, Departemen, I
 const csv = require('csvtojson');
 const fs = require('fs');
 const bcrypt = require('bcryptjs');
+const sequelize = require("sequelize");
 
 exports.allAccess = (req, res) => {
   res.status(200).send("Public Content.");
@@ -302,6 +303,34 @@ exports.getAllDosen = async (req, res) => {
 }
 
 // MAHASISWA
+exports.dashboardMahasiswa = async (req, res) => {
+  try {
+    const mahasiswa = req.mahasiswa;
+    const irs = await IRS.findOne({ 
+      where: { mahasiswa_nim: mahasiswa.nim },
+      order: sequelize.literal('"semester_aktif"::int DESC'), 
+      });
+    const khs = await KHS.findOne({ 
+      where: { mahasiswa_nim: mahasiswa.nim },
+      order: sequelize.literal('"semester_aktif"::int DESC'), 
+      });
+    const pkl = await PKL.findOne({ where: { mahasiswa_nim: mahasiswa.nim } });
+    const skripsi = await Skripsi.findOne({ where: { mahasiswa_nim: mahasiswa.nim } });
+    res.status(200).send({
+      semester: irs ? irs.semester_aktif: null,
+      ipk: khs ? khs.ip_kumulatif : null,
+      pkl: pkl ? pkl.status : null,
+      skripsi: skripsi ? skripsi.status : null,
+      irs_statusV: irs ? irs.status_verifikasi : null,
+      khs_statusV: khs ? khs.status_verifikasi : null,
+      pkl_statusV: pkl ? pkl.status_verifikasi : null,
+      skripsi_statusV: skripsi ? skripsi.status_verifikasi : null,
+    });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+}
+
 exports.updateMahasiswa = async (req, res) => {
   try {
     const t = await User.sequelize.transaction();

@@ -12,7 +12,7 @@ router.get("/operator",
   controller.operatorBoard);
 router.get("/mahasiswa", 
   [authMiddleware.verifyToken, authMiddleware.isMahasiswa, userMiddleware.getMahasiswaByID ,userMiddleware.hasUpdateProfile], 
-  controller.mahasiswaBoard);
+  controller.dashboardMahasiswa);
 router.get("/dosen", 
   [authMiddleware.verifyToken, authMiddleware.isDosen, userMiddleware.getDosenByID ,userMiddleware.hasUpdateProfile], 
   controller.dosenBoard);
