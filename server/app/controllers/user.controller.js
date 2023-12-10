@@ -331,6 +331,25 @@ exports.dashboardMahasiswa = async (req, res) => {
   }
 }
 
+exports.ipkGraphMahasiswaBoard = async (req, res) => {
+  try {
+    const mahasiswa = req.mahasiswa;
+    const khsArr = [];
+
+    const khss = await KHS.findAll({ where: { mahasiswa_nim: mahasiswa.nim } });
+    for (const khs of khss) {
+      khsArr.push({
+        semester: khs.semester_aktif,
+        ipk: khs.ip_kumulatif,
+      });
+    }
+
+    res.status(200).send(khsArr);
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+}
+
 exports.updateMahasiswa = async (req, res) => {
   try {
     const t = await User.sequelize.transaction();

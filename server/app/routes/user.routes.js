@@ -41,6 +41,9 @@ router.get("/operator/getAllAccount",
   controller.getAllAccount);
 
 // MAHASISWA
+router.get('/mahasiswa/ipkGraphMahasiswaBoard',
+  [authMiddleware.verifyToken, authMiddleware.isMahasiswa, userMiddleware.getMahasiswaByID ,userMiddleware.hasUpdateProfile],
+  controller.ipkGraphMahasiswaBoard);
 router.post("/mahasiswa/updateProfile", 
   [authMiddleware.verifyToken, authMiddleware.isMahasiswa, upload],
   controller.updateMahasiswa);
