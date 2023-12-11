@@ -34,7 +34,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { BarChart } from "recharts";
-import CustomBarChart from "@/components/charts/BarChart";
+import CustomBarChart from "@/components/charts/IPKBarChart";
 
 const data = [
   { id: 0, value: 600, label: "Mahasiswa" },

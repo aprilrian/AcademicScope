@@ -2,18 +2,18 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 
-import { Angkatan, Semester } from "../../data/tabel/tabelVerifikasi/data";
-import { dataVerifikasi } from "../../data/tabel/tabelVerifikasi/schema";
+import { Angkatan, Semester } from "../../data/tabel/tabelIRS/data";
+import { dataVerifikasi } from "../../data/tabel/tabelIRS/schema";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import { DataTableRowActions } from "./data-table-row-actions";
 
 export const columns: ColumnDef<dataVerifikasi>[] = [
   {
-    accessorKey: "mahasiswa_nim",
+    accessorKey: "nim",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="NIM" />
     ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("mahasiswa_nim")}</div>,
+    cell: ({ row }) => <div className="w-[80px]">{row.getValue("nim")}</div>,
     enableSorting: false,
     enableHiding: false,
   },
@@ -33,13 +33,13 @@ export const columns: ColumnDef<dataVerifikasi>[] = [
     },
   },
   {
-    accessorKey: "semester_aktif",
+    accessorKey: "semester",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Semester" />
     ),
     cell: ({ row }) => {
       const semester = Semester.find(
-        (semester) => semester.value === row.getValue("semester_aktif")
+        (semester) => semester.value === row.getValue("semester")
       );
 
       if (!semester) {

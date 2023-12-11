@@ -2,12 +2,12 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 
-import { Angkatan, Semester } from "../../data/tabel/tabelPKL/data";
-import { dataPKL } from "../../data/tabel/tabelPKL/schema";
+import { Angkatan, Semester } from "../../data/tabel/tabelIRS/data";
+import { dataVerifikasi } from "../../data/tabel/tabelIRS/schema";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import { DataTableRowActions } from "./data-table-row-actions";
 
-export const PKLColumns: ColumnDef<dataPKL>[] = [
+export const KHSColumns: ColumnDef<dataVerifikasi>[] = [
   {
     accessorKey: "nim",
     header: ({ column }) => (
@@ -81,33 +81,14 @@ export const PKLColumns: ColumnDef<dataPKL>[] = [
     },
   },
   {
-    accessorKey: "nilai",
+    accessorKey: "ip",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Nilai" />
+      <DataTableColumnHeader column={column} title="Indeks Prestasi" />
     ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("nilai")}</div>,
+    cell: ({ row }) => <div className="w-[80px]">{row.getValue("ip")}</div>,
     enableSorting: false,
     enableHiding: false,
   },
-    // cell: ({ row }) => {
-    //   const nilai = nilai.find(
-    //     (nilai) => nilai.value === row.getValue("nilai")
-    //   );
-
-      // if (!nilai) {
-      //   return null;
-      // }
-
-  //     return (
-  //       <div className="flex w-[100px] items-center">
-  //         {/* <span>{nilai.label}</span> */}
-  //       </div>
-  //     );
-  //   },
-  //   filterFn: (row, id, value) => {
-  //     return value.includes(row.getValue(id));
-  //   },
-  // },
   {
     id: "actions",
     cell: ({ row }) => <DataTableRowActions row={row} />,

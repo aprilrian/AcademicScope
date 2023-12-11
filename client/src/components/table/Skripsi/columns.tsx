@@ -3,11 +3,11 @@
 import { ColumnDef } from "@tanstack/react-table";
 
 import { Angkatan, Semester } from "../../data/tabel/tabelPKL/data";
-import { dataPKL } from "../../data/tabel/tabelPKL/schema";
+import { dataSkripsi } from "../../data/tabel/tabelSkripsi/schema";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import { DataTableRowActions } from "./data-table-row-actions";
 
-export const PKLColumns: ColumnDef<dataPKL>[] = [
+export const SkripsiColumns: ColumnDef<dataSkripsi>[] = [
   {
     accessorKey: "nim",
     header: ({ column }) => (

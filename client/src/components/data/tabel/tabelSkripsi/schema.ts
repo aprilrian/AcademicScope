@@ -1,7 +1,7 @@
 import { z } from "zod"
 import { Semester } from "./data"
 
-export const PKLSchema = z.object({
+export const skripsiSchema = z.object({
   nim: z.string(),
   nama: z.string(),
   angkatan: z.string(),
@@ -9,4 +9,4 @@ export const PKLSchema = z.object({
   semester : z.string(),
 })
 
-export type dataPKL = z.infer<typeof PKLSchema>
+export type dataSkripsi = z.infer<typeof skripsiSchema>

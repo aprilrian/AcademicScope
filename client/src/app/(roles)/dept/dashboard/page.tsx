@@ -1,12 +1,11 @@
 "use client";
 
 import React, { PureComponent } from "react";
-import { jsx } from '@emotion/react';
+import { jsx } from "@emotion/react";
 
 import CustomPieChart from "@/components/charts/PieChart";
-import CustomBarChart from "@/components/charts/BarChart";
-import { LineChart } from '@mui/x-charts/LineChart';
-
+import CustomBarChart from "@/components/charts/IPKBarChart";
+import { LineChart } from "@mui/x-charts/LineChart";
 
 import Image from "next/image";
 
@@ -19,21 +18,21 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { Check, ChevronsUpDown } from "lucide-react"
- 
-import { cn } from "@/lib/utils"
+import { Check, ChevronsUpDown } from "lucide-react";
+
+import { cn } from "@/lib/utils";
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
-} from "@/components/ui/command"
+} from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
+} from "@/components/ui/popover";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -58,7 +57,7 @@ const summarys = [
     value: "skripsi",
     label: "Skripsi",
   },
-]
+];
 
 const angkatans = [
   {
@@ -93,13 +92,13 @@ const angkatans = [
     value: "2023",
     label: "2023",
   },
-]
+];
 
 export default function DashboardPage() {
-  const [open, setOpen] = React.useState(false)
-  const [opens, setOpens] = React.useState(false)
-  const [value, setValue] = React.useState("")
-  const [values, setValues] = React.useState("")
+  const [open, setOpen] = React.useState(false);
+  const [opens, setOpens] = React.useState(false);
+  const [value, setValue] = React.useState("");
+  const [values, setValues] = React.useState("");
 
   return (
     <>
@@ -119,21 +118,21 @@ export default function DashboardPage() {
           className="hidden dark:block"
         />
       </div>
-      
+
       <div className="hidden flex-col md:flex">
         <div className="flex-1 space-y-4 p-8 pt-6">
-{/* 
+          {/* 
           <div className="flex items-center justify-between space-y-2">
             <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
             <div className="flex items-center space-x-2"></div>
           </div> */}
-{/* 
+          {/* 
           <div className="border-b">
               <div className="ml-auto flex items-center space-x-4"></div>
           </div> */}
 
           <div>
-          <div className="hidden flex-col md:flex items-center justify-center">
+            <div className="hidden flex-col md:flex items-center justify-center">
               <div className="ml-auto">
                 <Popover open={open} onOpenChange={setOpen}>
                   <PopoverTrigger asChild>
@@ -144,7 +143,9 @@ export default function DashboardPage() {
                       className="w-[200px] justify-between"
                     >
                       {value
-                        ? summarys.find((framework) => framework.value === value)?.label
+                        ? summarys.find(
+                            (framework) => framework.value === value
+                          )?.label
                         : "Pilih summary"}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
@@ -159,14 +160,18 @@ export default function DashboardPage() {
                             key={framework.value}
                             value={framework.value}
                             onSelect={(currentValue) => {
-                              setValue(currentValue === value ? "" : currentValue)
-                              setOpen(false)
+                              setValue(
+                                currentValue === value ? "" : currentValue
+                              );
+                              setOpen(false);
                             }}
                           >
                             <Check
                               className={cn(
                                 "mr-2 h-4 w-4",
-                                value === framework.value ? "opacity-100" : "opacity-0"
+                                value === framework.value
+                                  ? "opacity-100"
+                                  : "opacity-0"
                               )}
                             />
                             {framework.label}
@@ -185,20 +190,23 @@ export default function DashboardPage() {
                   <CardTitle>Grafik Indeks Prestasi Kumulatif</CardTitle>
                 </CardHeader>
                 <CardContent className="pl-2">
-                <LineChart
-                  xAxis={[{ 
-                    data: [2016, 2017, 2018, 2019, 2020, 2021, 2022],
-                    scaleType: 'point', }]}
-                  series={[
-                    {
-                      curve: "linear",
-                      data: [3, 3.8, 3.3, 3.5, 3.6, 3.2, 4],
-                    },
-                  ]}
-                  min-width={500}
-                  max-width={600}
-                  height={400}
-                />
+                  <LineChart
+                    xAxis={[
+                      {
+                        data: [2016, 2017, 2018, 2019, 2020, 2021, 2022],
+                        scaleType: "point",
+                      },
+                    ]}
+                    series={[
+                      {
+                        curve: "linear",
+                        data: [3, 3.8, 3.3, 3.5, 3.6, 3.2, 4],
+                      },
+                    ]}
+                    min-width={500}
+                    max-width={600}
+                    height={400}
+                  />
                 </CardContent>
               </Card>
             </div>
@@ -216,7 +224,9 @@ export default function DashboardPage() {
                       className="w-[200px] justify-between"
                     >
                       {values
-                        ? angkatans.find((angkatan) => angkatan.value === values)?.label
+                        ? angkatans.find(
+                            (angkatan) => angkatan.value === values
+                          )?.label
                         : "Pilih angkatan"}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
@@ -231,14 +241,18 @@ export default function DashboardPage() {
                             key={angkatan.value}
                             value={angkatan.value}
                             onSelect={(currentValue) => {
-                              setValues(currentValue === values ? "" : currentValue)
-                              setOpens(false)
+                              setValues(
+                                currentValue === values ? "" : currentValue
+                              );
+                              setOpens(false);
                             }}
                           >
                             <Check
                               className={cn(
                                 "mr-2 h-4 w-4",
-                                values === angkatan.value ? "opacity-100" : "opacity-0"
+                                values === angkatan.value
+                                  ? "opacity-100"
+                                  : "opacity-0"
                               )}
                             />
                             {angkatan.label}
@@ -260,9 +274,7 @@ export default function DashboardPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">174</div>
-                  <p className="text-xs text-muted-foreground">
-                    Mahasiswa
-                  </p>
+                  <p className="text-xs text-muted-foreground">Mahasiswa</p>
                 </CardContent>
               </Card>
               <Card>
@@ -273,20 +285,18 @@ export default function DashboardPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">40</div>
-                  <p className="text-xs text-muted-foreground">
-                    Mahasiswa
-                  </p>
+                  <p className="text-xs text-muted-foreground">Mahasiswa</p>
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Mahasiswa Lulus</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    Mahasiswa Lulus
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">70</div>
-                  <p className="text-xs text-muted-foreground">
-                    mahasiswa
-                  </p>
+                  <p className="text-xs text-muted-foreground">mahasiswa</p>
                 </CardContent>
               </Card>
               <Card>
@@ -297,9 +307,7 @@ export default function DashboardPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">8</div>
-                  <p className="text-xs text-muted-foreground">
-                    Mahasiswa
-                  </p>
+                  <p className="text-xs text-muted-foreground">Mahasiswa</p>
                 </CardContent>
               </Card>
               <Card>
@@ -310,9 +318,7 @@ export default function DashboardPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">12</div>
-                  <p className="text-xs text-muted-foreground">
-                    Mahasiswa
-                  </p>
+                  <p className="text-xs text-muted-foreground">Mahasiswa</p>
                 </CardContent>
               </Card>
               <Card>
@@ -323,9 +329,7 @@ export default function DashboardPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">3</div>
-                  <p className="text-xs text-muted-foreground">
-                    Mahasiswa 
-                  </p>
+                  <p className="text-xs text-muted-foreground">Mahasiswa</p>
                 </CardContent>
               </Card>
               <Card>
@@ -336,9 +340,7 @@ export default function DashboardPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">8</div>
-                  <p className="text-xs text-muted-foreground">
-                    Mahasiswa
-                  </p>
+                  <p className="text-xs text-muted-foreground">Mahasiswa</p>
                 </CardContent>
               </Card>
               <Card>
@@ -349,9 +351,7 @@ export default function DashboardPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">0</div>
-                  <p className="text-xs text-muted-foreground">
-                    Mahasiswa
-                  </p>
+                  <p className="text-xs text-muted-foreground">Mahasiswa</p>
                 </CardContent>
               </Card>
             </div>

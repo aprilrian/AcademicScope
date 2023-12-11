@@ -25,15 +25,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { DataTablePagination } from "@/components/table/PKL/data-table-pagination";
-import { DataTableToolbar } from "@/components/table/PKL/data-table-toolbar";
+import { DataTablePagination } from "@/components/table/KHS/data-table-pagination";
+import { DataTableToolbar } from "@/components/table/KHS/data-table-toolbar";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
 
-export function DataTablePKL<TData, TValue>({
+export function DataTableKHS<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {

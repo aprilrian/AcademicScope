@@ -1,13 +1,12 @@
 "use client";
 
-import React, { PureComponent, useEffect, useState } from "react";
-
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import CustomPieChart from "@/components/charts/PieChart";
-import CustomBarChart from "@/components/charts/BarChart";
+import IPKBarChart from "@/components/charts/IPKBarChart";
 
 import Image from "next/image";
-
-import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import {
   Card,
   CardContent,
@@ -15,55 +14,51 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useSession } from "next-auth/react";
 
 export default function DashboardPage() {
   const [irsData, setIrsData] = useState(null);
   const [khsData, setKhsData] = useState(null);
   const [pklData, setPklData] = useState(null);
   const [skripsiData, setSkripsiData] = useState(null);
+  const [irsStatus, setIRSStatus] = useState(null);
+  const [khsStatus, setKHSStatus] = useState(null);
+  const [pklStatus, setPklStatus] = useState(null);
+  const [skripsiStatus, setSkripsiStatus] = useState(null);
+  const { data: session } = useSession();
+  const accessToken = session?.user?.access_token;
+
+  const fetchDataDashboard = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/mahasiswa", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      console.log(response.data);
+
+      const dataDashboard = response.data;
+
+      setIrsData(dataDashboard.semester);
+      setKhsData(dataDashboard.ipk);
+      setPklData(dataDashboard.pkl);
+      setSkripsiData(dataDashboard.skripsi);
+      setIRSStatus(dataDashboard.irs_statusV);
+      setKHSStatus(dataDashboard.khs_statusV);
+      setPklStatus(dataDashboard.pkl_statusV);
+      setSkripsiStatus(dataDashboard.skripsi_statusV);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const irs = await fetchIRSData(); // Implement fetchIRSData function
-        const khs = await fetchKHSData(); // Implement fetchKHSData function
-        const pkl = await fetchPKLData(); // Implement fetchPKLData function
-        const skripsi = await fetchSkripsiData(); // Implement fetchSkripsiData function
+    if (session) {
+      fetchDataDashboard();
+    }
+  }, [session]);
 
-        setIrsData(irs);
-        setKhsData(khs);
-        setPklData(pkl);
-        setSkripsiData(skripsi);
-      } catch (error) {
-        // Handle errors appropriately
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-  }, []); // Empty dependency array ensures the effect runs only once on mount
-
-  // Placeholder functions for data fetching
-  const fetchIRSData = async () => {
-    // Replace with actual logic to fetch IRS data
-    return "Semester 2";
-  };
-
-  const fetchKHSData = async () => {
-    // Replace with actual logic to fetch KHS data
-    return "3.75"; // Example IPK
-  };
-
-  const fetchPKLData = async () => {
-    // Replace with actual logic to fetch PKL data
-    return "Completed"; // Example status
-  };
-
-  const fetchSkripsiData = async () => {
-    // Replace with actual logic to fetch Skripsi data
-    return "Not Completed"; // Example status
-  };
   return (
     <>
       <div className="md:hidden">
@@ -105,7 +100,9 @@ export default function DashboardPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">{irsData}</div>
-                    {/* Additional information if needed */}
+                    <div className="text-sm text-gray-500">
+                      Status: {irsStatus}
+                    </div>
                   </CardContent>
                 </Card>
 
@@ -114,11 +111,12 @@ export default function DashboardPage() {
                     <CardTitle className="text-sm font-medium">
                       KHS (IPK)
                     </CardTitle>
-                    {/* Add appropriate icon or styling here */}
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">{khsData}</div>
-                    {/* Additional information if needed */}
+                    <div className="text-sm text-gray-500">
+                      Status: {khsStatus}
+                    </div>
                   </CardContent>
                 </Card>
 
@@ -131,7 +129,9 @@ export default function DashboardPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">{pklData}</div>
-                    {/* Additional information if needed */}
+                    <div className="text-sm text-gray-500">
+                      Status: {pklStatus}
+                    </div>
                   </CardContent>
                 </Card>
 
@@ -144,27 +144,20 @@ export default function DashboardPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">{skripsiData}</div>
-                    {/* Additional information if needed */}
+                    <div className="text-sm text-gray-500">
+                      Status: {skripsiStatus}
+                    </div>
                   </CardContent>
                 </Card>
               </div>
 
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+              <div >
                 <Card className="col-span-4">
                   <CardHeader>
-                    <CardTitle>Overview</CardTitle>
+                    <CardTitle>Diagram IPK</CardTitle>
                   </CardHeader>
                   <CardContent className="pl-2">
-                    <CustomBarChart></CustomBarChart>
-                  </CardContent>
-                </Card>
-                <Card className="col-span-3">
-                  <CardHeader>
-                    <CardTitle>Recent Sales</CardTitle>
-                    <CardDescription>Jalur Masuk</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <CustomPieChart></CustomPieChart>
+                    <IPKBarChart></IPKBarChart>
                   </CardContent>
                 </Card>
               </div>

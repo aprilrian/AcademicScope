@@ -70,11 +70,6 @@ const UserProfile: FC<UserProfileProps> = () => {
               src={`http://localhost:8080/${userData.foto}`}
               className="h-full w-full rounded-full object-cover"
             />
-            {/* <AvatarImage
-  alt="User Avatar"
-  src={`http://localhost:8080/${userData.foto}`}
-  className="h-96 w-96 rounded-full object-cover"
-/> */}
             <AvatarFallback>
               {userData.nama && userData.nama.charAt(0)}
             </AvatarFallback>

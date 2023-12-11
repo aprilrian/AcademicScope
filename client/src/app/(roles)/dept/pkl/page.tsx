@@ -3,7 +3,7 @@
 import React, { PureComponent } from "react";
 
 import CustomPieChart from "@/components/charts/PieChart";
-import CustomBarChart from "@/components/charts/BarChart";
+import CustomBarChart from "@/components/charts/IPKBarChart";
 
 import Image from "next/image";
 
@@ -18,7 +18,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function DashboardPage() {
-  const dummyRekapProgress : any = {
+  const dummyRekapProgress: any = {
     angkatan: "2020",
     tahun: {
       "2016": {

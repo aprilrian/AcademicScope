@@ -78,8 +78,6 @@ const BatchForm = () => {
     }
   };
 
-  // ... (rest of the component)
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {

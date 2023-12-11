@@ -2,7 +2,6 @@
 
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { Row } from "@tanstack/react-table";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -19,7 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 // import { labels } from "../data/data"
-import { verifikasiSchema } from "../../data/tabel/tabelVerifikasi/schema";
+import { KHSSchema } from "../../data/tabel/tabelKHS/schema";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { toast } from "@/components/ui/use-toast";
@@ -31,15 +30,15 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
-  const verifikasi = verifikasiSchema.parse(row.original);
+  const verifikasi = KHSSchema.parse(row.original);
   const { data: session } = useSession();
   const accessToken = session?.user?.access_token;
 
   const handleDelete = async () => {
     try {
-      const { mahasiswa_nim, semester_aktif } = verifikasi;
+      const { nim, semester } = verifikasi;
       await axios.delete(
-        `http://localhost:8080/dosen/irs/delete/${mahasiswa_nim}/${semester_aktif}`,
+        `http://localhost:8080/dosen/irs/delete/${nim}/${semester}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -69,9 +68,9 @@ export function DataTableRowActions<TData>({
 
   const handleVerifyIRS = async () => {
     try {
-      const { mahasiswa_nim, semester_aktif } = verifikasi;
+      const { nim, semester } = verifikasi;
       await axios.put(
-        `http://localhost:8080/dosen/irs/verifyIRS/${mahasiswa_nim}/${semester_aktif}`,
+        `http://localhost:8080/dosen/irs/verifyIRS/${nim}/${semester}`,
         null,
         {
           headers: {
