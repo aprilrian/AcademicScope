@@ -179,12 +179,30 @@ exports.getAllAccount = async (req, res) => {
 // OPERATOR
 exports.dashboardOperator = async (req, res) => {
   try {
-    const operator = req.operator;
     const sumAccount = await User.count();
     const sumMahasiswa = await User.count({ where: { role: 'mahasiswa' } });
     const sumDosen = await User.count({ where: { role: 'dosen' } });
 
+    const sumAktif = await Mahasiswa.count({ where: { status: 'aktif' } });
+    const sumCuti = await Mahasiswa.count({ where: { status: 'cuti' } });
+    const sumMangkir = await Mahasiswa.count({ where: { status: 'mangkir' } });
+    const sumDO = await Mahasiswa.count({ where: { status: 'do' } });
+    const sumUndurDiri = await Mahasiswa.count({ where: { status: 'undur_diri' } });
+    const sumLulus = await Mahasiswa.count({ where: { status: 'lulus' } });
+    const sumMeninggalDunia = await Mahasiswa.count({ where: { status: 'meninggal_dunia' } });
 
+    res.status(200).send({ 
+      sumAccount: sumAccount.toString(),
+      sumMahasiswa: sumMahasiswa.toString(),
+      sumDosen: sumDosen.toString(),
+      sumAktif: sumAktif.toString(),
+      sumCuti: sumCuti.toString(),
+      sumMangkir: sumMangkir.toString(),
+      sumDO: sumDO.toString(),
+      sumUndurDiri: sumUndurDiri.toString(),
+      sumLulus: sumLulus.toString(),
+      sumMeninggalDunia: sumMeninggalDunia.toString(),
+    });
 
   } catch (error) {
     console.log(error);
@@ -279,6 +297,35 @@ exports.generateBatch = async (req, res) => {
 // DEPARTEMEN
 
 // DOSEN
+exports.dashboardDosen = async (req, res) => {
+  try {
+    const dosen = req.dosen;
+    const sumMahasiswa = await Mahasiswa.count({ where: { nip_dosen: dosen.nip } });
+    const sumAktif = await Mahasiswa.count({ where: { nip_dosen: dosen.nip, status: 'aktif' } });
+    const sumCuti = await Mahasiswa.count({ where: { nip_dosen: dosen.nip, status: 'cuti' } });
+    const sumMangkir = await Mahasiswa.count({ where: { nip_dosen: dosen.nip, status: 'mangkir' } });
+    const sumDO = await Mahasiswa.count({ where: { nip_dosen: dosen.nip, status: 'do' } });
+    const sumUndurDiri = await Mahasiswa.count({ where: { nip_dosen: dosen.nip, status: 'undur_diri' } });
+    const sumLulus = await Mahasiswa.count({ where: { nip_dosen: dosen.nip, status: 'lulus' } });
+    const sumMeninggalDunia = await Mahasiswa.count({ nip_dosen: dosen.nip, where: { status: 'meninggal_dunia' } });
+
+    res.status(200).send({ 
+      sumAccount: sumAccount.toString(),
+      sumMahasiswa: sumMahasiswa.toString(),
+      sumDosen: sumDosen.toString(),
+      sumAktif: sumAktif.toString(),
+      sumCuti: sumCuti.toString(),
+      sumMangkir: sumMangkir.toString(),
+      sumDO: sumDO.toString(),
+      sumUndurDiri: sumUndurDiri.toString(),
+      sumLulus: sumLulus.toString(),
+      sumMeninggalDunia: sumMeninggalDunia.toString(),
+    });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+}
+
 exports.updateDosen = async (req, res) => {
   try {
     const t = await User.sequelize.transaction();

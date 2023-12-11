@@ -9,7 +9,7 @@ router.get("/",
   controller.allAccess);
 router.get("/operator", 
   [authMiddleware.verifyToken, authMiddleware.isOperator], 
-  controller.operatorBoard);
+  controller.dashboardOperator);
 router.get("/mahasiswa", 
   [authMiddleware.verifyToken, authMiddleware.isMahasiswa, userMiddleware.getMahasiswaByID ,userMiddleware.hasUpdateProfile], 
   controller.dashboardMahasiswa);

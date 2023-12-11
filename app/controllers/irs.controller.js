@@ -111,7 +111,6 @@ exports.getIRSBelumByDosen = async (req, res) => {
   }
 };
 
-
 exports.getAllIRS = async (req, res) => {
   try {
     const irs = await IRS.findAll();

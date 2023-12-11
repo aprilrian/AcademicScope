@@ -59,7 +59,7 @@ const Mahasiswa = sequelize.define('Mahasiswa', {
     type: DataTypes.STRING,
   },
   status: {
-    type: DataTypes.ENUM('aktif', 'cuti', 'mangkir', 'do', 'undur diri', 'lulus', 'meninggal dunia'),
+    type: DataTypes.ENUM('aktif', 'cuti', 'mangkir', 'do', 'undur_diri', 'lulus', 'meninggal_dunia'),
     allowNull: {
       args: false,
       msg: 'Status wajib diisi',
