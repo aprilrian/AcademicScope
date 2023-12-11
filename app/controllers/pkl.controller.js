@@ -268,26 +268,6 @@ exports.getAllPKL = async (req, res) => {
   }
 };
 
-exports.downloadPKL = async (req, res) => {
-  try {
-    const pkl = await PKLModel.findOne({
-      where: { mahasiswaId: req.mahasiswaId },
-    });
-
-    if (!pkl) {
-      res.status(404).send({ message: 'File not found!' });
-      return;
-    }
-
-    const file = fs.createReadStream(pkl.file);
-    const filename = 'PKL';
-    res.setHeader('Content-disposition', 'attachment; filename=' + filename);
-    file.pipe(res);
-  } catch (error) {
-    res.status(500).send({ message: error.message || 'Error retrieving PKL.' });
-  }
-};
-
 exports.deletePKL = async (req, res) => {
   try {
     const pkl = await PKL.findOne({

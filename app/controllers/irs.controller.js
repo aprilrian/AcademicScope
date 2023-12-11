@@ -264,8 +264,10 @@ exports.downloadIRS = async (req, res) => {
     if (!irs) {
       return res.status(404).send({ message: "File not found!" });
     }
-
-    res.download(irs.file);
+    
+    const filename = path.basename(irs.file);
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+    res.send(irs.file);
   } catch (err) {
     console.error(err);
     res.status(500).send({ message: "Internal Server Error" });
