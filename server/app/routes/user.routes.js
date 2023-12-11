@@ -48,7 +48,7 @@ router.post("/mahasiswa/updateProfile",
   [authMiddleware.verifyToken, authMiddleware.isMahasiswa, upload],
   controller.updateMahasiswa);
 router.use("/mahasiswa/irs", 
-  // [authMiddleware.verifyToken, authMiddleware.isMahasiswa, userMiddleware.getMahasiswaByID ,userMiddleware.hasUpdateProfile],
+  [authMiddleware.verifyToken, authMiddleware.isMahasiswa, userMiddleware.getMahasiswaByID ,userMiddleware.hasUpdateProfile],
   require("./irs.routes"));
 router.use("/mahasiswa/khs", 
   [authMiddleware.verifyToken, authMiddleware.isMahasiswa, userMiddleware.getMahasiswaByID ,userMiddleware.hasUpdateProfile],
