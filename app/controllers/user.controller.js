@@ -184,10 +184,14 @@ exports.dashboardOperator = async (req, res) => {
     const sumMahasiswa = await User.count({ where: { role: 'mahasiswa' } });
     const sumDosen = await User.count({ where: { role: 'dosen' } });
 
+
+
   } catch (error) {
+    console.log(error);
     res.status(500).send({ message: error.message });
   }
 }
+
 exports.generate = async (req, res) => {
   try {
     const { nim, nama, angkatan, nip_dosen } = req.body;
