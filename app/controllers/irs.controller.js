@@ -153,9 +153,9 @@ exports.showIRS = async (req, res) => {
       return res.status(404).send({ message: "File not found!" });
     }
     const sanitizedFileName = irs.file.replace(/\\/g, '/');
-    pathFile = `${sanitizedFileName}`
+    pathFile = `http://localhost:8080/${sanitizedFileName}`
     console.log(pathFile);
-    res.status(200).send(pathFile)
+    res.redirect(pathFile);
   } catch (err) {
     console.error(err);
     res.status(500).send({ message: "Internal Server Error" });
@@ -264,10 +264,11 @@ exports.downloadIRS = async (req, res) => {
     if (!irs) {
       return res.status(404).send({ message: "File not found!" });
     }
-    
-    const filename = path.basename(irs.file);
-    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
-    res.send(irs.file);
+
+    const sanitizedFileName = irs.file.replace(/\\/g, '/');
+    pathFile = `http://localhost:8080/${sanitizedFileName}`
+    console.log(pathFile);
+    res.redirect(pathFile);
   } catch (err) {
     console.error(err);
     res.status(500).send({ message: "Internal Server Error" });

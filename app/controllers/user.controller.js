@@ -177,6 +177,11 @@ exports.getAllAccount = async (req, res) => {
 }
 
 // OPERATOR
+exports.dashboardOperator = async (req, res) => {
+  try {
+    const operator = req.operator;
+    const sumAccount = 
+
 exports.generate = async (req, res) => {
   try {
     const { nim, nama, angkatan, nip_dosen } = req.body;
