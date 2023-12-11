@@ -142,21 +142,6 @@ exports.getIRSBySemesterAndMahasiswa = async (req, res) => {
 
 exports.showIRS = async (req, res) => {
   try {
-    function getContentType(extension) {
-      switch (extension) {
-        case ".jpg":
-          return "application/jpg";
-        case ".jpeg":
-          return "application/jpeg";
-        case ".png":
-          return "application/png";
-        case ".pdf":
-          return "application/pdf";
-        default:
-          return "application/octet-stream"; 
-      }
-    }
-
     const irs = await IRS.findOne({
       where: {
         mahasiswa_nim: req.params.nim,
@@ -167,25 +152,15 @@ exports.showIRS = async (req, res) => {
     if (!irs) {
       return res.status(404).send({ message: "File not found!" });
     }
-
-    const mhs = await Mahasiswa.findOne({ where: { nim: req.params.nim } });
-
-    const fileContent = await fs.readFile(irs.file);
-    const fileext = path.extname(irs.file).toLowerCase();
-    const contentType = getContentType(fileext);
-    res.setHeader("Content-type", contentType);
-    res.setHeader(
-      "Content-disposition",
-      `inline; filename=IRS_${mhs.nama}_${mhs.nim}_${irs.semester_aktif}.${fileext}`
-    );
-
-    res.send(fileContent);
+    const sanitizedFileName = irs.file.replace(/\\/g, '/');
+    pathFile = `http://localhost:8080/${sanitizedFileName}`
+    console.log(pathFile);
+    res.redirect(pathFile);
   } catch (err) {
-    console.error({ message: err.message || "Error occurred while retrieving IRS." });
+    console.error(err);
     res.status(500).send({ message: "Internal Server Error" });
   }
 };
-
 
 exports.editIRS = async (req, res) => {
   try {
