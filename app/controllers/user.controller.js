@@ -177,10 +177,9 @@ exports.getAllAccount = async (req, res) => {
 }
 
 // OPERATOR
-exports.dashboardOperator = async (req, res) => {
-  try {
-    const operator = req.operator;
-    const sumAccount = 
+// exports.dashboardOperator = async (req, res) => {
+//   try {
+//     const operator = req.operator;
 
 exports.generate = async (req, res) => {
   try {
