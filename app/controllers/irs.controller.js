@@ -153,9 +153,9 @@ exports.showIRS = async (req, res) => {
       return res.status(404).send({ message: "File not found!" });
     }
     const sanitizedFileName = irs.file.replace(/\\/g, '/');
-    pathFile = `http://localhost:8080/${sanitizedFileName}`
+    pathFile = `${sanitizedFileName}`
     console.log(pathFile);
-    res.redirect(pathFile);
+    res.status(200).send(pathFile)
   } catch (err) {
     console.error(err);
     res.status(500).send({ message: "Internal Server Error" });

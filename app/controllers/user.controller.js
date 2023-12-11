@@ -177,10 +177,14 @@ exports.getAllAccount = async (req, res) => {
 }
 
 // OPERATOR
-// exports.dashboardOperator = async (req, res) => {
-//   try {
-//     const operator = req.operator;
+exports.dashboardOperator = async (req, res) => {
+  try {
+    const operator = req.operator;
+    const sumAccount = await User.count();
+    const sumMahasiswa = await User.count({ where: { role: 'mahasiswa' } });
+    const sumDosen = await User.count({ where: { role: 'dosen' } });
 
+    
 exports.generate = async (req, res) => {
   try {
     const { nim, nama, angkatan, nip_dosen } = req.body;
