@@ -27,4 +27,8 @@ router.delete(
     '/delete/:nim/:semester_aktif',
     controller.deleteKHS);
 
+router.get(
+    '/download/:nim/:semester_aktif',
+    controller.downloadKHS);
+
 module.exports = router;

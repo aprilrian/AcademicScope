@@ -33,4 +33,8 @@ router.put(
     '/edit/:nim/:semester_aktif',
     controller.editIRS);
 
+router.get(
+    '/download/:nim/:semester_aktif',
+    controller.downloadIRS);
+
 module.exports = router;

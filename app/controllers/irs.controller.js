@@ -153,9 +153,9 @@ exports.showIRS = async (req, res) => {
       return res.status(404).send({ message: "File not found!" });
     }
     const sanitizedFileName = irs.file.replace(/\\/g, '/');
-    pathFile = `http://localhost:8080/${sanitizedFileName}`
+    pathFile = `${sanitizedFileName}`
     console.log(pathFile);
-    res.redirect(pathFile);
+    res.status(200).send(pathFile)
   } catch (err) {
     console.error(err);
     res.status(500).send({ message: "Internal Server Error" });
@@ -251,3 +251,23 @@ exports.deleteIRS = async (req, res) => {
     res.status(500).send({ message: err.message || "Some error occurred while processing the request." });
   }
 };
+
+exports.downloadIRS = async (req, res) => {
+  try {
+    const irs = await IRS.findOne({
+      where: {
+        mahasiswa_nim: req.params.nim,
+        semester_aktif: req.params.semester_aktif,
+      },
+    });
+
+    if (!irs) {
+      return res.status(404).send({ message: "File not found!" });
+    }
+
+    res.download(irs.file);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: "Internal Server Error" });
+  }
+}

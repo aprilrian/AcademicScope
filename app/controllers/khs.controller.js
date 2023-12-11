@@ -253,3 +253,22 @@ exports.deleteKHS = async (req, res) => {
     res.status(500).send({ message: err.message || "Some error occurred while processing the request." });
   }
 };
+
+exports.downloadKHS = async (req, res) => {
+  try {
+    const khs = await KHS.findOne({
+      where: {
+        mahasiswa_nim: req.params.nim,
+        semester_aktif: req.params.semester_aktif,
+      },
+    });
+
+    if (!khs) {
+      return res.status(404).send({ message: "File not found!" });
+    }
+
+    res.download(khs.file);
+  } catch (err) {
+    console.log({ message: err.message || "Error occurred while retrieving KHS." });
+  }
+}
