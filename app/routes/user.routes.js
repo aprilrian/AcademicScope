@@ -19,7 +19,7 @@ router.get("/dosen",
   controller.dashboardDosen);
 router.get("/departemen", 
   [authMiddleware.verifyToken, authMiddleware.isDepartemen], 
-  controller.departemenBoard);
+  controller.dashboardDepartemen);
 router.get("/profileDetail",
   [authMiddleware.verifyToken],
   controller.viewProfile)

@@ -295,6 +295,31 @@ exports.generateBatch = async (req, res) => {
 };
 
 // DEPARTEMEN
+exports.dashboardDepartemen = async (req, res) => {
+  try {
+    const sumMahasiswa = await Mahasiswa.count();
+    const sumAktif = await Mahasiswa.count({ where: { status: 'aktif' } });
+    const sumCuti = await Mahasiswa.count({ where: { status: 'cuti' } });
+    const sumMangkir = await Mahasiswa.count({ where: { status: 'mangkir' } });
+    const sumDO = await Mahasiswa.count({ where: { status: 'do' } });
+    const sumUndurDiri = await Mahasiswa.count({ where: { status: 'undur_diri' } });
+    const sumLulus = await Mahasiswa.count({ where: { status: 'lulus' } });
+    const sumMeninggalDunia = await Mahasiswa.count({ where: { status: 'meninggal_dunia' } });
+
+    res.status(200).send({ 
+      sumMahasiswa: sumMahasiswa.toString(),
+      sumAktif: sumAktif.toString(),
+      sumLulus: sumLulus.toString(),
+      sumCuti: sumCuti.toString(),
+      sumMangkir: sumMangkir.toString(),
+      sumDO: sumDO.toString(),
+      sumUndurDiri: sumUndurDiri.toString(),
+      sumMeninggalDunia: sumMeninggalDunia.toString(),
+    });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+}
 
 // DOSEN
 exports.dashboardDosen = async (req, res) => {
@@ -307,7 +332,7 @@ exports.dashboardDosen = async (req, res) => {
     const sumDO = await Mahasiswa.count({ where: { nip_dosen: dosen.nip, status: 'do' } });
     const sumUndurDiri = await Mahasiswa.count({ where: { nip_dosen: dosen.nip, status: 'undur_diri' } });
     const sumLulus = await Mahasiswa.count({ where: { nip_dosen: dosen.nip, status: 'lulus' } });
-    const sumMeninggalDunia = await Mahasiswa.count({ nip_dosen: dosen.nip, where: { status: 'meninggal_dunia' } });
+    const sumMeninggalDunia = await Mahasiswa.count({ where : { nip_dosen: dosen.nip, status: 'meninggal_dunia' } });
 
     res.status(200).send({ 
       sumMahasiswa: sumMahasiswa.toString(),
