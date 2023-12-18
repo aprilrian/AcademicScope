@@ -146,44 +146,6 @@ exports.getRekapSkripsiByDosen = async (req, res) => {
   }
 };
 
-exports.verifySkripsi = async (req, res) => {
-  try {
-    const dosen = req.dosen;
-    const { nim } = req.params;
-
-    const mahasiswa = await Mahasiswa.findOne({
-      where: {
-        nim: nim,
-      },
-    });
-
-    if (!mahasiswa) {
-      return res.status(404).send({ message: 'Mahasiswa not found!' });
-    }
-
-    if (mahasiswa.nip_dosen !== dosen.nip) {
-      return res.status(401).send({ message: 'Unauthorized!' });
-    }
-
-    const skripsi = await Skripsi.findOne({
-      where: {
-        mahasiswa_nim: nim,
-      },
-    });
-
-    if (!skripsi) {
-      return res.status(404).send({ message: 'Skripsi not found!' });
-    }
-
-    skripsi.status_verifikasi = 'sudah';
-    await skripsi.save();
-
-    res.status(200).send({ message: 'Skripsi was verified successfully.' });
-  } catch (error) {
-    res.status(500).send({ message: error.message || 'Error verifying Skripsi.' });
-  }
-};
-
 exports.getSkripsiBelumByDosen = async (req, res) => {
   try {
     const dosen = req.dosen;
@@ -215,87 +177,6 @@ exports.getSkripsiBelumByDosen = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: err.message || "Terjadi kesalahan saat mengambil data Skripsi." });
-  }
-};
-
-exports.showSkripsi = async (req, res) => {
-  try {
-    const skripsi = await Skripsi.findOne({
-      where: {
-        mahasiswa_nim: req.params.nim,
-      }
-    });
-
-    if (!skripsi) {
-      return res.status(404).send({ message: "Skripsi not found!" });
-    }
-
-    const mhs = await Mahasiswa.findOne({ where: { nim: req.params.nim } });
-
-    const fileStream = fs.createReadStream(skripsi.file);
-    const contentType = "application/pdf"; 
-    res.setHeader("Content-type", contentType);
-    res.setHeader("Content-disposition", `inline; filename=Skripsi_${mhs.nama}_${mhs.nim}.pdf`);
-
-    fileStream.pipe(res);
-    } catch (err) {
-      console.log({ message: err.message || "Error occurred while retrieving Skripsi." });
-    }
-  };
-
-exports.deleteSkripsi = async (req, res) => {
-  try {
-    const skripsi = await Skripsi.findOne({
-      where: {
-        mahasiswa_nim: req.params.nim,
-      },
-    });
-
-    if (!skripsi) {
-      return res.status(404).send({ message: "Skripsi not found!" });
-    }
-
-    if (skripsi.status_verifikasi == "sudah") {
-      return res.status(400).send({ message: "Skripsi has already verified!" });
-    }
-
-    await skripsi.destroy();
-
-    res.status(200).send({ message: "Skripsi was deleted successfully." });
-  } catch (error) {
-    res.status(500).send({ message: error.message || "Error deleting Skripsi." });
-  }
-};
-
-exports.editSkripsi = async (req, res) => {
-  try {
-    const mahasiswa = req.mahasiswa;
-    const { nilai, semester, tanggal_lulus, tanggal_sidang } = req.body;
-
-    const skripsi = await Skripsi.findOne({
-      where: {
-        mahasiswa_nim: req.params.nim,
-      },
-    });
-
-    if (!skripsi) {
-      return res.status(400).send({ message: "Skripsi not found!" });
-    }
-
-    if (skripsi.status_verifikasi == "sudah") {
-      return res.status(400).send({ message: "Skripsi has already verified!" });
-    }
-
-    await skripsi.update({
-      nilai: nilai,
-      semester: semester,
-      tanggal_lulus: tanggal_lulus,
-      tanggal_sidang: tanggal_sidang,
-    });
-
-    res.status(200).send({ message: "Skripsi was updated successfully." });
-  } catch (error) {
-    res.status(500).send({ message: error.message || "Error updating Skripsi." });
   }
 };
 
@@ -369,54 +250,140 @@ exports.getRekap = async (req, res) => {
   }
 };
 
-exports.downloadSkripsi = async (req, res) => {
+exports.verifySkripsi = async (req, res) => {
   try {
+    const dosen = req.dosen;
+    const { nim } = req.params;
+
+    const mahasiswa = await Mahasiswa.findOne({
+      where: {
+        nim: nim,
+      },
+    });
+
+    if (!mahasiswa) {
+      return res.status(404).send({ message: 'Mahasiswa not found!' });
+    }
+
+    if (mahasiswa.nip_dosen !== dosen.nip) {
+      return res.status(401).send({ message: 'Unauthorized!' });
+    }
+
     const skripsi = await Skripsi.findOne({
-      where: { mahasiswaId: req.mahasiswaId },
+      where: {
+        mahasiswa_nim: nim,
+      },
     });
 
     if (!skripsi) {
-      res.status(404).send({ message: "File not found!" });
-      return;
+      return res.status(404).send({ message: 'Skripsi not found!' });
     }
 
-    const file = fs.createReadStream(skripsi.file);
-    const filename = "Skripsi";
-    res.setHeader("Content-disposition", "attachment; filename=" + filename);
-    file.pipe(res);
+    skripsi.status_verifikasi = 'sudah';
+    await skripsi.save();
+
+    res.status(200).send({ message: 'Skripsi was verified successfully.' });
   } catch (error) {
-    res.status(500).send({ message: error.message });
+    res.status(500).send({ message: error.message || 'Error verifying Skripsi.' });
   }
 };
 
-exports.waliSkripsi = async (req, res) => {
+exports.deleteSkripsi = async (req, res) => {
   try {
-    const dosen = await Dosen.findOne({ where: { user: req.userId } });
-    const resultMhs = await Mahasiswa.findAll({ where: { kodeWali: dosen.id } });
-    const resultSkr = await Skripsi.findAll();
-
-    let result = resultMhs.map((mhs) => {
-      const skripsi = resultSkr.find((skr) => skr.mahasiswaId === mhs.id);
-
-      if (skripsi) {
-        return {
-          name: mhs.name,
-          nim: mhs.nim,
-          angkatan: mhs.angkatan,
-          status_konfirmasi: "sudah",
-        };
-      } else {
-        return {
-          name: mhs.name,
-          nim: mhs.nim,
-          angkatan: mhs.angkatan,
-          status_konfirmasi: "belum",
-        };
-      }
+    const skripsi = await Skripsi.findOne({
+      where: {
+        mahasiswa_nim: req.params.nim,
+      },
     });
 
-    res.status(200).send(result);
+    if (!skripsi) {
+      return res.status(404).send({ message: "Skripsi not found!" });
+    }
+
+    if (skripsi.status_verifikasi == "sudah") {
+      return res.status(400).send({ message: "Skripsi has already verified!" });
+    }
+
+    await skripsi.destroy();
+
+    res.status(200).send({ message: "Skripsi was deleted successfully." });
   } catch (error) {
-    res.status(500).send({ message: error.message });
+    res.status(500).send({ message: error.message || "Error deleting Skripsi." });
   }
 };
+
+exports.editSkripsi = async (req, res) => {
+  try {
+    const mahasiswa = req.mahasiswa;
+    const { nilai, semester, tanggal_lulus, tanggal_sidang } = req.body;
+
+    const skripsi = await Skripsi.findOne({
+      where: {
+        mahasiswa_nim: req.params.nim,
+      },
+    });
+
+    if (!skripsi) {
+      return res.status(400).send({ message: "Skripsi not found!" });
+    }
+
+    if (skripsi.status_verifikasi == "sudah") {
+      return res.status(400).send({ message: "Skripsi has already verified!" });
+    }
+
+    await skripsi.update({
+      nilai: nilai,
+      semester: semester,
+      tanggal_lulus: tanggal_lulus,
+      tanggal_sidang: tanggal_sidang,
+    });
+
+    res.status(200).send({ message: "Skripsi was updated successfully." });
+  } catch (error) {
+    res.status(500).send({ message: error.message || "Error updating Skripsi." });
+  }
+};
+
+exports.showSkripsi = async (req, res) => {
+  try {
+    const skripsi = await Skripsi.findOne({
+      where: {
+        mahasiswa_nim: req.params.nim,
+      },
+    });
+
+    if (!skripsi) {
+      return res.status(404).send({ message: "File not found!" });
+    }
+    const sanitizedFileName = skripsi.file.replace(/\\/g, '/');
+    pathFile = `${sanitizedFileName}`
+    console.log(pathFile);
+    res.status(200).send(pathFile)
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: "Internal Server Error" });
+  }
+};
+
+exports.downloadSkripsi = async (req, res) => {
+  try {
+    const skripsi = await Skripsi.findOne({
+      where: {
+        mahasiswa_nim: req.params.nim,
+        semester_aktif: req.params.semester_aktif,
+      },
+    });
+
+    if (!skripsi) {
+      return res.status(404).send({ message: "File not found!" });
+    }
+
+    const sanitizedFileName = skripsi.file.replace(/\\/g, '/');
+    pathFile = `http://localhost:8080/${sanitizedFileName}`
+    console.log(pathFile);
+    res.redirect(pathFile);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: "Internal Server Error" });
+  }
+}

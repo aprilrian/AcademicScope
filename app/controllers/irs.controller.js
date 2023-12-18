@@ -41,7 +41,6 @@ exports.submitIRS = async (req, res) => {
       }
     }
 
-
     const newIRS = {
       mahasiswa_nim: mahasiswa.nim,
       semester_aktif: req.body.semester_aktif,

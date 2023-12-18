@@ -14,8 +14,9 @@ router.get("/mahasiswa",
   [authMiddleware.verifyToken, authMiddleware.isMahasiswa, userMiddleware.getMahasiswaByID ,userMiddleware.hasUpdateProfile], 
   controller.dashboardMahasiswa);
 router.get("/dosen", 
-  [authMiddleware.verifyToken, authMiddleware.isDosen, userMiddleware.getDosenByID ,userMiddleware.hasUpdateProfile], 
-  controller.dosenBoard);
+  // [authMiddleware.verifyToken, authMiddleware.isDosen, userMiddleware.getDosenByID ,userMiddleware.hasUpdateProfile], 
+  [authMiddleware.verifyToken, authMiddleware.isDosen, userMiddleware.getDosenByID], 
+  controller.dashboardDosen);
 router.get("/departemen", 
   [authMiddleware.verifyToken, authMiddleware.isDepartemen], 
   controller.departemenBoard);
@@ -61,6 +62,9 @@ router.use("/mahasiswa/skripsi",
   require("./skripsi.routes"));
 
 // DOSEN
+router.get('/dosen/ipkGraphDosenBoard',
+  [authMiddleware.verifyToken, authMiddleware.isDosen, userMiddleware.getDosenByID],
+  controller.ipkGraphDosenBoard);
 router.post("/dosen/updateProfile", 
   [authMiddleware.verifyToken, authMiddleware.isDosen, upload],
   controller.updateDosen);

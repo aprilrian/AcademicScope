@@ -310,9 +310,7 @@ exports.dashboardDosen = async (req, res) => {
     const sumMeninggalDunia = await Mahasiswa.count({ nip_dosen: dosen.nip, where: { status: 'meninggal_dunia' } });
 
     res.status(200).send({ 
-      sumAccount: sumAccount.toString(),
       sumMahasiswa: sumMahasiswa.toString(),
-      sumDosen: sumDosen.toString(),
       sumAktif: sumAktif.toString(),
       sumCuti: sumCuti.toString(),
       sumMangkir: sumMangkir.toString(),
@@ -325,6 +323,45 @@ exports.dashboardDosen = async (req, res) => {
     res.status(500).send({ message: error.message });
   }
 }
+
+const { Op } = require('sequelize');
+
+exports.ipkGraphDosenBoard = async (req, res) => {
+  try {
+    const dosen = req.dosen;
+    const mahasiswa = await Mahasiswa.findAll({ where: { nip_dosen: dosen.nip } });
+    const angkatanMap = new Map(); // Map untuk menyimpan rata-rata IPK per angkatan
+
+    for (const mhs of mahasiswa) {
+      const khsList = await KHS.findAll({
+        where: { mahasiswa_nim: mhs.nim },
+        order: sequelize.literal('"semester_aktif"::int DESC'),
+      });
+
+      khsList.forEach((khs) => {
+        const angkatan = mhs.angkatan; // Gunakan angkatan dari Mahasiswa
+        if (!angkatanMap.has(angkatan)) {
+          angkatanMap.set(angkatan, { totalIPK: 0, jumlahSemester: 0 });
+        }
+        angkatanMap.get(angkatan).totalIPK += khs.ip_kumulatif;
+        angkatanMap.get(angkatan).jumlahSemester += 1;
+      });
+    }
+
+    const rataRataPerAngkatan = [];
+    angkatanMap.forEach((data, angkatan) => {
+      const rataRataIPK = data.jumlahSemester > 0 ? data.totalIPK / data.jumlahSemester : 0;
+      rataRataPerAngkatan.push({
+        angkatan: angkatan,
+        rata_rata_ipk: rataRataIPK.toFixed(2),
+      });
+    });
+
+    res.status(200).send(rataRataPerAngkatan);
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+};
 
 exports.updateDosen = async (req, res) => {
   try {

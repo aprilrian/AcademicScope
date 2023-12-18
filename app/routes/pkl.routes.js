@@ -15,9 +15,13 @@ router.get(
     '/rekap',
     controller.getRekapPKLByDosen);
 
-router.put(
-    '/verify/:nim',
-    controller.verifyPKL);
+router.get(
+    '/getPKLBelumByDosen',
+    controller.getPKLBelumByDosen);
+
+router.get(
+    '/getAll',
+    controller.getAllPKL);
 
 router.put(
     '/edit/:nim',
@@ -27,16 +31,20 @@ router.get(
     '/show/:nim',
     controller.showPKL);
 
+router.get(
+    '/download/:nim',
+    controller.downloadPKL);
+
+router.put(
+    '/verify/:nim',
+    controller.verifyPKL);
+
 router.delete(
     '/delete/:nim',
     controller.deletePKL);
 
-router.get(
-    '/getAll',
-    controller.getAllPKL);
-
-router.get(
-    '/getPKLBelumByDosen',
-    controller.getPKLBelumByDosen);
+router.put(
+    '/edit/:nim',
+    controller.editPKL);
     
 module.exports = router;

@@ -32,6 +32,10 @@ router.get(
     controller.showSkripsi);
 
 router.get(
+    '/download/:nim',
+    controller.downloadSkripsi);
+
+router.get(
     '/getAll', 
     controller.getAllSkripsi);
 

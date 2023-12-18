@@ -137,21 +137,13 @@ exports.showKHS = async (req, res) => {
     if (!khs) {
       return res.status(404).send({ message: "File not found!" });
     }
-    const mhs = await Mahasiswa.findOne({ where: { nim: req.params.nim } });
-
-    const fileStream = fs.createReadStream(khs.file);
-
-    // Set the appropriate content type based on the file type
-    const contentType = "application/pdf"; // Sesuaikan berdasarkan jenis file Anda
-    res.setHeader("Content-type", contentType);
-
-    // Set Content-Disposition to inline for displaying in a new tab
-    res.setHeader("Content-disposition", `inline; filename=KHS_${mhs.nama}_${mhs.nim}_${khs.semester_aktif}.pdf`);
-
-    // Pipe the file stream to the response
-    fileStream.pipe(res);
+    const sanitizedFileName = khs.file.replace(/\\/g, '/');
+    pathFile = `${sanitizedFileName}`
+    console.log(pathFile);
+    res.status(200).send(pathFile)
   } catch (err) {
-    console.log({ message: err.message || "Error occurred while retrieving KHS." });
+    console.error(err);
+    res.status(500).send({ message: "Internal Server Error" });
   }
 };
 
@@ -267,8 +259,12 @@ exports.downloadKHS = async (req, res) => {
       return res.status(404).send({ message: "File not found!" });
     }
 
-    res.download(khs.file);
+    const sanitizedFileName = khs.file.replace(/\\/g, '/');
+    pathFile = `http://localhost:8080/${sanitizedFileName}`
+    console.log(pathFile);
+    res.redirect(pathFile);
   } catch (err) {
-    console.log({ message: err.message || "Error occurred while retrieving KHS." });
+    console.error(err);
+    res.status(500).send({ message: "Internal Server Error" });
   }
 }
