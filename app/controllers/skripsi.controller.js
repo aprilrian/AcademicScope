@@ -130,7 +130,7 @@ exports.getRekapSkripsi = async (req, res) => {
       }
 
       let sudah = 0;
-      let belum = 0;
+      let belum = mahasiswas.length;
 
       await Promise.all(mahasiswas.map(async (mahasiswa) => {
         const skripsi = await Skripsi.findOne({
@@ -140,12 +140,8 @@ exports.getRekapSkripsi = async (req, res) => {
           },
         });
 
-        if (skripsi) {
-          if (skripsi.status === "belum ambil") {
-            belum++;
-          } else {
-            sudah++;
-          }
+        if (skripsi && skripsi.status === "sudah") {
+          sudah++;
         }
       }));
 

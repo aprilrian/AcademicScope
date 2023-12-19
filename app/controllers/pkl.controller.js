@@ -143,7 +143,7 @@ exports.getRekapPKL = async (req, res) => {
       }
 
       let sudah = 0;
-      let belum = 0;
+      let belum = mahasiswas.length;
 
       await Promise.all(mahasiswas.map(async (mahasiswa) => {
         const pkl = await PKL.findOne({
@@ -153,12 +153,8 @@ exports.getRekapPKL = async (req, res) => {
           },
         });
 
-        if (pkl) {
-          if (pkl.status === "belum ambil") {
-            belum++;
-          } else {
+        if (pkl && pkl.status === "sudah") {
             sudah++;
-          }
         }
       }));
 
