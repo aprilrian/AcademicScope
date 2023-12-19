@@ -297,31 +297,52 @@ exports.generateBatch = async (req, res) => {
 // DEPARTEMEN
 exports.graphDepartemenBoard = async (req, res) => {
   try {
-    const mahasiswa = await Mahasiswa.findAll();
-    const angkatanMap = new Map(); // Map untuk menyimpan jumlah mahasiswa per angkatan
+    const mahasiswaList = await Mahasiswa.findAll();
+    const angkatanMap = new Map(); 
 
-    for (const mhs of mahasiswa) {
-      const angkatan = mhs.angkatan; // Gunakan angkatan dari Mahasiswa
-      if (!angkatanMap.has(angkatan)) {
-        angkatanMap.set(angkatan, 0);
-      }
-
-      angkatanMap.set(angkatan, angkatanMap.get(angkatan) + 1);
+    for (let angkatan = 2016; angkatan <= 2023; angkatan++) {
+      angkatanMap.set(angkatan.toString(), { total: 0, count: 0 });
     }
 
+    for (const mahasiswa of mahasiswaList) {
+      const angkatan = mahasiswa.angkatan.toString(); // Convert to string
+      const khs = await KHS.findOne({
+        where: { mahasiswa_nim: mahasiswa.nim },
+        order: sequelize.literal('"semester_aktif"::int DESC'),
+      });
+      const ipk = khs ? parseFloat(khs.ip_kumulatif) : 0;
+
+      if (!angkatanMap.has(angkatan)) {
+        angkatanMap.set(angkatan, { total: 0, count: 0 });
+      }
+
+      const angkatanData = angkatanMap.get(angkatan);
+      
+      if (khs) {
+        angkatanData.total += ipk;
+        angkatanData.count += 1;
+      }
+    }
+
+    console.log(angkatanMap);
+
     const jumlahMahasiswaPerAngkatan = [];
-    angkatanMap.forEach((jumlahMahasiswa, angkatan) => {
+    angkatanMap.forEach((angkatanData, angkatan) => {
+      const { total, count } = angkatanData;
+      const rerataIpk = count > 0 ? (total / count).toFixed(2) : 0;
+
       jumlahMahasiswaPerAngkatan.push({
-        angkatan: angkatan,
-        jumlah_mahasiswa: jumlahMahasiswa,
+        label: angkatan,
+        value: rerataIpk,
       });
     });
 
-    res.status(200).send(jumlahMahasiswaPerAngkatan);
+    res.status(200).json(jumlahMahasiswaPerAngkatan);
   } catch (error) {
-    res.status(500).send({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
+
 
 exports.dashboardDepartemen = async (req, res) => {
   try {
