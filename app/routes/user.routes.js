@@ -77,6 +77,9 @@ router.get('/dosen/getAllMahasiswaByDosen',
 router.get('/dosen/detail/:id',
   [authMiddleware.verifyToken, authMiddleware.isDosen, userMiddleware.getDosenByID, authMiddleware.isWali],
   controller.getAllAcademicByMahasiswa);
+router.get('/dosen/preDetail/:id',
+  [authMiddleware.verifyToken, authMiddleware.isDosen, userMiddleware.getDosenByID, authMiddleware.isWali],
+  controller.getPreDetail);
 router.use("/dosen/irs", 
   [authMiddleware.verifyToken, authMiddleware.isDosen, userMiddleware.getDosenByID],
   require("./irs.routes"));
@@ -103,6 +106,12 @@ router.use('/departemen/pkl',
 router.use("/departemen/skripsi",
   [authMiddleware.verifyToken, authMiddleware.isDepartemen, userMiddleware.getMasterByID],
   require("./skripsi.routes"))
+router.get('/departemen/preDetail/:id',
+  [authMiddleware.verifyToken, authMiddleware.isDepartemen],
+  controller.getPreDetail);
+router.get('/departemen/detail/:id',
+  [authMiddleware.verifyToken, authMiddleware.isDepartemen],
+  controller.getAllAcademicByMahasiswa);
 router.get('/departemen/mahasiswaCount',
   [authMiddleware.verifyToken, authMiddleware.isDepartemen],
   controller.getAllMahasiswaCount);

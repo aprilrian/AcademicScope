@@ -657,6 +657,33 @@ exports.getAllMahasiswaByDosen = async (req, res) => {
   }
 }
 
+exports.getPreDetail = async (req, res) => {
+  try {
+    const mahasiswa = Mahasiswa.findOne({ where: { nim: req.params.id } });
+    const dosen = Dosen.findOne({ where: { nip: mahasiswa.nip_dosen } });
+
+    if (!mahasiswa) {
+      return res.status(404).send({ message: 'Mahasiswa not found' });
+    }
+
+    if (!dosen) {
+      return res.status(404).send({ message: 'Dosen not found' });
+    }
+
+    res.status(200).send({
+      nama: mahasiswa.nama,
+      nim: mahasiswa.nim,
+      angkatan: mahasiswa.angkatan,
+      dosenWali: dosen.nama,
+      image: mahasiswa.foto,
+      role: 'Mahasiswa',
+      email: mahasiswa.email,
+    });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+}
+
 exports.getAllAcademicByMahasiswa = async (req, res) => {
   try {
     const mahasiswa = req.mahasiswa;
