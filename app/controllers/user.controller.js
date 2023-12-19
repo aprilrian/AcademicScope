@@ -661,7 +661,7 @@ exports.getPreDetail = async (req, res) => {
   try {
     const nim = BigInt(req.params.id);
     const mahasiswa = await Mahasiswa.findOne({ where: { nim: nim.toString() } });
-    const dosen = Dosen.findOne({ where: { nip: mahasiswa.nip_dosen } });
+    const dosen = await Dosen.findOne({ where: { nip: mahasiswa.nip_dosen } });
 
     if (!mahasiswa) {
       return res.status(404).send({ message: 'Mahasiswa not found' });
