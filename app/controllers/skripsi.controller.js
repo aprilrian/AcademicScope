@@ -122,7 +122,7 @@ exports.getRekapSkripsi = async (req, res) => {
       } else {
         mahasiswas = await Mahasiswa.findAll({
           where: {
-            nip_dosen: req.nip,
+            nip_dosen: req.dosen.nip,
             angkatan: angkatan,
           },
         });
