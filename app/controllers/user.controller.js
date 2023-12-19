@@ -176,6 +176,24 @@ exports.getAllAccount = async (req, res) => {
   }
 }
 
+exports.resetPassword = async (req, res) => {
+  try {
+    const username = req.params.username;
+
+    const user = await User.findOne({ where: { username: username } });
+    if (!user) {
+      return res.status(404).send({ message: 'User not found.' });
+    }
+
+    const passwordHash = bcrypt.hashSync(username, 8);
+    await User.update({ password: passwordHash }, { where: { username: username } });
+
+    res.status(200).send('Password berhasil direset');
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+}
+
 // OPERATOR
 exports.dashboardOperator = async (req, res) => {
   try {
@@ -600,3 +618,38 @@ exports.getAllMahasiswaByDosen = async (req, res) => {
     res.status(500).send({ message: error.message });
   }
 }
+
+exports.getAllAcademicByMahasiswa = async (req, res) => {
+  try {
+    const mahasiswa = req.mahasiswa;
+    const academicData = [];
+
+    for (let semester = 1; semester <= 14; semester++) {
+      const khs = await KHS.findOne({ where: { mahasiswa_nim: mahasiswa.nim, semester_aktif: semester.toString() } });
+      const pkl = await PKL.findOne({ where: { mahasiswa_nim: mahasiswa.nim, semester: semester.toString() } });
+      const skripsi = await Skripsi.findOne({ where: { mahasiswa_nim: mahasiswa.nim, semester: semester.toString() } });
+      const irs = await IRS.findOne({ where: { mahasiswa_nim: mahasiswa.nim, semester_aktif: semester.toString() } });
+
+      const academicRecord = {
+        semester: semester,
+        irs_status: irs ? true : false,
+        khs_status: khs ? true : false,
+        pkl_status: pkl ? true : false,
+        skripsi_status: skripsi ? true : false,
+        irs_file: irs ? irs.file : null,
+        khs_file: khs ? khs.file : null,
+        sks: irs ? irs.sks : null,
+        sks_semester: khs ? khs.semester_aktif : null,
+        ip_semester: khs ? khs.ip_semester : null,
+        sks_kumulatif: khs ? khs.sks_kumulatif : null,
+        ip_kumulatif: khs ? khs.ip_kumulatif : null,
+      };
+
+      academicData.push(academicRecord);
+    }
+
+    res.status(200).send(academicData);
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+};

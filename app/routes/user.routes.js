@@ -23,9 +23,6 @@ router.get("/departemen",
 router.get("/profileDetail",
   [authMiddleware.verifyToken],
   controller.viewProfile)
-router.get("/detail/:id",
-  [authMiddleware.verifyToken],
-  controller.viewProfile)
 
 // OPERATOR
 router.post("/operator/generate", 
@@ -40,6 +37,9 @@ router.get("/operator/getBatchTemplate",
 router.get("/operator/getAllAccount",
   [authMiddleware.verifyToken, authMiddleware.isOperator],
   controller.getAllAccount);
+router.put('/operator/resetPassword/:username',
+  [authMiddleware.verifyToken, authMiddleware.isOperator],
+  controller.resetPassword);
 
 // MAHASISWA
 router.get('/mahasiswa/ipkGraphMahasiswaBoard',
@@ -71,6 +71,9 @@ router.post("/dosen/updateProfile",
 router.get('/dosen/getAllMahasiswaByDosen', 
   [authMiddleware.verifyToken, authMiddleware.isDosen, userMiddleware.getDosenByID],
   controller.getAllMahasiswaByDosen);
+router.get('/dosen/detail/:id',
+  [authMiddleware.verifyToken, authMiddleware.isDosen, userMiddleware.getDosenByID, authMiddleware.isWali],
+  controller.getAllAcademicByMahasiswa);
 router.use("/dosen/irs", 
   [authMiddleware.verifyToken, authMiddleware.isDosen, userMiddleware.getDosenByID],
   require("./irs.routes"));
@@ -103,6 +106,9 @@ router.get('/departemen/mahasiswaCount',
 router.get('/departemen/graphBoard',
   [authMiddleware.verifyToken, authMiddleware.isDepartemen],
   controller.graphDepartemenBoard);
+router.get('/departemen/detail/:id',
+  [authMiddleware.verifyToken, authMiddleware.isDepartemen],
+  controller.getAllAcademicByMahasiswa);
 
 // DEPARTEMEN x OPERATOR = MASTER
 router.get('/master/getAllDosen', 

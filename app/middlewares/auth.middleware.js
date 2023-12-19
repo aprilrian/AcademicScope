@@ -151,52 +151,30 @@ isMahasiswaOrDosen = (req, res, next) => {
     });
 };
 
-isDosenWali = (req, res, next) => {
-    User.findById(req.userId).exec((err, user) => {
-        if (err) {
-            res.status(500).send({ message: err });
-            return;
-        }
-        Role.find(
-            {
-                _id: { $in: user.roles },
-            },
-            (err, roles) => {
-                if (err) {
-                    res.status(500).send({ message: err });
-                    return;
-                }
-                for (let i = 0; i < roles.length; i++) {
-                    if (roles[i].name === "mahasiswa") {
-                        next();
-                        return;
-                    } else if (roles[i].name === "dosen") {
-                        Dosen.findOne({ user: req.userId }).exec((err, dosen) => {
-                            if (err) {
-                                res.status(500).send({ message: err });
-                                return;
-                            }
-                            //get mahasiswa id from params
-                            Mahasiswa.findById(req.mahasiswaId).exec((err, mahasiswa) => {
-                                if (err) {
-                                    res.status(500).send({ message: err });
-                                    return;
-                                }
-                                //compare dosen id with mahasiswa kodewali
-                                if (dosen.id == mahasiswa.kodeWali) {
-                                    next();
-                                    return;
-                                }
-                                res.status(403).send({ message: "You're not dosen wali" });
-                                return;
-                            });
-                        });
-                    }
-                }
-            }
-        );
-    });
-};
+isWali = async (req, res, next) => {
+  try {
+    const dosen = req.dosen;
+    const nim = BigInt(req.params.id);
+    const mahasiswa = await Mahasiswa.findOne({ where: { nim: nim.toString() } });
+    req.mahasiswa = mahasiswa;
+
+    console.log(dosen.nip)
+    console.log(mahasiswa.nip_dosen)
+
+    if (!mahasiswa) {
+      return res.status(404).send({ message: 'Mahasiswa not found' });
+    }
+
+    if (dosen.nip === mahasiswa.nip_dosen) {
+      next();
+    } else {
+      res.status(403).send({ message: 'You are not Dosen Wali!' });
+    }
+
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+}
 
 const authMiddleware = {
     verifyToken,
@@ -206,7 +184,7 @@ const authMiddleware = {
     isMahasiswa,
     isMaster,
     isMahasiswaOrDosen,
-    isDosenWali,
+    isWali,
 }
 
 module.exports = authMiddleware
