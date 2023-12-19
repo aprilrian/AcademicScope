@@ -692,10 +692,10 @@ exports.getAllAcademicByMahasiswa = async (req, res) => {
     const academicData = [];
 
     for (let semester = 1; semester <= 14; semester++) {
-      const khs = await KHS.findOne({ where: { mahasiswa_nim: mahasiswa.nim, semester_aktif: semester.toString() } });
-      const pkl = await PKL.findOne({ where: { mahasiswa_nim: mahasiswa.nim, semester: semester.toString() } });
-      const skripsi = await Skripsi.findOne({ where: { mahasiswa_nim: mahasiswa.nim, semester: semester.toString() } });
-      const irs = await IRS.findOne({ where: { mahasiswa_nim: mahasiswa.nim, semester_aktif: semester.toString() } });
+      const irs = await IRS.findOne({ where: { mahasiswa_nim: mahasiswa.nim, status_verifikasi: 'sudah', semester_aktif: semester.toString() } });
+      const khs = await KHS.findOne({ where: { mahasiswa_nim: mahasiswa.nim, status_verifikasi: 'sudah', semester_aktif: semester.toString() } });
+      const pkl = await PKL.findOne({ where: { mahasiswa_nim: mahasiswa.nim, status_verifikasi: 'sudah', semester: semester.toString() } });
+      const skripsi = await Skripsi.findOne({ where: { mahasiswa_nim: mahasiswa.nim, status_verifikasi: 'sudah', semester: semester.toString() } });
 
       const academicRecord = {
         semester: semester,
