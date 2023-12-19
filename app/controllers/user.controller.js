@@ -659,7 +659,8 @@ exports.getAllMahasiswaByDosen = async (req, res) => {
 
 exports.getPreDetail = async (req, res) => {
   try {
-    const mahasiswa = Mahasiswa.findOne({ where: { nim: req.params.id } });
+    const nim = BigInt(req.params.id);
+    const mahasiswa = await Mahasiswa.findOne({ where: { nim: nim.toString() } });
     const dosen = Dosen.findOne({ where: { nip: mahasiswa.nip_dosen } });
 
     if (!mahasiswa) {
@@ -686,7 +687,8 @@ exports.getPreDetail = async (req, res) => {
 
 exports.getAllAcademicByMahasiswa = async (req, res) => {
   try {
-    const mahasiswa = req.mahasiswa;
+    const nim = BigInt(req.params.id);
+    const mahasiswa = await Mahasiswa.findOne({ where: { nim: nim.toString() } });
     const academicData = [];
 
     for (let semester = 1; semester <= 14; semester++) {

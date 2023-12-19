@@ -156,10 +156,6 @@ isWali = async (req, res, next) => {
     const dosen = req.dosen;
     const nim = BigInt(req.params.id);
     const mahasiswa = await Mahasiswa.findOne({ where: { nim: nim.toString() } });
-    req.mahasiswa = mahasiswa;
-
-    console.log(dosen.nip)
-    console.log(mahasiswa.nip_dosen)
 
     if (!mahasiswa) {
       return res.status(404).send({ message: 'Mahasiswa not found' });
