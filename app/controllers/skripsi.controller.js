@@ -63,17 +63,25 @@ exports.submitSkripsi = async (req, res) => {
   }
 };
 
-exports.getSkripsiByDosen = async (req, res) => {
+exports.getSkripsi = async (req, res) => {
   try {
-    const dosen = req.dosen;
     const { status, angkatan } = req.params;
+    let mahasiswas;
 
-    const mahasiswas = await Mahasiswa.findAll({
-      where: {
-        nip_dosen: dosen.nip,
-        angkatan: angkatan,
-      },
-    });
+    if (req.dosen) {
+      mahasiswas = await Mahasiswa.findAll({
+        where: {
+          nip_dosen: req.dosen.nip,
+          angkatan: angkatan,
+        },
+      });
+    } else {
+      mahasiswas = await Mahasiswa.findAll({
+        where: {
+          angkatan: angkatan,
+        },
+      });
+    }
 
     const skripsis = await Promise.all(mahasiswas.map(async (mahasiswa) => {
       const skripsi = await Skripsi.findOne({
@@ -101,62 +109,24 @@ exports.getSkripsiByDosen = async (req, res) => {
 exports.getRekapSkripsi = async (req, res) => {
   try {
     const rekapList = {};
+    let mahasiswas;
 
     for (let angkat = 2016; angkat <= 2023; angkat++) {
       const angkatan = angkat.toString();
-      const mahasiswas = await Mahasiswa.findAll({
-        where: {
-          angkatan: angkatan,
-        },
-      });
-
-      let sudah = 0;
-      let belum = 0;
-
-      await Promise.all(mahasiswas.map(async (mahasiswa) => {
-        const skripsi = await Skripsi.findOne({
+      if (!req.dosen){
+        mahasiswas = await Mahasiswa.findAll({
           where: {
-            mahasiswa_nim: mahasiswa.nim,
-            status_verifikasi: 'sudah',
+            angkatan: angkatan,
           },
         });
-
-        if (skripsi) {
-          if (skripsi.status === "belum ambil") {
-            belum++;
-          } else {
-            sudah++;
-          }
-        }
-      }));
-
-      const rekap = {
-        sudah: sudah,
-        belum: belum,
-      };
-
-      rekapList[angkatan] = rekap;
-    }
-
-    res.status(200).send({ tahun: rekapList });
-  } catch (error) {
-    res.status(500).send({ message: error.message || 'Error retrieving Rekap Skripsi.' });
-  }
-};
-
-exports.getRekapSkripsiByDosen = async (req, res) => {
-  try {
-    const dosen = req.dosen;
-    const rekapList = {};
-
-    for (let angkat = 2016; angkat <= 2023; angkat++) {
-      const angkatan = angkat.toString();
-      const mahasiswas = await Mahasiswa.findAll({
-        where: {
-          nip_dosen: dosen.nip,
-          angkatan: angkatan,
-        },
-      });
+      } else {
+        mahasiswas = await Mahasiswa.findAll({
+          where: {
+            nip_dosen: req.nip,
+            angkatan: angkatan,
+          },
+        });
+      }
 
       let sudah = 0;
       let belum = 0;
@@ -231,66 +201,6 @@ exports.getAllSkripsi = async (req, res) => {
     const skripsi = await Skripsi.findAll();
 
     res.status(200).send(skripsi);
-  } catch (error) {
-    res.status(500).send({ message: error.message });
-  }
-};
-
-exports.getSkripsi = async (req, res) => {
-  try {
-    const skripsi = await Skripsi.findOne({
-      where: { mahasiswaId: req.mahasiswaId },
-    });
-
-    if (!skripsi) {
-      res.status(404).send({ message: "Skripsi not found!" });
-      return;
-    }
-
-    let filename = skripsi.file.split("/").pop();
-    filename = filename.split("-").slice(1).join("-");
-
-    let tanggal = new Date(skripsi.tanggal);
-    tanggal = tanggal.toLocaleDateString("id-ID");
-
-    res.status(200).send({
-      nilai: skripsi.nilai,
-      tanggal: tanggal,
-      semester: skripsi.semester,
-      status_konfirmasi: skripsi.statusKonfirmasi,
-      file: filename,
-    });
-  } catch (error) {
-    res.status(500).send({ message: error.message });
-  }
-};
-
-exports.getRekap = async (req, res) => {
-  try {
-    const resultMhs = await Mahasiswa.findAll();
-    const resultSkr = await Skripsi.findAll();
-
-    let result = resultMhs.map((mhs) => {
-      const skripsi = resultSkr.find((skr) => skr.mahasiswaId === mhs.id);
-
-      if (skripsi) {
-        return {
-          name: mhs.name,
-          nim: mhs.nim,
-          angkatan: mhs.angkatan,
-          status_konfirmasi: "sudah",
-        };
-      } else {
-        return {
-          name: mhs.name,
-          nim: mhs.nim,
-          angkatan: mhs.angkatan,
-          status_konfirmasi: "belum",
-        };
-      }
-    });
-
-    res.status(200).send(result);
   } catch (error) {
     res.status(500).send({ message: error.message });
   }

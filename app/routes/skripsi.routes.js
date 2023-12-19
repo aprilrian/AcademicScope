@@ -9,11 +9,7 @@ router.post(
 
 router.get(
     '/rekap/:status/:angkatan', 
-    controller.getSkripsiByDosen);
-
-router.get(
-    '/rekapByDosen', 
-    controller.getRekapSkripsiByDosen);
+    controller.getSkripsi);
 
 router.get(
     '/rekap',

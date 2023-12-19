@@ -1,6 +1,5 @@
 const { PKL, Mahasiswa, Dosen } = require('../models');
 const fs = require('fs').promises;
-const { getRekapByDosen } = require('../controllers/user.controller');
 
 exports.submitPKL = async (req, res) => {
   try {
@@ -78,17 +77,25 @@ exports.getPKLBelumByDosen = async (req, res) => {
   }
 };
 
-exports.getPKLByDosen = async (req, res) => {
+exports.getPKL = async (req, res) => {
   try {
-    const dosen = req.dosen;
     const { status, angkatan } = req.params;
+    let mahasiswas;
 
-    const mahasiswas = await Mahasiswa.findAll({
-      where: {
-        nip_dosen: dosen.nip,
-        angkatan: angkatan,
-      },
-    });
+    if (req.dosen) {
+      mahasiswas = await Mahasiswa.findAll({
+        where: {
+          nip_dosen: req.dosen.nip,
+          angkatan: angkatan,
+        },
+      });
+    } else {
+      mahasiswas = await Mahasiswa.findAll({
+        where: {
+          angkatan: angkatan,
+        },
+      });
+    }
 
     const pkls = await Promise.all(mahasiswas.map(async (mahasiswa) => {
       const pkl = await PKL.findOne({
@@ -115,62 +122,24 @@ exports.getPKLByDosen = async (req, res) => {
 exports.getRekapPKL = async (req, res) => {
   try {
     const rekapList = {};
+    let mahasiswas;
 
     for (let angkat = 2016; angkat <= 2023; angkat++) {
       const angkatan = angkat.toString();
-      const mahasiswas = await Mahasiswa.findAll({
-        where: {
-          angkatan: angkatan,
-        },
-      });
-
-      let sudah = 0;
-      let belum = 0;
-
-      await Promise.all(mahasiswas.map(async (mahasiswa) => {
-        const pkl = await PKL.findOne({
+      if (!req.dosen) {
+        mahasiswas = await Mahasiswa.findAll({
           where: {
-            mahasiswa_nim: mahasiswa.nim,
-            status_verifikasi: 'sudah',
+            angkatan: angkatan,
           },
         });
-
-        if (pkl) {
-          if (pkl.status === "belum ambil") {
-            belum++;
-          } else {
-            sudah++;
-          }
-        }
-      }));
-
-      const rekap = {
-        sudah: sudah,
-        belum: belum,
-      };
-
-      rekapList[angkatan] = rekap;
-    }
-
-    res.status(200).send({ tahun: rekapList });
-  } catch (error) {
-    res.status(500).send({ message: error.message || 'Error retrieving Rekap PKL.' });
-  }
-};
-
-exports.getRekapPKLByDosen = async (req, res) => {
-  try {
-    const dosen = req.dosen;
-    const rekapList = {};
-
-    for (let angkat = 2016; angkat <= 2023; angkat++) {
-      const angkatan = angkat.toString();
-      const mahasiswas = await Mahasiswa.findAll({
-        where: {
-          nip_dosen: dosen.nip,
-          angkatan: angkatan,
-        },
-      });
+      } else {
+        mahasiswas = await Mahasiswa.findAll({
+          where: {
+            angkatan: angkatan,
+            nip_dosen: req.dosen.nip,
+          },
+        });
+      }
 
       let sudah = 0;
       let belum = 0;

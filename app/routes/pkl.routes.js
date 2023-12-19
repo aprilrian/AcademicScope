@@ -9,11 +9,11 @@ router.post(
 
 router.get(
     '/rekap/:status/:angkatan',
-    controller.getPKLByDosen);
+    controller.getPKL);
 
 router.get(
     '/rekap',
-    controller.getRekapPKLByDosen);
+    controller.getRekapPKL);
 
 router.get(
     '/getPKLBelumByDosen',
