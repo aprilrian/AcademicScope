@@ -129,7 +129,6 @@ exports.getAllAccount = async (req, res) => {
       include: [
         { model: Mahasiswa, attributes: ['nama', 'email'], required: false },
         { model: Dosen, attributes: ['nama', 'email'], required: false },
-        { model: Operator, attributes: ['nama', 'email'], required: false },
         { model: Departemen, attributes: ['nama', 'email'], required: false }
       ],
       attributes: ['username', 'role'],
@@ -150,24 +149,12 @@ exports.getAllAccount = async (req, res) => {
             nama: user.Dosen.nama,
             email: user.Dosen.email,
           }
-        } else if (user.role === 'operator') {
-          return {
-            username: user.username,
-            role: user.role,
-            nama: user.Operator.nama,
-            email: user.Operator.email,
-          }
-        } else if (user.role === 'departemen') {
+        } else {
           return {
             username: user.username,
             role: user.role,
             nama: user.Departemen.nama,
             email: user.Departemen.email,
-          }
-        } else {
-          return {
-            username: user.username,
-            role: user.role,
           }
         }
       }))
@@ -311,6 +298,28 @@ exports.generateBatch = async (req, res) => {
     });
   }
 };
+
+exports.deleteAccount = async (req, res) => {
+  try {
+    const username = req.params.username;
+
+    const user = await User.findOne({ where: { username: username } });
+    if (!user) {
+      return res.status(404).send({ message: 'User not found.' });
+    }
+
+    const isMahasiswa = await Mahasiswa.findOne({ where: { nim: username } });
+    const isDosen = await Dosen.findOne({ where: { nip: username } });
+    const isOperator = await Operator.findOne({ where: { nip: username } });
+    const isDepartemen = await Departemen.findOne({ where: { nama: username } });
+
+    await User.destroy({ where: { username: username } });
+
+    res.status(200).send('Akun berhasil dihapus');
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+}
 
 // DEPARTEMEN
 exports.graphDepartemenBoard = async (req, res) => {
