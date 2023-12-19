@@ -398,42 +398,52 @@ exports.dashboardDosen = async (req, res) => {
   }
 }
 
-const { Op } = require('sequelize');
-
 exports.ipkGraphDosenBoard = async (req, res) => {
   try {
     const dosen = req.dosen;
-    const mahasiswa = await Mahasiswa.findAll({ where: { nip_dosen: dosen.nip } });
-    const angkatanMap = new Map(); // Map untuk menyimpan rata-rata IPK per angkatan
+    const mahasiswaList = await Mahasiswa.findAll({ where: { nip_dosen: dosen.nip } });
+    const angkatanMap = new Map(); 
 
-    for (const mhs of mahasiswa) {
-      const khsList = await KHS.findAll({
-        where: { mahasiswa_nim: mhs.nim },
-        order: sequelize.literal('"semester_aktif"::int DESC'),
-      });
-
-      khsList.forEach((khs) => {
-        const angkatan = mhs.angkatan; // Gunakan angkatan dari Mahasiswa
-        if (!angkatanMap.has(angkatan)) {
-          angkatanMap.set(angkatan, { totalIPK: 0, jumlahSemester: 0 });
-        }
-        angkatanMap.get(angkatan).totalIPK += khs.ip_kumulatif;
-        angkatanMap.get(angkatan).jumlahSemester += 1;
-      });
+    for (let angkatan = 2016; angkatan <= 2023; angkatan++) {
+      angkatanMap.set(angkatan.toString(), { total: 0, count: 0 });
     }
 
-    const rataRataPerAngkatan = [];
-    angkatanMap.forEach((data, angkatan) => {
-      const rataRataIPK = data.jumlahSemester > 0 ? data.totalIPK / data.jumlahSemester : 0;
-      rataRataPerAngkatan.push({
-        angkatan: angkatan,
-        rata_rata_ipk: rataRataIPK.toFixed(2),
+    for (const mahasiswa of mahasiswaList) {
+      const angkatan = mahasiswa.angkatan.toString(); // Convert to string
+      const khs = await KHS.findOne({
+        where: { mahasiswa_nim: mahasiswa.nim },
+        order: sequelize.literal('"semester_aktif"::int DESC'),
+      });
+      const ipk = khs ? parseFloat(khs.ip_kumulatif) : 0;
+
+      if (!angkatanMap.has(angkatan)) {
+        angkatanMap.set(angkatan, { total: 0, count: 0 });
+      }
+
+      const angkatanData = angkatanMap.get(angkatan);
+      
+      if (khs) {
+        angkatanData.total += ipk;
+        angkatanData.count += 1;
+      }
+    }
+
+    console.log(angkatanMap);
+
+    const jumlahMahasiswaPerAngkatan = [];
+    angkatanMap.forEach((angkatanData, angkatan) => {
+      const { total, count } = angkatanData;
+      const rerataIpk = count > 0 ? (total / count).toFixed(2) : 0;
+
+      jumlahMahasiswaPerAngkatan.push({
+        label: angkatan,
+        value: rerataIpk,
       });
     });
 
-    res.status(200).send(rataRataPerAngkatan);
+    res.status(200).json(jumlahMahasiswaPerAngkatan);
   } catch (error) {
-    res.status(500).send({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
