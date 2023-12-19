@@ -99,7 +99,7 @@ exports.getPKL = async (req, res) => {
 
     const pkls = await Promise.all(mahasiswas.map(async (mahasiswa) => {
       const pkl = await PKL.findOne({
-        attributes: [['mahasiswa_nim', 'nim'], 'status', 'status_verifikasi'],
+        attributes: [['mahasiswa_nim', 'nim'], 'status', 'status_verifikasi', 'nilai', 'semester'],
         where: {
           mahasiswa_nim: mahasiswa.nim,
           status: status,
@@ -109,6 +109,7 @@ exports.getPKL = async (req, res) => {
 
       if (pkl) {
         pkl.dataValues.nama = mahasiswa.nama
+        pkl.dataValues.angkatan = mahasiswa.angkatan
       };
 
       return pkl;

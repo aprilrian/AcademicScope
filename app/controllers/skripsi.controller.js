@@ -85,7 +85,7 @@ exports.getSkripsi = async (req, res) => {
 
     const skripsis = await Promise.all(mahasiswas.map(async (mahasiswa) => {
       const skripsi = await Skripsi.findOne({
-        attributes: [['mahasiswa_nim', 'nim'], 'status', 'status_verifikasi'],
+        attributes: [['mahasiswa_nim', 'nim'], 'status', 'status_verifikasi', 'nilai', 'semester'],
         where: {
           mahasiswa_nim: mahasiswa.nim,
           status: status,
@@ -95,6 +95,7 @@ exports.getSkripsi = async (req, res) => {
 
       if (skripsi) {
         skripsi.dataValues.nama = mahasiswa.nama
+        skripsi.dataValues.angkatan = mahasiswa.angkatan
       };
 
       return skripsi;
