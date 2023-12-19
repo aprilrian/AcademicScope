@@ -40,6 +40,9 @@ router.get("/operator/getAllAccount",
 router.put('/operator/resetPassword/:username',
   [authMiddleware.verifyToken, authMiddleware.isOperator],
   controller.resetPassword);
+router.delete('/operator/deleteAccount/:username',
+  [authMiddleware.verifyToken, authMiddleware.isOperator],
+  controller.deleteAccount);
 
 // MAHASISWA
 router.get('/mahasiswa/ipkGraphMahasiswaBoard',

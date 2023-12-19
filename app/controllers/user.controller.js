@@ -181,6 +181,35 @@ exports.resetPassword = async (req, res) => {
   }
 }
 
+exports.deleteAccount = async (req, res) => {
+  try {
+    const username = req.params.username;
+
+    const user = await User.findOne({ where: { username: username } });
+    if (!user) {
+      return res.status(404).send({ message: 'User not found.' });
+    }
+
+    const isMahasiswa = await Mahasiswa.findOne({ where: { nim: username } });
+    const isDosen = await Dosen.findOne({ where: { nip: username } });
+
+    const t = await User.sequelize.transaction();
+    await User.destroy({ where: { username: username }, transaction: t });
+    if (isMahasiswa) {
+      await Mahasiswa.destroy({ where: { nim: username }, transaction: t });
+    } else if (isDosen) {
+      await Dosen.destroy({ where: { nip: username }, transaction: t });
+    } else {
+      res.status(400).send({ message: 'Do not try to delete Departemen or you will be FIRED!' });
+    await t.commit();
+    }
+
+    res.status(200).send('Akun berhasil dihapus');
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+}
+
 // OPERATOR
 exports.dashboardOperator = async (req, res) => {
   try {
