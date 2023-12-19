@@ -112,6 +112,51 @@ exports.getPKLByDosen = async (req, res) => {
     res.status(500).send({ message: error.message || 'Error retrieving PKL.' });
   }
 }
+exports.getRekapPKL = async (req, res) => {
+  try {
+    const rekapList = {};
+
+    for (let angkat = 2016; angkat <= 2023; angkat++) {
+      const angkatan = angkat.toString();
+      const mahasiswas = await Mahasiswa.findAll({
+        where: {
+          angkatan: angkatan,
+        },
+      });
+
+      let sudah = 0;
+      let belum = 0;
+
+      await Promise.all(mahasiswas.map(async (mahasiswa) => {
+        const pkl = await PKL.findOne({
+          where: {
+            mahasiswa_nim: mahasiswa.nim,
+            status_verifikasi: 'sudah',
+          },
+        });
+
+        if (pkl) {
+          if (pkl.status === "belum ambil") {
+            belum++;
+          } else {
+            sudah++;
+          }
+        }
+      }));
+
+      const rekap = {
+        sudah: sudah,
+        belum: belum,
+      };
+
+      rekapList[angkatan] = rekap;
+    }
+
+    res.status(200).send({ tahun: rekapList });
+  } catch (error) {
+    res.status(500).send({ message: error.message || 'Error retrieving Rekap PKL.' });
+  }
+};
 
 exports.getRekapPKLByDosen = async (req, res) => {
   try {
@@ -155,7 +200,7 @@ exports.getRekapPKLByDosen = async (req, res) => {
       rekapList[angkatan] = rekap;
     }
 
-    res.status(200).send(rekapList);
+    res.status(200).send({ tahun: rekapList });
   } catch (error) {
     res.status(500).send({ message: error.message || 'Error retrieving Rekap PKL.' });
   }

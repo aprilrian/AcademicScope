@@ -98,6 +98,52 @@ exports.getSkripsiByDosen = async (req, res) => {
   }
 }
 
+exports.getRekapSkripsi = async (req, res) => {
+  try {
+    const rekapList = {};
+
+    for (let angkat = 2016; angkat <= 2023; angkat++) {
+      const angkatan = angkat.toString();
+      const mahasiswas = await Mahasiswa.findAll({
+        where: {
+          angkatan: angkatan,
+        },
+      });
+
+      let sudah = 0;
+      let belum = 0;
+
+      await Promise.all(mahasiswas.map(async (mahasiswa) => {
+        const skripsi = await Skripsi.findOne({
+          where: {
+            mahasiswa_nim: mahasiswa.nim,
+            status_verifikasi: 'sudah',
+          },
+        });
+
+        if (skripsi) {
+          if (skripsi.status === "belum ambil") {
+            belum++;
+          } else {
+            sudah++;
+          }
+        }
+      }));
+
+      const rekap = {
+        sudah: sudah,
+        belum: belum,
+      };
+
+      rekapList[angkatan] = rekap;
+    }
+
+    res.status(200).send({ tahun: rekapList });
+  } catch (error) {
+    res.status(500).send({ message: error.message || 'Error retrieving Rekap Skripsi.' });
+  }
+};
+
 exports.getRekapSkripsiByDosen = async (req, res) => {
   try {
     const dosen = req.dosen;
@@ -140,7 +186,7 @@ exports.getRekapSkripsiByDosen = async (req, res) => {
       rekapList[angkatan] = rekap;
     }
 
-    res.status(200).send(rekapList);
+    res.status(200).send({ tahun: rekapList });
   } catch (error) {
     res.status(500).send({ message: error.message || 'Error retrieving Rekap Skripsi.' });
   }
