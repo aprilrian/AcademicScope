@@ -707,7 +707,7 @@ exports.getAllAcademicByMahasiswa = async (req, res) => {
         khs_file: khs ? khs.file : null,
         sks: irs ? irs.sks : null,
         sks_semester: khs ? khs.semester_aktif : null,
-        ip_semester: khs ? khs.ip_semester : null,
+        ip_semester: khs ? khs.ip : null,
         sks_kumulatif: khs ? khs.sks_kumulatif : null,
         ip_kumulatif: khs ? khs.ip_kumulatif : null,
       };
