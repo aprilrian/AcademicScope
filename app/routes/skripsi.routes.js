@@ -12,8 +12,12 @@ router.get(
     controller.getSkripsiByDosen);
 
 router.get(
-    '/rekap', 
+    '/rekapByDosen', 
     controller.getRekapSkripsiByDosen);
+
+router.get(
+    '/rekap',
+    controller.getRekapSkripsi);
 
 router.put(
     '/verify/:nim', 

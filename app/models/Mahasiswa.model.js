@@ -1,13 +1,5 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../configs/db.config');
-const User = require('./User.model');
-const Dosen = require('./Dosen.model');
-const KabupatenKota = require('./KabupatenKota.model');
-const Provinsi = require('./Provinsi.model');
-const IRS = require('./IRS.model');
-const KHS = require('./KHS.model');
-const Skripsi = require('./Skripsi.model');
-const PKL = require('./PKL.model');
 
 const Mahasiswa = sequelize.define('Mahasiswa', {
   nim: {

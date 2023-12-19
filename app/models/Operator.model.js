@@ -1,4 +1,3 @@
-// DosenModel.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../configs/db.config');
 const User = require('./User.model');
