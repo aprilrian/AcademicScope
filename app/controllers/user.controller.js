@@ -295,6 +295,34 @@ exports.generateBatch = async (req, res) => {
 };
 
 // DEPARTEMEN
+exports.graphDepartemenBoard = async (req, res) => {
+  try {
+    const mahasiswa = await Mahasiswa.findAll();
+    const angkatanMap = new Map(); // Map untuk menyimpan jumlah mahasiswa per angkatan
+
+    for (const mhs of mahasiswa) {
+      const angkatan = mhs.angkatan; // Gunakan angkatan dari Mahasiswa
+      if (!angkatanMap.has(angkatan)) {
+        angkatanMap.set(angkatan, 0);
+      }
+
+      angkatanMap.set(angkatan, angkatanMap.get(angkatan) + 1);
+    }
+
+    const jumlahMahasiswaPerAngkatan = [];
+    angkatanMap.forEach((jumlahMahasiswa, angkatan) => {
+      jumlahMahasiswaPerAngkatan.push({
+        angkatan: angkatan,
+        jumlah_mahasiswa: jumlahMahasiswa,
+      });
+    });
+
+    res.status(200).send(jumlahMahasiswaPerAngkatan);
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+};
+
 exports.dashboardDepartemen = async (req, res) => {
   try {
     const sumMahasiswa = await Mahasiswa.count();

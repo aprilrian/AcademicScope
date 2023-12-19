@@ -100,6 +100,9 @@ router.use("/departemen/skripsi",
 router.get('/departemen/mahasiswaCount',
   [authMiddleware.verifyToken, authMiddleware.isDepartemen],
   controller.getAllMahasiswaCount);
+router.get('/departemen/graphBoard',
+  [authMiddleware.verifyToken, authMiddleware.isDepartemen],
+  controller.graphDepartemenBoard);
 
 // DEPARTEMEN x OPERATOR = MASTER
 router.get('/master/getAllDosen', 
