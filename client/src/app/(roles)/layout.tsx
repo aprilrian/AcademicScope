@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
-
 import { cn } from "@/lib/utils";
 
 import Sidebar from "@/components/layouts/sidebar";
@@ -46,7 +45,9 @@ export default function RootLayout({
                 <div className="basis-1/6">
                   <Sidebar />
                 </div>
-                <div className="basis-5/6 bg-gray-100">{children}</div>
+                <div className="basis-5/6 bg-gray-100  dark:bg-zinc-800">
+                  {children}
+                </div>
               </div>
             )}
           </div>

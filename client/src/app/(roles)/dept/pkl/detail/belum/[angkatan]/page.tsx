@@ -3,10 +3,10 @@ import path from "path";
 import { Metadata } from "next";
 import Image from "next/image";
 import { z } from "zod";
-
-import { columns } from "@/components/table/PKL/columns";
-import { DataTable } from "@/components/table/PKL/data-table";
 import { PKLSchema } from "@/components/data/tabel/tabelPKL/schema";
+import { DataTablePKL } from "@/components/table/PKL/data-table";
+import { PKLColumns } from "@/components/table/PKL/columns";
+import { Card } from "@/components/ui/card";
 
 export const metadata: Metadata = {
   title: "Detail PKL",
@@ -45,14 +45,9 @@ export default async function pklPage() {
         />
       </div>
       <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
-        <div className="flex items-center justify-between space-y-2">
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight">Data PKL</h2>
-            <p className="text-muted-foreground">Data PKL</p>
-          </div>
-          <div className="flex items-center space-x-2"></div>
-        </div>
-        <DataTable data={dataPKL} columns={columns} />
+        <Card className="p-6 bg-white rounded-md shadow-md">
+          <DataTablePKL data={dataPKL} columns={PKLColumns} />
+        </Card>
       </div>
     </>
   );

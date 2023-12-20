@@ -19,7 +19,6 @@ export default function DashboardPage() {
   const router = useRouter();
   const { data: session } = useSession();
   const accessToken = session?.user?.access_token;
-  // Specify the type for the state
   const [rekapProgress, setRekapProgress] = useState<RekapProgress | null>(
     null
   );
@@ -50,7 +49,7 @@ export default function DashboardPage() {
   }, [accessToken]);
 
   if (rekapProgress === null) {
-    return <div>Loading...</div>; // You can replace this with a loading indicator or any other appropriate UI
+    return <div>Loading...</div>;
   }
 
   return (

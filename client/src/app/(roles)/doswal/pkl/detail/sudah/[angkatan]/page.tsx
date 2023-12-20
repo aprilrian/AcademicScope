@@ -5,25 +5,28 @@ import Image from "next/image";
 import { z } from "zod";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptionConfig";
 
-import { columns } from "@/components/table/PKL/columns";
-import { DataTable } from "@/components/table/PKL/data-table";
+import { PKLColumns } from "@/components/table/PKL/columns";
+import { DataTablePKL } from "@/components/table/PKL/data-table";
 import { PKLSchema } from "@/components/data/tabel/tabelPKL/schema";
 import { getServerSession } from "next-auth";
 import axios from "axios";
-import { useRouter } from "next/router"; // Fix import
+import { NextRequest } from "next/server";
 
 export const metadata: Metadata = {
   title: "Detail PKL",
   description: "List detail PKL",
 };
 
-async function getDataPKL(angkatan : any) {
+async function getDataPKL() {
   try {
     const session = await getServerSession(authOptions);
     const accessToken = session?.user?.access_token;
+    // const angkatan = request.nextUrl.pathname;
+
+    // console.log(angkatan);
 
     const response = await axios.get(
-      `http://localhost:8080/dosen/pkl/rekap/sudah/${angkatan}`,
+      `http://localhost:8080/dosen/skripsi/rekap/lulus/2021`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -42,9 +45,8 @@ async function getDataPKL(angkatan : any) {
   }
 }
 
-export default async function pklPage({ params }) {
-  const angkatan = params?.angkatan;
-  const dataPKL = await getDataPKL(angkatan);
+export default async function pklPage() {
+  const dataPKL = await getDataPKL();
 
   return (
     <>
@@ -72,7 +74,7 @@ export default async function pklPage({ params }) {
           </div>
           <div className="flex items-center space-x-2"></div>
         </div>
-        <DataTable data={dataPKL} columns={columns} />
+        <DataTablePKL data={dataPKL} columns={PKLColumns} />
       </div>
     </>
   );

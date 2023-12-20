@@ -8,6 +8,7 @@ import { DataTable } from "@/components/table/ManajemenAkun/data-table";
 import { manajemenSchema } from "@/components/data/tabel/tabelManajemenAkun/schema";
 import { getServerSession } from "next-auth";
 import axios from "axios";
+import { Card } from "@/components/ui/card";
 
 export const metadata: Metadata = {
   title: "Manajemen Akun",
@@ -63,17 +64,28 @@ export default async function ManajemenPage() {
           className="hidden dark:block"
         />
       </div>
-      <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
+      <div className="hidden h-full w-full flex-1 flex-col space-y-8 p-8 md:flex">
         <div className="flex items-center justify-between space-y-2">
-          <div>
+          {/* <div>
             <h2 className="text-2xl font-bold tracking-tight">
               Manajemen Akun
             </h2>
-            <p className="text-muted-foreground">Manajemen Akun</p>
-          </div>
+            <p className="text-gray-500">By Operator</p>
+          </div> */}
           <div className="flex items-center space-x-2"></div>
         </div>
-        <DataTable data={dataManajemen} columns={columns} />
+        <Card className="w-full mx-auto p-6 rounded-lg shadow-xl bg-white dark:bg-zinc-900">
+          <div className="flex items-center justify-between space-x-2">
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight">
+                Manajemen Akun
+              </h2>
+              <p className="text-muted-foreground">Data Manajemen</p>
+            </div>
+            <div className="flex items-center space-x-2"></div>
+          </div>
+          <DataTable data={dataManajemen} columns={columns} />
+        </Card>
       </div>
     </>
   );

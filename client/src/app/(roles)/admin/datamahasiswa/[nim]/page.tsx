@@ -1,172 +1,85 @@
-'use client';
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/authOptionConfig";
+import Image from "next/image";
+import { z } from "zod";
+import axios from "axios";
+import { columns } from "@/components/table/DataMahasiswa/columns";
+import { DataTable } from "@/components/table/DataMahasiswa/data-table";
+import { mahasiswaSchema } from "@/components/data/tabel/tabelDataMahasiswa/schema";
+import { Metadata } from "next";
+import { Card } from "@/components/ui/card";
 
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-
-
-const dummyUserData = {
-  "nama": "John Doe",
-  "nim": "123456789",
-  "angkatan": "2020",
-  "dosenWali": "Dr. Jane Smith",
-  "image": "/john_doe_avatar.jpg",
-  "username": "john_doe",
-  "role": "Full Stack Developer at Acme Inc.",
-  "email": "john.doe@example.com"
+export const metadata: Metadata = {
+  title: "Data Mahasiswa",
+  description: "List Data Mahasiswa",
 };
 
-const dummySemesterData = [
-  {
-    "isSkripsiLulus": true,
-    "isPklLulus": false,
-    "isIrsKhsDiisikan": true
-  },
-  {
-    "isSkripsiLulus": false,
-    "isPklLulus": true,
-    "isIrsKhsDiisikan": false
-  },
-  {
-    "isSkripsiLulus": true,
-    "isPklLulus": true,
-    "isIrsKhsDiisikan": false
-  }
-];
+async function getDataMahasiswa() {
+  try {
+    const session = await getServerSession(authOptions);
+    console.log(session);
 
-interface SemesterData {
-  isSkripsiLulus: boolean;
-  isPklLulus: boolean;
-  isIrsKhsDiisikan: boolean;
+    const accessToken = session?.user?.access_token;
+
+    console.log(accessToken);
+
+    const response = await axios.get(
+      "http://localhost:8080/master/getAllMahasiswa",
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    console.log(response.data);
+
+    const dataMahasiswa = response.data;
+
+    return z.array(mahasiswaSchema).parse(dataMahasiswa);
+  } catch (error) {
+    console.error("Error fetching or parsing data:", error);
+    return [];
+  }
 }
 
-const MahasiswaCard = () => {
-  const [user, setUser] = useState(dummyUserData);
-  const [semesterData, setSemesterData] = useState(dummySemesterData);
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await axios.get('src/components/data/detailMhs/userData.json');
-        setUser(response.data);
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      }
-    };
-
-    const fetchSemesterData = async () => {
-      try {
-        const response = await axios.get('src/components/data/detailMhs/semesterData.json');
-        setSemesterData(response.data);
-      } catch (error) {
-        console.error('Error fetching semester data:', error);
-      }
-    };
-
-    fetchUserData();
-    fetchSemesterData();
-  }, []);
-
-  const getButtonColor = (semester : any) => {
-    if (semester.isSkripsiLulus) {
-      return 'bg-green-500';
-    } else if (semester.isPklLulus) {
-      return 'bg-yellow-500';
-    } else if (semester.isIrsKhsDiisikan) {
-      return 'bg-blue-500';
-    } else {
-      return 'bg-red-500';
-    }
-  };
+export default async function DataMahasiswaPage() {
+  const dataMahasiswa = await getDataMahasiswa();
 
   return (
-    <Card className="mx-auto my-1 p-6 rounded-lg shadow-xl bg-white dark:bg-zinc-900">
-      <CardHeader>
-        <CardTitle>Progress Perkembangan Studi Mahasiswa Informatika Fakultas Sains dan Matematika UNDIP Semarang</CardTitle>
-        <CardDescription>Detail Mahasiswa</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="flex flex-col items-center space-y-4">
-          <Avatar className="h-24 w-24">
-            <AvatarImage
-              alt="User Avatar"
-              src={user.image || "/placeholder-avatar.jpg"}
-            />
-            <AvatarFallback>
-              {user.username && user.username.charAt(0)}
-            </AvatarFallback>
-          </Avatar>
-          <div className="text-center">
-            <h2 className="text-2xl font-bold">{user.nama || "N/A"}</h2>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">
-              {user.role || "N/A"}
-            </p>
-          </div>
+    <>
+      <div className="md:hidden">
+        <Image
+          src="/examples/tasks-light.png"
+          width={1280}
+          height={998}
+          alt="Playground"
+          className="block dark:hidden"
+        />
+        <Image
+          src="/examples/tasks-dark.png"
+          width={1280}
+          height={998}
+          alt="Playground"
+          className="hidden dark:block"
+        />
+      </div>
+      <div className="hidden h-full w-full flex-1 flex-col space-y-8 p-8 md:flex">
+        <div className="flex items-center justify-between space-y-2">
+          <div className="flex items-center space-x-2"></div>
         </div>
-        <div className="mt-8 border-t pt-6 space-y-2">
-          <div className="flex justify-between">
-          <span className="font-medium text-sm">Nama:</span>
-            <span className="text-sm text-zinc-500 dark:text-zinc-400">
-              {user.nama || "N/A"}
-            </span>
-            <span className="font-medium text-sm">NIM:</span>
-            <span className="text-sm text-zinc-500 dark:text-zinc-400">
-              {user.nim || "N/A"}
-            </span>
-            <span className="font-medium text-sm">Angkatan:</span>
-            <span className="text-sm text-zinc-500 dark:text-zinc-400">
-              {user.angkatan || "N/A"}
-            </span>
-            <span className="font-medium text-sm">Dosen Wali:</span>
-            <span className="text-sm text-zinc-500 dark:text-zinc-400">
-              {user.dosenWali || "N/A"}
-            </span>
+        <Card className="w-full mx-auto p-6 rounded-lg shadow-xl bg-white dark:bg-zinc-900">
+          <div className="flex items-center justify-between space-x-2">
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight">
+                Data Mahasiswa
+              </h2>
+              <p className="text-muted-foreground">Data mahasiswa</p>
+            </div>
+            <div className="flex items-center space-x-2"></div>
           </div>
-        </div>
-
-        <div className="flex flex-col items-center mt-4">
-          <div className="flex flex-wrap justify-center">
-            {semesterData.map((semester, index) => (
-              <Dialog key={index}>
-                <DialogTrigger className={`p-3 rounded-md cursor-pointer text-lg ${getButtonColor(semester)}`}>
-                  {index + 1}
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Detail Progress</DialogTitle>
-                    <Tabs defaultValue="irs" className="w-[400px]">
-                      <TabsList>
-                        <TabsTrigger value="irs">IRS</TabsTrigger>
-                        <TabsTrigger value="khs">KHS</TabsTrigger>
-                        <TabsTrigger value="pkl">PKL</TabsTrigger>
-                        <TabsTrigger value="skripsi">Skripsi</TabsTrigger>
-                      </TabsList>
-                      <TabsContent value="irs">Detail IRS</TabsContent>
-                      <TabsContent value="khs">Detail KHS</TabsContent>
-                      <TabsContent value="pkl">Detail PKL</TabsContent>
-                      <TabsContent value="skripsi">Detail Skripsi</TabsContent>
-                    </Tabs>
-                  </DialogHeader>
-                </DialogContent>
-              </Dialog>
-            ))}
-          </div>
-        </div>
-      </CardContent>
-      <CardFooter>
-      </CardFooter>
-    </Card>
+          <DataTable data={dataMahasiswa} columns={columns} />
+        </Card>
+      </div>
+    </>
   );
 }
-
-export default MahasiswaCard;

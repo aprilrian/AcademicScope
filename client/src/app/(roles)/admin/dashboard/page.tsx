@@ -1,16 +1,12 @@
 "use client";
 
-import React, { PureComponent } from "react";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
-
-import { LineChart } from "@mui/x-charts/LineChart";
-import { PieChart } from "@mui/x-charts/PieChart";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import CustomPieChart from "@/components/charts/PieChart";
+import IPKBarChart from "@/components/charts/IPKBarChart";
 
 import Image from "next/image";
-
-import { Plus } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import {
   Card,
   CardContent,
@@ -18,98 +14,62 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
-import { Check, ChevronsUpDown } from "lucide-react";
-
-import { cn } from "@/lib/utils";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-
-const darkTheme = createTheme({
-  palette: {
-    mode: "dark",
-  },
-});
-const data = [
-  { id: 0, value: 600, label: "Mahasiswa" },
-  { id: 1, value: 40, label: "Dosen" },
-];
-
-const summarys = [
-  {
-    value: "ipk",
-    label: "IPK",
-  },
-  {
-    value: "irs",
-    label: "IRS",
-  },
-  {
-    value: "khs",
-    label: "KHS",
-  },
-  {
-    value: "pkl",
-    label: "PKL",
-  },
-  {
-    value: "skripsi",
-    label: "Skripsi",
-  },
-];
-
-const angkatans = [
-  {
-    value: "2016",
-    label: "2016",
-  },
-  {
-    value: "2017",
-    label: "2017",
-  },
-  {
-    value: "2018",
-    label: "2018",
-  },
-  {
-    value: "2019",
-    label: "2019",
-  },
-  {
-    value: "2020",
-    label: "2020",
-  },
-  {
-    value: "2021",
-    label: "2021",
-  },
-  {
-    value: "2022",
-    label: "2022",
-  },
-  {
-    value: "2023",
-    label: "2023",
-  },
-];
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 export default function DashboardPage() {
-  const [open, setOpen] = React.useState(false);
-  const [opens, setOpens] = React.useState(false);
-  const [value, setValue] = React.useState("");
-  const [values, setValues] = React.useState("");
+  const [totalAkunData, setTotalAkunData] = useState(null);
+  const [totalAkunMahasiswaData, setTotalAkunMahasiswaData] = useState(null);
+  const [totalAkunDosenData, setTotalAkunDosenData] = useState(null);
+  const [totalMahasiswaData, setTotalMahasiswaData] = useState(null);
+  const [totalMahasiswaAktifData, setTotalMahasiswaAktifData] = useState(null);
+  const [totalMahasiswaLulusData, setTotalMahasiswaLulusData] = useState(null);
+  const [totalMahasiswaCutiData, setTotalMahasiswaCutiData] = useState(null);
+  const [totalMahasiswaMangkirData, setTotalMahasiswaMangkirData] =
+    useState(null);
+  const [totalMahasiswaDOData, setTotalMahasiswaDOData] = useState(null);
+  const [totalMahasiswaUndurData, setTotalMahasiswaUndurData] = useState(null);
+  const [totalMahasiswaMeninggalData, setTotalMahasiswaMeninggalData] =
+    useState(null);
   const router = useRouter();
+  const { data: session } = useSession();
+  const accessToken = session?.user?.access_token;
+
+  const fetchDataDashboard = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/operator", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      console.log(response.data);
+
+      const dataDashboard = response.data;
+
+      setTotalAkunData(dataDashboard.sumAccount);
+      setTotalAkunMahasiswaData(dataDashboard.sumMahasiswa);
+      setTotalAkunDosenData(dataDashboard.sumDosen);
+      setTotalMahasiswaData(dataDashboard.sumMahasiswa);
+      setTotalMahasiswaAktifData(dataDashboard.sumAktif);
+      setTotalMahasiswaLulusData(dataDashboard.sumLulus);
+      setTotalMahasiswaCutiData(dataDashboard.sumCuti);
+      setTotalMahasiswaMangkirData(dataDashboard.sumMangkir);
+      setTotalMahasiswaDOData(dataDashboard.sumDO);
+      setTotalMahasiswaUndurData(dataDashboard.sumUndurDiri);
+      setTotalMahasiswaMeninggalData(dataDashboard.sumMeninggalDunia);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (session) {
+      fetchDataDashboard();
+    }
+  }, [session]);
 
   const handleButtonClick = () => {
     // Navigate to "/admin/generate" when the button is clicked
@@ -118,248 +78,189 @@ export default function DashboardPage() {
 
   return (
     <>
-      {" "}
-      <ThemeProvider theme={darkTheme}>
-        <div className="md:hidden">
-          <Image
-            src="/examples/dashboard-light.png"
-            width={1280}
-            height={866}
-            alt="Dashboard"
-            className="block dark:hidden"
-          />
-          <Image
-            src="/examples/dashboard-dark.png"
-            width={1280}
-            height={866}
-            alt="Dashboard"
-            className="hidden dark:block"
-          />
-        </div>
-
-        <div className="hidden flex-col md:flex">
-          <div className="flex-1 space-y-4 p-8 pt-6">
-            {/* <div className="flex items-center justify-between space-y-2">
-              <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-              <div className="flex items-center space-x-2"></div>
-            </div> */}
-
-            {/* <div className="border-b">
-              <div className="ml-auto flex items-center space-x-4"></div>
-            </div> */}
-
-            <div>
-              <div className="flex items-start mt-5 mb-2">
-                <h2 className="text-xl font-bold">Summary Akun</h2>
-                <div className="ml-auto">
-                  <Button onClick={handleButtonClick}>
-                    <Plus className="mr-2 h-4 w-4" /> Generate Akun
-                  </Button>
-                </div>
-              </div>
-              {/* 
-              <div>
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-l font-semibold">
-                      Diagram Akun
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="pl-2"></CardContent>
-                </Card>
-              </div> */}
-            </div>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 ml-3 my-3">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Total Akun
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">645</div>
-                  <p className="text-xs text-muted-foreground">Akun</p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Total Akun Mahasiswa
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">174</div>
-                  <p className="text-xs text-muted-foreground">
-                    Akun Mahasiswa
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Total Akun Dosen
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">40</div>
-                  <p className="text-xs text-muted-foreground">
-                    Total Akun Dosen
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-            <div>
-              <div className="flex items-start mt-10 mb-2">
-                <h2 className="text-xl font-bold tracking-tight">
-                  Status Mahasiswa
-                </h2>
-                <div className="ml-auto">
-                  <Popover open={opens} onOpenChange={setOpens}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        aria-expanded={opens}
-                        className="w-[200px] justify-between"
-                      >
-                        {values
-                          ? angkatans.find(
-                              (angkatan) => angkatan.value === values
-                            )?.label
-                          : "Pilih angkatan"}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-[200px] p-0">
-                      <Command>
-                        {/* <CommandInput placeholder="Search angkatan..." /> */}
-                        {/* <CommandEmpty>No angkatan found.</CommandEmpty> */}
-                        <CommandGroup>
-                          {angkatans.map((angkatan) => (
-                            <CommandItem
-                              key={angkatan.value}
-                              value={angkatan.value}
-                              onSelect={(currentValue) => {
-                                setValues(
-                                  currentValue === values ? "" : currentValue
-                                );
-                                setOpens(false);
-                              }}
-                            >
-                              <Check
-                                className={cn(
-                                  "mr-2 h-4 w-4",
-                                  values === angkatan.value
-                                    ? "opacity-100"
-                                    : "opacity-0"
-                                )}
-                              />
-                              {angkatan.label}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-                </div>
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Total Mahasiswa
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">174</div>
-                    <p className="text-xs text-muted-foreground">Mahasiswa</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Mahasiswa Aktif
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">40</div>
-                    <p className="text-xs text-muted-foreground">Mahasiswa</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Mahasiswa Lulus
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">70</div>
-                    <p className="text-xs text-muted-foreground">mahasiswa</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Mahasiswa Cuti
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">8</div>
-                    <p className="text-xs text-muted-foreground">Mahasiswa</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Mahasiswa Mangkir
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">12</div>
-                    <p className="text-xs text-muted-foreground">Mahasiswa</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Mahasiswa DO
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">3</div>
-                    <p className="text-xs text-muted-foreground">Mahasiswa</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Mahasiswa Undur Diri
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">8</div>
-                    <p className="text-xs text-muted-foreground">Mahasiswa</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Mahasiswa Meninggal Dunia
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">0</div>
-                    <p className="text-xs text-muted-foreground">Mahasiswa</p>
-                  </CardContent>
-                </Card>
+      <div className="md:hidden">
+        <Image
+          src="/examples/dashboard-light.png"
+          width={1280}
+          height={866}
+          alt="Dashboard"
+          className="block dark:hidden"
+        />
+        <Image
+          src="/examples/dashboard-dark.png"
+          width={1280}
+          height={866}
+          alt="Dashboard"
+          className="hidden dark:block"
+        />
+      </div>
+      <div className="hidden flex-col md:flex">
+        <div className="flex-1 space-y-4 p-8 pt-6">
+          <div>
+            <div className="flex items-start mt-5 mb-2">
+              <h2 className="text-xl font-bold">Summary Akun</h2>
+              <div className="ml-auto">
+                <Button onClick={handleButtonClick}>
+                  <Plus className="mr-2 h-4 w-4" /> Generate Akun
+                </Button>
               </div>
             </div>
           </div>
+
+          <div className="grid gap-4 md:grid-cols-3 ml-3 my-3">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  Total Akun
+                </CardTitle>
+                {/* Add appropriate icon or styling here */}
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{totalAkunData}</div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  Total Akun Mahasiswa{" "}
+                </CardTitle>
+                {/* Add appropriate icon or styling here */}
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {totalAkunMahasiswaData}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  Total Akun Dosen
+                </CardTitle>
+                {/* Add appropriate icon or styling here */}
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{totalAkunDosenData}</div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div>
+            <div className="flex items-start mt-10 mb-2">
+              <h2 className="text-xl font-bold tracking-tight">
+                Status Mahasiswa
+              </h2>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Total Mahasiswa
+                  </CardTitle>
+                  {/* Add appropriate icon or styling here */}
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{totalMahasiswaData}</div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Mahasiswa Aktif
+                  </CardTitle>
+                  {/* Add appropriate icon or styling here */}
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {totalMahasiswaAktifData}
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Mahasiswa Lulus
+                  </CardTitle>
+                  {/* Add appropriate icon or styling here */}
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {totalMahasiswaLulusData}
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Mahasiswa Cuti
+                  </CardTitle>
+                  {/* Add appropriate icon or styling here */}
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {totalMahasiswaCutiData}
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Mahasiswa Mangkir
+                  </CardTitle>
+                  {/* Add appropriate icon or styling here */}
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {totalMahasiswaMangkirData}
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Mahasiswa DO
+                  </CardTitle>
+                  {/* Add appropriate icon or styling here */}
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {totalMahasiswaDOData}
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Mahasiswa Undur Diri
+                  </CardTitle>
+                  {/* Add appropriate icon or styling here */}
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {totalMahasiswaUndurData}
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Mahasiswa Meninggal Dunia
+                  </CardTitle>
+                  {/* Add appropriate icon or styling here */}
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {totalMahasiswaMeninggalData}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         </div>
-      </ThemeProvider>
+      </div>
     </>
   );
 }

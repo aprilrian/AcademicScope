@@ -10,6 +10,7 @@ import { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import { useReactToPrint } from "react-to-print";
 import jsPDF from "jspdf";
+import { Card } from "@/components/ui/card";
 
 export const metadata: Metadata = {
   title: "Data Mahasiswa",
@@ -64,17 +65,28 @@ export default async function DataMahasiswaPage() {
           className="hidden dark:block"
         />
       </div>
-      <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
+      <div className="hidden h-full w-full flex-1 flex-col space-y-8 p-8 md:flex">
         <div className="flex items-center justify-between space-y-2">
-          <div>
+          {/* <div>
             <h2 className="text-2xl font-bold tracking-tight">
               Data Mahasiswa
             </h2>
-            <p className="text-muted-foreground">Data mahasiswa</p>
-          </div>
+            <p className="text-gray-500">By Departemen</p>
+          </div> */}
           <div className="flex items-center space-x-2"></div>
         </div>
-        <DataTable data={dataMahasiswa} columns={columns} />
+        <Card className="w-full mx-auto p-6 rounded-lg shadow-xl bg-white dark:bg-zinc-900">
+          <div className="flex items-center justify-between space-x-2">
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight">
+                Data Mahasiswa
+              </h2>
+              <p className="text-muted-foreground">Data mahasiswa</p>
+            </div>
+            <div className="flex items-center space-x-2"></div>
+          </div>
+          <DataTable data={dataMahasiswa} columns={columns} />
+        </Card>
       </div>
     </>
   );

@@ -77,7 +77,7 @@ export default function DashboardPage() {
           className="hidden dark:block"
         />
       </div>
-      <div className="hidden flex-col md:flex  bg-gray-100 dark:bg-gray-800">
+      <div className="hidden flex-col md:flex">
         {/* <div className="border-b">
           <div className="flex h-16 items-center px-4">
             <div className="ml-auto flex items-center space-x-4"></div>
@@ -101,7 +101,7 @@ export default function DashboardPage() {
                   <CardContent>
                     <div className="text-2xl font-bold">{irsData}</div>
                     <div className="text-sm text-gray-500">
-                      Status: {irsStatus}
+                      Status Verifikasi: {irsStatus}
                     </div>
                   </CardContent>
                 </Card>
@@ -115,7 +115,7 @@ export default function DashboardPage() {
                   <CardContent>
                     <div className="text-2xl font-bold">{khsData}</div>
                     <div className="text-sm text-gray-500">
-                      Status: {khsStatus}
+                      Status Verifikasi: {khsStatus}
                     </div>
                   </CardContent>
                 </Card>
@@ -130,7 +130,7 @@ export default function DashboardPage() {
                   <CardContent>
                     <div className="text-2xl font-bold">{pklData}</div>
                     <div className="text-sm text-gray-500">
-                      Status: {pklStatus}
+                      Status Verifikasi: {pklStatus}
                     </div>
                   </CardContent>
                 </Card>
@@ -145,13 +145,13 @@ export default function DashboardPage() {
                   <CardContent>
                     <div className="text-2xl font-bold">{skripsiData}</div>
                     <div className="text-sm text-gray-500">
-                      Status: {skripsiStatus}
+                      Status Verifikasi: {skripsiStatus}
                     </div>
                   </CardContent>
                 </Card>
               </div>
 
-              <div >
+              <div>
                 <Card className="col-span-4">
                   <CardHeader>
                     <CardTitle>Diagram IPK</CardTitle>

@@ -3,48 +3,28 @@ import path from "path";
 import { Metadata } from "next";
 import Image from "next/image";
 import { z } from "zod";
-import { authOptions } from "@/app/api/auth/[...nextauth]/authOptionConfig";
-
-import { columns } from "@/components/table/PKL/columns";
-import { DataTable } from "@/components/table/PKL/data-table";
 import { PKLSchema } from "@/components/data/tabel/tabelPKL/schema";
-import { getServerSession } from "next-auth";
-import axios from "axios";
-import { useRouter } from "next/router"; // Fix import
+import { DataTablePKL } from "@/components/table/PKL/data-table";
+import { PKLColumns } from "@/components/table/PKL/columns";
+import { Card } from "@/components/ui/card";
 
 export const metadata: Metadata = {
   title: "Detail PKL",
   description: "List detail PKL",
 };
 
-async function getDataPKL(angkatan) {
-  try {
-    const session = await getServerSession(authOptions);
-    const accessToken = session?.user?.access_token;
+async function getDataPKL() {
+  const data = await fs.readFile(
+    path.join(process.cwd(), "src/components/data/tabel/tabelPKL/dataPKL.json")
+  );
 
-    const response = await axios.get(
-      `http://localhost:8080/departemen/skripsi/rekap/belum_ambil/${angkatan}`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
+  const dataPKL = JSON.parse(data.toString());
 
-    const dataPkl = response.data;
-
-    console.log(dataPkl);
-
-    return z.array(PKLSchema).parse(dataPkl);
-  } catch (error) {
-    console.error("Error fetching or parsing data:", error);
-    return [];
-  }
+  return z.array(PKLSchema).parse(dataPKL);
 }
 
-export default async function pklPage({ params }) {
-  const angkatan = params?.angkatan;
-  const dataPKL = await getDataPKL(angkatan);
+export default async function pklPage() {
+  const dataPKL = await getDataPKL();
 
   return (
     <>
@@ -65,14 +45,9 @@ export default async function pklPage({ params }) {
         />
       </div>
       <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
-        <div className="flex items-center justify-between space-y-2">
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight">Data PKL</h2>
-            <p className="text-muted-foreground">Data PKL</p>
-          </div>
-          <div className="flex items-center space-x-2"></div>
-        </div>
-        <DataTable data={dataPKL} columns={columns} />
+        <Card className="p-6 bg-white rounded-md shadow-md">
+          <DataTablePKL data={dataPKL} columns={PKLColumns} />
+        </Card>
       </div>
     </>
   );

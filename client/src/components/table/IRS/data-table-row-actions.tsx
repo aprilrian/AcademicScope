@@ -1,7 +1,8 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Worker, Viewer } from "@react-pdf-viewer/core";
-import { DotsHorizontalIcon } from "@radix-ui/react-icons";
+import { ButtonIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { Row } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,6 +33,7 @@ export function DataTableRowActions<TData>({
   const verifikasi = verifikasiSchema.parse(row.original);
   const { data: session } = useSession();
   const accessToken = session?.user?.access_token;
+  const router = useRouter();
 
   const handleDelete = async () => {
     try {
@@ -133,7 +135,7 @@ export function DataTableRowActions<TData>({
     }
   };
 
-  const handleShowIRS = async () => {
+  const getFileUrl = async () => {
     try {
       const { nim, semester } = verifikasi;
       const response = await axios.get(
@@ -142,91 +144,67 @@ export function DataTableRowActions<TData>({
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
-          responseType: "blob", // Set the responseType to 'blob' to handle various file types
         }
       );
 
-      const contentType = response.headers["content-type"];
+      const trimmedUrl = response.data.trim(); // Trim leading and trailing whitespace
 
-      // Handle different file types
-      if (contentType.includes("application/pdf")) {
-        // Display PDF using a PDF viewer or download link
-        const pdfUrl = URL.createObjectURL(new Blob([response.data]));
-        window.open(pdfUrl, "_blank");
-      } else if (contentType.includes("image")) {
-        // Display image using an image element
-        const imageUrl = URL.createObjectURL(new Blob([response.data]));
-        window.open(imageUrl, "_blank");
-      } else {
-        // Handle other file types or show a download link
-        const fileUrl = URL.createObjectURL(new Blob([response.data]));
-        const downloadLink = document.createElement("a");
-        downloadLink.href = fileUrl;
-        downloadLink.download = `file.${contentType.split("/")[1]}`;
-        downloadLink.click();
-      }
+      console.log(trimmedUrl);
+      return trimmedUrl;
     } catch (error) {
-      console.error("Error fetching IRS detail:", error);
+      console.error(
+        "Error getting IRS path:",
+        (error as any).response || (error as any).message || error
+      );
+      // Handle errors or show a notification to the user
+      throw error; // Rethrow the error if you want to propagate it
+    }
+  };
+
+  const handleDownloadIRS = async () => {
+    try {
+      const fileURL = await getFileUrl();
+      console.log(fileURL);
+      const fullFileUrl = `http://localhost:8080/${fileURL}`;
+      const filename = fileURL.substring(fileURL.lastIndexOf("/") + 1);
+
+      const response = await axios.get(fullFileUrl, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        responseType: "arraybuffer", // Set the response type to arraybuffer
+      });
+
+      // Create a Blob from the array buffer
+      const blob = new Blob([response.data], { type: "application/pdf" }); // Set content type to application/pdf
+
+      // Create a download link
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = filename; // Use the extracted filename
+      document.body.appendChild(link);
+
+      // Trigger the download
+      link.click();
+
+      // Remove the link from the DOM
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Error downloading IRS file:", error);
       // Handle errors or show a notification to the user
     }
   };
 
-  // const handleShowIRS = async () => {
-  //   try {
-  //     const { nim, semester } = verifikasi; // Assuming verifikasi is properly defined somewhere in your code
-  //     const response = await axios.get<Blob>(
-  //       `https://localhost:8080/dosen/irs/show/${nim}/${semester}`,
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${accessToken}`,
-  //         },
-  //         responseType: "blob",
-  //       }
-  //     );
-
-  //     const contentType = response.headers["content-type"];
-
-  //     // Handle different file types
-  //     if (contentType.includes("application/pdf")) {
-  //       // Display PDF using the react-pdf library
-  //       const pdfUrl = URL.createObjectURL(new Blob([response.data]));
-
-  //       // Render PDF preview
-  //       const pdfViewer = (
-  //         <>
-  //           <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-  //             {/* You should replace Viewer with the actual component you are using */}
-  //             {/* e.g., <YourPdfViewerComponent fileUrl={pdfUrl} /> */}
-  //             <Viewer fileUrl={pdfUrl} />
-  //           </Worker>
-  //         </>
-  //       );
-
-  //       // Open a modal or use a UI component to display the preview
-  //       console.log("Displaying PDF preview:", pdfViewer);
-  //     } else if (contentType.includes("image")) {
-  //       // Display image using an image element
-  //       const imageUrl = URL.createObjectURL(new Blob([response.data]));
-
-  //       // Render image preview
-  //       const imageViewer = <img src={imageUrl} alt="Preview" />;
-
-  //       // Open a modal or use a UI component to display the preview
-  //       console.log("Displaying image preview:", imageViewer);
-  //     } else {
-  //       // Handle other file types or show a download link
-  //       const fileUrl = URL.createObjectURL(new Blob([response.data]));
-  //       const downloadLink = document.createElement("a");
-  //       downloadLink.href = fileUrl;
-  //       downloadLink.download = `file.${contentType.split("/")[1]}`;
-  //       downloadLink.click();
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching IRS detail:", error);
-  //     // Handle errors or show a notification to the user
-  //     // You might want to notify the user about the error, for example using a notification library
-  //   }
-  // };
+  const handleShowIRS = async () => {
+    try {
+      const fileURL = await getFileUrl();
+      const fullFileUrl = `http://localhost:8080/${fileURL}`;
+      window.open(fullFileUrl, "_blank");
+    } catch (error) {
+      // Handle errors here if needed
+      console.error("Error handling IRS file:", error);
+    }
+  };
 
   return (
     <DropdownMenu>
@@ -241,6 +219,10 @@ export function DataTableRowActions<TData>({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
         <DropdownMenuItem onClick={handleShowIRS}>Detail</DropdownMenuItem>
+
+        <DropdownMenuItem onClick={handleDownloadIRS}>
+          Download
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={handleVerifyIRS}>Terima</DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem>Edit</DropdownMenuItem>

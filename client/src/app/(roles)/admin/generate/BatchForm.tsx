@@ -137,8 +137,8 @@ const BatchForm = () => {
         </CardHeader>
         <CardContent>
           <Button
-          className="mb-6 bg-blue-500 text-white hover:bg-blue-700"
-          onClick={handleDownloadTemplate}
+            className="mb-6 bg-blue-500 text-white hover:bg-blue-700"
+            onClick={handleDownloadTemplate}
           >
             Download Template
           </Button>
@@ -172,4 +172,3 @@ const BatchForm = () => {
 };
 
 export default BatchForm;
-

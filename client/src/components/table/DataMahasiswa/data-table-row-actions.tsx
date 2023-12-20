@@ -8,17 +8,9 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-// import { labels } from "../data/data"
 import { mahasiswaSchema } from "../../data/tabel/tabelDataMahasiswa/schema";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -31,7 +23,7 @@ export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
   const mahasiswa = mahasiswaSchema.parse(row.original);
-  const router = useRouter(); // Initialize the useRouter hook
+  const router = useRouter();
   const { data: session } = useSession();
   const role: string | undefined = session?.user?.role;
 

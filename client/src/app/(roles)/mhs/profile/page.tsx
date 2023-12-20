@@ -60,14 +60,14 @@ const UserProfile: FC<UserProfileProps> = () => {
   if (!session) {
     // Render loading state or redirect to login
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-800">
+      <div className="flex items-center justify-center min-h-scree">
         <Loader />
       </div>
     );
   }
 
   return (
-    <div className="flex items-center justify-center  bg-gray-100 dark:bg-gray-800">
+    <div className="flex items-center justify-center">
       <Card className="w-11/12 p-6 rounded-lg shadow-xl">
         <div className="flex flex-col items-center space-y-4">
           <Avatar className="h-64 w-64">
@@ -81,9 +81,7 @@ const UserProfile: FC<UserProfileProps> = () => {
             </AvatarFallback>
           </Avatar>
           <div className="text-center">
-            <h2 className="text-2xl font-bold">
-              {userData.nama || "Not Set"}
-            </h2>
+            <h2 className="text-2xl font-bold">{userData.nama || "Not Set"}</h2>
             <p className="text-sm text-zinc-500 dark:text-zinc-400">
               {role
                 ? role.charAt(0).toUpperCase() + role.slice(1)

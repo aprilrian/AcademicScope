@@ -6,17 +6,32 @@ export default function GeneratePage() {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="w-full max-w-screen-md">
-        <Tabs defaultValue="account" className="w-full">
+        <Tabs
+          defaultValue="account"
+          className="w-full border rounded-md overflow-hidden"
+        >
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="account">Form</TabsTrigger>
-            <TabsTrigger value="file">Batch</TabsTrigger>
+            <TabsTrigger
+              value="account"
+              className="py-2 px-4 text-center cursor-pointer"
+            >
+              Form
+            </TabsTrigger>
+            <TabsTrigger
+              value="file"
+              className="py-2 px-4 text-center cursor-pointer"
+            >
+              Batch
+            </TabsTrigger>
           </TabsList>
-          <TabsContent value="account">
-            <SignInForm />
-          </TabsContent>
-          <TabsContent value="file">
-            <BatchForm />
-          </TabsContent>
+          <div className=" p-4 flex flex-col">
+            <TabsContent value="account">
+              <SignInForm />
+            </TabsContent>
+            <TabsContent value="file" className="flex-grow">
+              <BatchForm />
+            </TabsContent>
+          </div>
         </Tabs>
       </div>
     </div>

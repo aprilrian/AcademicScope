@@ -98,15 +98,15 @@ const IrsForm = () => {
   };
   return (
     <>
-      <div className="hidden space-y-6 p-10 pb-16 md:block  bg-gray-100 dark:bg-gray-800">
+      <div className="hidden space-y-6 p-10 pb-16 md:block">
         {/* <div className="space-y-0.5">
           <h2 className="text-2xl font-bold tracking-tight">IRS</h2>
           <p className="text-muted-foreground">Isi IRS anda</p>
         </div>
         <Separator className="my-6" /> */}
         <div className="mt-10 flex-grow mb-10">
-        <Card className="w-11/12 p-6 rounded-lg shadow-xl">
-        <CardHeader className="pb-3 flex flex-col items-center">
+          <Card className="w-11/12 p-6 rounded-lg shadow-xl">
+            <CardHeader className="pb-3 flex flex-col items-center">
               <CardTitle>Form Submit IRS</CardTitle>
             </CardHeader>
             <CardContent>
@@ -174,6 +174,6 @@ const IrsForm = () => {
       </div>
     </>
   );
-}
+};
 
 export default IrsForm;
