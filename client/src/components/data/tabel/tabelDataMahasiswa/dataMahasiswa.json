@@ -1,0 +1,68 @@
+[
+  {
+    "nim": "12345678901234",
+    "nama": "John Doe",
+    "angkatan": "2018",
+    "status": "aktif"
+  },
+  {
+    "nim": "98765432101234",
+    "nama": "Jane Smith",
+    "angkatan": "2017",
+    "status": "lulus"
+  },
+  {
+    "nim": "54321678901234",
+    "nama": "Alice Johnson",
+    "angkatan": "2018",
+    "status": "dropout"
+  },
+  {
+    "nim": "98765432109876",
+    "nama": "Bob Anderson",
+    "angkatan": "2016",
+    "status": "aktif"
+  },
+  {
+    "nim": "12345678904321",
+    "nama": "Eve Taylor",
+    "angkatan": "2020",
+    "status": "lulus"
+  },
+  {
+    "nim": "11112222333444",
+    "nama": "Charlie Brown",
+    "angkatan": "2023",
+    "status": "dropout"
+  },
+  {
+    "nim": "55556666777888",
+    "nama": "Grace Williams",
+    "angkatan": "2017",
+    "status": "aktif"
+  },
+  {
+    "nim": "87654321098765",
+    "nama": "David Clark",
+    "angkatan": "2021",
+    "status": "lulus"
+  },
+  {
+    "nim": "11111122223333",
+    "nama": "Sophie Turner",
+    "angkatan": "2018",
+    "status": "dropout"
+  },
+  {
+    "nim": "11111122223334",
+    "nama": "Alex Turner",
+    "angkatan": "2016",
+    "status": "dropout"
+  },
+  {
+    "nim": "11111122223335",
+    "nama": "John Lennon",
+    "angkatan": "2016",
+    "status": "dropout"
+  }
+]

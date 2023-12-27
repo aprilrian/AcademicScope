@@ -1,0 +1,162 @@
+[
+  {
+    "nim": "24060120000039",
+    "nama": "Andi Kurniawan",
+    "angkatan": "2016",
+    "status": "aktif",
+    "nilai": "93",
+    "semester": "2"
+  },
+  {
+    "nim": "24060120000040",
+    "nama": "Bella Wijaya",
+    "angkatan": "2017",
+    "status": "lulus",
+    "nilai": "71",
+    "semester": "5"
+  },
+  {
+    "nim": "24060120000041",
+    "nama": "Cahya Pratama",
+    "angkatan": "2018",
+    "status": "dropout",
+    "nilai": "65",
+    "semester": "3"
+  },
+  {
+    "nim": "24060120000042",
+    "nama": "Dinda Safitri",
+    "angkatan": "2019",
+    "status": "aktif",
+    "nilai": "88",
+    "semester": "4"
+  },
+  {
+    "nim": "24060120000043",
+    "nama": "Eko Purnomo",
+    "angkatan": "2020",
+    "status": "lulus",
+    "nilai": "82",
+    "semester": "6"
+  },
+  {
+    "nim": "24060120000044",
+    "nama": "Fira Devi",
+    "angkatan": "2021",
+    "status": "dropout",
+    "nilai": "69",
+    "semester": "1"
+  },
+  {
+    "nim": "24060120000045",
+    "nama": "Guntur Prabowo",
+    "angkatan": "2022",
+    "status": "aktif",
+    "nilai": "90",
+    "semester": "7"
+  },
+  {
+    "nim": "24060120000046",
+    "nama": "Hani Novianti",
+    "angkatan": "2023",
+    "status": "lulus",
+    "nilai": "78",
+    "semester": "3"
+  },
+  {
+    "nim": "24060120000047",
+    "nama": "Iqbal Kusuma",
+    "angkatan": "2016",
+    "status": "dropout",
+    "nilai": "67",
+    "semester": "4"
+  },
+  {
+    "nim": "24060120000048",
+    "nama": "Jasmine Putri",
+    "angkatan": "2017",
+    "status": "dropout",
+    "nilai": "55",
+    "semester": "2"
+  },
+  {
+    "nim": "24060120000049",
+    "nama": "Kevin Santoso",
+    "angkatan": "2018",
+    "status": "dropout",
+    "nilai": "64",
+    "semester": "1"
+  },
+  {
+    "nim": "24060120000050",
+    "nama": "Lina Indriani",
+    "angkatan": "2019",
+    "status": "aktif",
+    "nilai": "85",
+    "semester": "5"
+  },
+  {
+    "nim": "24060120000051",
+    "nama": "Maman Firmansyah",
+    "angkatan": "2020",
+    "status": "lulus",
+    "nilai": "79",
+    "semester": "6"
+  },
+  {
+    "nim": "24060120000052",
+    "nama": "Nadia Ramadhani",
+    "angkatan": "2021",
+    "status": "dropout",
+    "nilai": "62",
+    "semester": "3"
+  },
+  {
+    "nim": "24060120000053",
+    "nama": "Oscar Hidayat",
+    "angkatan": "2022",
+    "status": "aktif",
+    "nilai": "87",
+    "semester": "4"
+  },
+  {
+    "nim": "24060120000054",
+    "nama": "Putri Cahya",
+    "angkatan": "2023",
+    "status": "lulus",
+    "nilai": "81",
+    "semester": "7"
+  },
+  {
+    "nim": "24060120000055",
+    "nama": "Qamarun Nisa",
+    "angkatan": "2016",
+    "status": "dropout",
+    "nilai": "71",
+    "semester": "2"
+  },
+  {
+    "nim": "24060120000056",
+    "nama": "Rian Nugraha",
+    "angkatan": "2017",
+    "status": "aktif",
+    "nilai": "89",
+    "semester": "5"
+  },
+  {
+    "nim": "24060120000057",
+    "nama": "Siska Ramadhani",
+    "angkatan": "2018",
+    "status": "lulus",
+    "nilai": "82",
+    "semester": "6"
+  },
+  {
+    "nim": "24060120000058",
+    "nama": "Taufik Pratama",
+    "angkatan": "2019",
+    "status": "dropout",
+    "nilai": "67",
+    "semester": "3"
+  }
+]
