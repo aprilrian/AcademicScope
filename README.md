@@ -43,13 +43,17 @@ To run the AcademicScope locally, follow these steps:
 
 1. Clone this repository to your local machine.
 2. Make sure you have Node.js and npm (Node Package Manager) installed.
-3. Install the project dependencies by running the following command in your terminal:
+3. Install the project dependencies for each folder client and server by running the following command in your terminal:
    ```
    npm install
    ```
 4. Set up the PostgreSQL database and obtain the necessary connection credentials.
 5. Create a `.env` file in the project root directory and populate it with the MongoDB connection details. You can refer to the `.env.example` file for the required variables.
-6. Start the development server by running the following command:
+6. Start the development server for backend by running the following command:
+   ```
+   npm start
+   ```
+7. Start the development server for frontend by running the following command:
    ```
    npm run dev
    ```
