@@ -1,0 +1,23 @@
+[
+    {
+      "isSkripsiLulus": true,
+      "isPklLulus": true,
+      "isIrsKhsDiisikan": true
+    },
+    {
+      "isSkripsiLulus": false,
+      "isPklLulus": true,
+      "isIrsKhsDiisikan": true
+    },
+    {
+      "isSkripsiLulus": false,
+      "isPklLulus": false,
+      "isIrsKhsDiisikan": true
+    },
+    {
+      "isSkripsiLulus": false,
+      "isPklLulus": false,
+      "isIrsKhsDiisikan": false
+    }
+  ]
+  
